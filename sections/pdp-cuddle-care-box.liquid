@@ -1,8 +1,1395 @@
-{% if section.settings.enable %}
-  {% assign eligible = true %}{% if section.settings.eligible_collection != blank %}{% assign eligible = false %}{% for collection in product.collections %}{% if collection.handle == section.settings.eligible_collection.handle %}{% assign eligible = true %}{% endif %}{% endfor %}{% endif %}
-  {% if eligible %}<section class="pp-ccb" style="--ccb-bg:{{ section.settings.section_background }};--ccb-card:{{ section.settings.card_background }};--ccb-accent:{{ section.settings.accent_color }};--ccb-radius:{{ section.settings.border_radius }}px"><div class="page-width"><div class="pp-ccb__card"><span class="pp-kicker">{{ section.settings.eyebrow }}</span><h2>{{ section.settings.heading }}</h2><p>{{ section.settings.description }}</p><ol><li>{{ section.settings.step_one }}</li><li>{{ section.settings.step_two }}</li><li>{{ section.settings.step_three }}</li></ol><a class="pp-btn pp-btn--orange" data-ccb-cta data-builder-url="{{ pages[section.settings.builder_page].url | default: '/pages/build-your-own-box' }}" data-product-handle="{{ product.handle }}" data-default-variant="{{ product.selected_or_first_available_variant.id }}" href="{{ pages[section.settings.builder_page].url | default: '/pages/build-your-own-box' }}?variant={{ product.selected_or_first_available_variant.id }}&product={{ product.handle }}">{{ section.settings.button_text }}</a></div></div></section>{% endif %}
-{% endif %}
-{% stylesheet %}.pp-ccb{background:var(--ccb-bg);padding:24px 0}.pp-ccb__card{background:var(--ccb-card);border:1px solid var(--line);border-radius:var(--ccb-radius);padding:28px}.pp-ccb__card h2{margin:8px 0}.pp-ccb__card ol{display:flex;gap:24px;flex-wrap:wrap;padding-left:20px}{% endstylesheet %}
+{% render 'section-editor-styles', section: section %}
+
+{% comment %}
+  PDP — Cuddle Care Box compact builder callout.
+
+  The section:
+  - Uses the existing eligible collection logic.
+  - Passes current product + selected variant to the builder.
+  - Uses data attributes already expected by the theme JS.
+{% endcomment %}
+
+
+{%- liquid
+  assign eligible_collection = section.settings.eligible_collection
+  assign is_eligible = false
+
+  if eligible_collection != blank
+    for c in product.collections
+      if c.handle == eligible_collection.handle
+        assign is_eligible = true
+        break
+      endif
+    endfor
+  else
+    assign is_eligible = true
+  endif
+
+  if section.settings.use_metafield_override
+    assign flag = product.metafields.custom.cuddle_care_box_eligible
+
+    if flag != blank
+      assign is_eligible = flag.value
+    else
+      assign is_eligible = false
+    endif
+  endif
+
+  assign target_page = section.settings.builder_page
+
+  if target_page != blank
+    assign builder_url = target_page.url
+  else
+    assign builder_url = '/pages/build-your-own-box'
+  endif
+
+  assign current_variant = product.selected_or_first_available_variant
+  assign cta_url = builder_url | append: '?variant=' | append: current_variant.id | append: '&product=' | append: product.handle
+
+  comment
+    Box price badge — reads the same fixed-price "box product" the Build Your
+    Own Box section uses, so this always mirrors the real price with no
+    duplicate number to maintain. Merchant picks the product once below.
+  endcomment
+  assign box_price_product = section.settings.box_price_product
+  if box_price_product != blank
+    assign box_price_variant = box_price_product.selected_or_first_available_variant
+  endif
+
+  comment
+    Custom promo image — full fit/position/radius/size controls, desktop + mobile.
+    Size is a single square dimension (0 = same as the shared product thumbnail
+    size) since the thumbnail box is always square in this design; alignment
+    settings are intentionally omitted because the thumb box always sizes to
+    the image itself (no extra room to align within), so fit + position already
+    cover positioning of the photo inside its own box.
+  endcomment
+  assign promo_fit = section.settings.promo_image_fit | default: 'contain'
+  assign promo_position = section.settings.promo_image_position | default: 'center center'
+  assign promo_fit_m = section.settings.promo_image_fit_mobile | default: 'contain'
+  assign promo_position_m = section.settings.promo_image_position_mobile | default: 'center center'
+  assign promo_radius = section.settings.promo_image_radius | default: 0
+  assign promo_radius_m = section.settings.promo_image_radius_mobile | default: 0
+  assign promo_size = section.settings.promo_image_width | default: 0
+  assign promo_size_m = section.settings.promo_image_width_mobile | default: 0
+-%}
+
+
+
+{%- if section.settings.enable and product != blank -%}
+
+  {%- if is_eligible or request.design_mode -%}
+
+
+    <style>
+
+      /* =========================================================
+         SECTION
+      ========================================================= */
+
+      #shopify-section-{{ section.id }} .pp-ccb {
+        width: 100%;
+
+        padding-top:
+          {{ section.settings.padding_top }}px;
+
+        padding-bottom:
+          {{ section.settings.padding_bottom }}px;
+
+        background:
+          {{ section.settings.section_background }};
+      }
+
+
+      #shopify-section-{{ section.id }} .pp-ccb .page-width {
+        width: 100%;
+      }
+
+
+      /* =========================================================
+         MAIN WIDGET
+      ========================================================= */
+
+      #shopify-section-{{ section.id }} .pp-ccb__widget {
+
+        {% if section.settings.content_width > 0 %}
+          max-width: {{ section.settings.content_width }}px;
+        {% endif %}
+
+        width: 100%;
+
+        margin-inline: auto;
+
+        background:
+          {{ section.settings.card_background }};
+
+        border:
+          1px solid
+          {{ section.settings.border_color }};
+
+        border-radius:
+          {{ section.settings.border_radius }}px;
+
+        overflow: hidden;
+
+        color:
+          {{ section.settings.text_color }};
+
+        box-shadow:
+          0 5px 18px rgba(53, 16, 66, 0.035);
+      }
+
+
+      /* =========================================================
+         TOP MESSAGE STRIP
+      ========================================================= */
+
+      #shopify-section-{{ section.id }} .pp-ccb__topbar {
+
+        min-height: 34px;
+
+        padding:
+          7px 18px;
+
+        display: flex;
+
+        flex-wrap: wrap;
+
+        align-items: center;
+
+        justify-content: center;
+
+        gap: 6px 10px;
+
+        text-align: center;
+
+        background:
+          {{ section.settings.top_bar_background }};
+
+        color:
+          {{ section.settings.top_bar_text }};
+
+        border-bottom:
+          1px solid
+          {{ section.settings.border_color }};
+
+        font-size: 12px;
+
+        line-height: 1.35;
+      }
+
+
+      #shopify-section-{{ section.id }} .pp-ccb__topbar strong {
+        color:
+          {{ section.settings.top_bar_text }};
+
+        font-weight: 700;
+      }
+
+
+      #shopify-section-{{ section.id }} .pp-ccb__top-description {
+        opacity: 0.9;
+      }
+
+
+      /* =========================================================
+         BOX PRICE BADGE
+      ========================================================= */
+
+      #shopify-section-{{ section.id }} .pp-ccb__price-badge {
+        display: inline-flex;
+
+        align-items: center;
+
+        gap: 5px;
+
+        padding: 3px 12px;
+
+        background:
+          {{ section.settings.price_badge_background }};
+
+        color:
+          {{ section.settings.price_badge_text }};
+
+        border-radius: 999px;
+
+        font-size: 11px;
+
+        line-height: 1.4;
+
+        font-weight: 900;
+
+        letter-spacing: 0.02em;
+
+        white-space: nowrap;
+      }
+
+
+      /* =========================================================
+         BODY
+      ========================================================= */
+
+      #shopify-section-{{ section.id }} .pp-ccb__body {
+        display: grid;
+
+        grid-template-columns:
+          minmax(210px, 255px)
+          minmax(340px, 1fr)
+          auto;
+
+        align-items: center;
+
+        gap: clamp(22px, 3vw, 42px);
+
+        min-height: 92px;
+
+        padding:
+          16px 22px;
+      }
+
+
+      /* =========================================================
+         CURRENT PRODUCT
+      ========================================================= */
+
+      #shopify-section-{{ section.id }} .pp-ccb__product {
+        display: flex;
+
+        align-items: center;
+
+        gap: 12px;
+
+        min-width: 0;
+      }
+
+
+      #shopify-section-{{ section.id }} .pp-ccb__thumb {
+        width:
+          {{ section.settings.product_image_size }}px;
+
+        height:
+          {{ section.settings.product_image_size }}px;
+
+        flex: 0 0
+          {{ section.settings.product_image_size }}px;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        padding: 4px;
+
+        background:
+          {{ section.settings.image_background }};
+
+        border:
+          1px solid
+          {{ section.settings.border_color }};
+
+        border-radius: 12px;
+
+        overflow: hidden;
+      }
+
+      {% if promo_size > 0 or promo_radius > 0 %}
+      #shopify-section-{{ section.id }} .pp-ccb__thumb--promo {
+        {% if promo_size > 0 %}
+        width: {{ promo_size }}px;
+        height: {{ promo_size }}px;
+        flex: 0 0 {{ promo_size }}px;
+        {% endif %}
+        {% if promo_radius > 0 %}
+        border-radius: {{ promo_radius }}px;
+        {% endif %}
+      }
+      {% endif %}
+
+
+      #shopify-section-{{ section.id }} .pp-ccb__thumb img,
+      #shopify-section-{{ section.id }} .pp-ccb__thumb svg {
+        display: block;
+
+        width: 100%;
+        height: 100%;
+
+        object-fit: contain;
+
+        object-position: center;
+      }
+
+      #shopify-section-{{ section.id }} .pp-ccb__thumb .pp-ccb__promo-pic img {
+        object-fit: {{ promo_fit }};
+
+        object-position: {{ promo_position }};
+      }
+
+
+      #shopify-section-{{ section.id }} .pp-ccb__product-info {
+        min-width: 0;
+      }
+
+
+      #shopify-section-{{ section.id }} .pp-ccb__eyebrow {
+        margin:
+          0 0 3px;
+
+        color:
+          {{ section.settings.accent_color }};
+
+        font-size: 9px;
+
+        line-height: 1.2;
+
+        font-weight: 800;
+
+        letter-spacing: 0.07em;
+
+        text-transform: uppercase;
+      }
+
+
+      #shopify-section-{{ section.id }} .pp-ccb__product-title {
+        display: -webkit-box;
+
+        margin: 0;
+
+        overflow: hidden;
+
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+
+        color:
+          {{ section.settings.heading_color }};
+
+        font-size: 14px;
+
+        line-height: 1.3;
+
+        font-weight: 700;
+      }
+
+
+      #shopify-section-{{ section.id }} .pp-ccb__selected {
+        display: inline-flex;
+
+        align-items: center;
+
+        gap: 4px;
+
+        margin-top: 4px;
+
+        color:
+          {{ section.settings.text_color }};
+
+        font-size: 10px;
+
+        line-height: 1.2;
+
+        opacity: 0.78;
+      }
+
+
+      #shopify-section-{{ section.id }} .pp-ccb__selected-check {
+        display: inline-flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        width: 14px;
+        height: 14px;
+
+        border-radius: 50%;
+
+        background:
+          {{ section.settings.progress_color }};
+
+        color: #ffffff;
+
+        font-size: 9px;
+
+        font-weight: 900;
+
+        line-height: 1;
+      }
+
+
+
+      /* =========================================================
+         JOURNEY / PROGRESS
+      ========================================================= */
+
+      #shopify-section-{{ section.id }} .pp-ccb__journey {
+        position: relative;
+
+        width: 100%;
+
+        min-width: 0;
+
+        padding-top: 1px;
+      }
+
+
+      /* Track behind milestones */
+
+      #shopify-section-{{ section.id }} .pp-ccb__track {
+        position: absolute;
+
+        left: 0;
+        right: 0;
+
+        top: 14px;
+
+        height: 3px;
+
+        background:
+          {{ section.settings.progress_track }};
+
+        border-radius: 999px;
+
+        overflow: hidden;
+
+        z-index: 0;
+      }
+
+
+      /* Progress reaches first milestone */
+
+      #shopify-section-{{ section.id }} .pp-ccb__track-fill {
+        display: block;
+
+        width: 16.666%;
+
+        height: 100%;
+
+        background:
+          {{ section.settings.progress_color }};
+
+        border-radius: 999px;
+
+        position: relative;
+        overflow: hidden;
+      }
+
+      #shopify-section-{{ section.id }} .pp-ccb__track-fill:after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,.85), transparent);
+        transform: translateX(-100%);
+      }
+
+      @media (prefers-reduced-motion: no-preference) {
+        #shopify-section-{{ section.id }} .pp-ccb__track-fill:after {
+          animation: pp-ccb-shimmer 2.4s ease-in-out infinite;
+        }
+        #shopify-section-{{ section.id }} .pp-ccb__cta {
+          animation: pp-ccb-cta-pulse 2.8s ease-in-out infinite;
+        }
+      }
+
+      @keyframes pp-ccb-shimmer {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
+      }
+
+      @keyframes pp-ccb-cta-pulse {
+        0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, {{ section.settings.button_background }} 45%, transparent); }
+        50% { box-shadow: 0 0 0 8px color-mix(in srgb, {{ section.settings.button_background }} 0%, transparent); }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        #shopify-section-{{ section.id }} .pp-ccb__track-fill:after,
+        #shopify-section-{{ section.id }} .pp-ccb__cta { animation: none !important; }
+      }
+
+
+      /* Milestones */
+
+      #shopify-section-{{ section.id }} .pp-ccb__steps {
+        position: relative;
+
+        z-index: 2;
+
+        display: grid;
+
+        grid-template-columns:
+          repeat(3, minmax(0, 1fr));
+
+        width: 100%;
+      }
+
+
+      #shopify-section-{{ section.id }} .pp-ccb__step {
+        display: flex;
+
+        flex-direction: column;
+
+        align-items: center;
+
+        min-width: 0;
+
+        text-align: center;
+      }
+
+
+      /* Milestone circle */
+
+      #shopify-section-{{ section.id }} .pp-ccb__node {
+        position: relative;
+
+        width: 28px;
+        height: 28px;
+
+        display: inline-flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        flex: 0 0 28px;
+
+        background:
+          {{ section.settings.card_background }};
+
+        border:
+          2px solid
+          {{ section.settings.progress_color }};
+
+        border-radius: 50%;
+
+        color:
+          {{ section.settings.progress_color }};
+
+        font-size: 11px;
+
+        line-height: 1;
+
+        font-weight: 800;
+
+        box-shadow:
+          0 0 0 3px
+          {{ section.settings.card_background }};
+      }
+
+
+      /* Active / completed first node */
+
+      #shopify-section-{{ section.id }} .pp-ccb__step--active .pp-ccb__node {
+        background:
+          {{ section.settings.progress_color }};
+
+        color: #ffffff;
+      }
+
+
+      #shopify-section-{{ section.id }} .pp-ccb__step-label {
+        display: block;
+
+        margin-top: 6px;
+
+        max-width: 110px;
+
+        color:
+          {{ section.settings.heading_color }};
+
+        font-size: 11px;
+
+        line-height: 1.25;
+
+        font-weight: 650;
+      }
+
+
+      /* =========================================================
+         CTA
+      ========================================================= */
+
+      #shopify-section-{{ section.id }} .pp-ccb__cta {
+        display: inline-flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        min-width: 190px;
+
+        min-height: 43px;
+
+        padding:
+          11px 20px;
+
+        white-space: nowrap;
+
+        background:
+          {{ section.settings.button_background }};
+
+        color:
+          {{ section.settings.button_text_color }};
+
+        border: 0;
+
+        border-radius: 999px;
+
+        text-decoration: none;
+
+        font-size: 12px;
+
+        line-height: 1;
+
+        font-weight: 800;
+
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease,
+          filter 0.2s ease;
+      }
+
+
+      #shopify-section-{{ section.id }} .pp-ccb__cta:hover {
+        transform:
+          translateY(-1px);
+
+        filter:
+          saturate(1.05);
+
+        box-shadow:
+          0 7px 16px
+          rgba(232, 91, 27, 0.18);
+      }
+
+
+      #shopify-section-{{ section.id }} .pp-ccb__cta:focus-visible {
+        outline:
+          3px solid
+          {{ section.settings.heading_color }};
+
+        outline-offset: 3px;
+      }
+
+
+      /* =========================================================
+         DESIGN MODE MESSAGE
+      ========================================================= */
+
+      #shopify-section-{{ section.id }} .pp-ccb__setup {
+        grid-column: 1 / -1;
+
+        padding:
+          10px 12px;
+
+        margin-top: 2px;
+
+        border:
+          1px dashed
+          {{ section.settings.border_color }};
+
+        border-radius: 8px;
+
+        background:
+          {{ section.settings.top_bar_background }};
+
+        font-size: 11px;
+
+        line-height: 1.4;
+      }
+
+
+
+      /* =========================================================
+         MEDIUM DESKTOP / TABLET
+      ========================================================= */
+
+      @media screen and (max-width: 1050px) {
+
+        #shopify-section-{{ section.id }} .pp-ccb__body {
+          grid-template-columns:
+            minmax(200px, 1fr)
+            auto;
+
+          gap:
+            15px 24px;
+
+          padding:
+            16px 20px;
+        }
+
+
+        #shopify-section-{{ section.id }} .pp-ccb__product {
+          grid-column: 1;
+          grid-row: 1;
+        }
+
+
+        #shopify-section-{{ section.id }} .pp-ccb__journey {
+          grid-column: 1 / -1;
+          grid-row: 2;
+        }
+
+
+        #shopify-section-{{ section.id }} .pp-ccb__cta {
+          grid-column: 2;
+          grid-row: 1;
+
+          min-width: 185px;
+        }
+
+      }
+
+
+
+      /* =========================================================
+         MOBILE
+      ========================================================= */
+
+      @media screen and (max-width: 620px) {
+
+        #shopify-section-{{ section.id }} .pp-ccb {
+          padding-top:
+            {{ section.settings.padding_top_mobile }}px;
+
+          padding-bottom:
+            {{ section.settings.padding_bottom_mobile }}px;
+        }
+
+
+        #shopify-section-{{ section.id }} .pp-ccb__widget {
+          border-radius:
+            min(
+              {{ section.settings.border_radius }}px,
+              16px
+            );
+        }
+
+
+        /* Top strip */
+
+        #shopify-section-{{ section.id }} .pp-ccb__topbar {
+          min-height: 0;
+
+          padding:
+            8px 12px;
+
+          display: flex;
+
+          flex-wrap: wrap;
+
+          font-size: 11px;
+
+          line-height: 1.35;
+        }
+
+
+        #shopify-section-{{ section.id }} .pp-ccb__top-description {
+          display: block;
+
+          margin-top: 2px;
+        }
+
+
+        /* Body */
+
+        #shopify-section-{{ section.id }} .pp-ccb__body {
+          display: grid;
+
+          grid-template-columns: 1fr;
+
+          gap: 16px;
+
+          min-height: 0;
+
+          padding:
+            16px 14px;
+        }
+
+
+        #shopify-section-{{ section.id }} .pp-ccb__product,
+        #shopify-section-{{ section.id }} .pp-ccb__journey,
+        #shopify-section-{{ section.id }} .pp-ccb__cta {
+          grid-column: 1;
+
+          grid-row: auto;
+        }
+
+
+        /* Product */
+
+        #shopify-section-{{ section.id }} .pp-ccb__product {
+          justify-content: flex-start;
+        }
+
+
+        #shopify-section-{{ section.id }} .pp-ccb__thumb {
+          width: 52px;
+          height: 52px;
+
+          flex-basis: 52px;
+
+          border-radius: 10px;
+        }
+
+        {% if promo_size_m > 0 or promo_radius_m > 0 %}
+        #shopify-section-{{ section.id }} .pp-ccb__thumb--promo {
+          {% if promo_size_m > 0 %}
+          width: {{ promo_size_m }}px;
+          height: {{ promo_size_m }}px;
+          flex-basis: {{ promo_size_m }}px;
+          {% endif %}
+          {% if promo_radius_m > 0 %}
+          border-radius: {{ promo_radius_m }}px;
+          {% endif %}
+        }
+        {% endif %}
+
+        #shopify-section-{{ section.id }} .pp-ccb__thumb .pp-ccb__promo-pic img {
+          object-fit: {{ promo_fit_m }};
+          object-position: {{ promo_position_m }};
+        }
+
+
+        #shopify-section-{{ section.id }} .pp-ccb__product-title {
+          font-size: 13px;
+        }
+
+
+        /* Journey */
+
+        #shopify-section-{{ section.id }} .pp-ccb__track {
+          top: 13px;
+        }
+
+
+        #shopify-section-{{ section.id }} .pp-ccb__node {
+          width: 26px;
+          height: 26px;
+
+          flex-basis: 26px;
+
+          font-size: 10px;
+        }
+
+
+        #shopify-section-{{ section.id }} .pp-ccb__step-label {
+          max-width: 88px;
+
+          margin-top: 6px;
+
+          font-size: 10px;
+        }
+
+
+        /* Button */
+
+        #shopify-section-{{ section.id }} .pp-ccb__cta {
+          width: 100%;
+
+          min-width: 0;
+
+          min-height: 44px;
+
+          margin-top: 1px;
+        }
+
+      }
+
+
+
+      /* =========================================================
+         VERY SMALL MOBILE
+      ========================================================= */
+
+      @media screen and (max-width: 390px) {
+
+        #shopify-section-{{ section.id }} .pp-ccb__body {
+          padding:
+            14px 12px;
+        }
+
+
+        #shopify-section-{{ section.id }} .pp-ccb__step-label {
+          max-width: 78px;
+
+          font-size: 9.5px;
+        }
+
+      }
+
+
+
+      /* =========================================================
+         ACCESSIBILITY
+      ========================================================= */
+
+      @media (prefers-reduced-motion: reduce) {
+
+        #shopify-section-{{ section.id }} .pp-ccb__cta {
+          transition: none;
+        }
+
+
+        #shopify-section-{{ section.id }} .pp-ccb__cta:hover {
+          transform: none;
+        }
+
+      }
+
+      body.pp-motion-off #shopify-section-{{ section.id }} .pp-ccb__track-fill:after,
+      body.pp-motion-off #shopify-section-{{ section.id }} .pp-ccb__cta {
+        animation: none !important;
+      }
+
+
+      /* =========================================================
+         DESKTOP ONLY — assets/pp-pdp-cuddle-relocate.js physically
+         moves this section's own #shopify-section-{{ section.id }}
+         wrapper to become the last child of the PDP gallery column
+         ([data-pdp-gallery] in sections/main-product.liquid) once the
+         viewport is >=991px, so it renders directly below the product
+         images, filling that column's leftover height, with the
+         product info column beside it. On mobile the script restores
+         it to its original place in the page and none of the rules
+         below apply. If the script hasn't run yet (JS disabled), this
+         section simply stays in its normal full-width position.
+      ========================================================= */
+
+      @media screen and (min-width: 991px) {
+
+        .pp-pdp__gallery > #shopify-section-{{ section.id }} {
+          grid-column: 1 / -1;
+          margin-top: 18px;
+        }
+
+        #shopify-section-{{ section.id }} .pp-ccb {
+          padding-top: 0;
+        }
+
+        .pp-pdp__gallery > #shopify-section-{{ section.id }} .pp-ccb .page-width {
+          width: 100%;
+          max-width: none;
+          margin: 0;
+        }
+
+        .pp-pdp__gallery > #shopify-section-{{ section.id }} .pp-ccb__widget {
+          width: 100%;
+          max-width: none;
+          margin-inline: 0;
+        }
+
+        .pp-pdp__gallery > #shopify-section-{{ section.id }} .pp-ccb__body {
+          grid-template-columns:
+            minmax(200px, 1fr)
+            auto;
+
+          gap: 15px 24px;
+
+          padding: 16px 20px;
+        }
+
+        .pp-pdp__gallery > #shopify-section-{{ section.id }} .pp-ccb__product {
+          grid-column: 1;
+          grid-row: 1;
+        }
+
+        .pp-pdp__gallery > #shopify-section-{{ section.id }} .pp-ccb__journey {
+          grid-column: 1 / -1;
+          grid-row: 2;
+        }
+
+        .pp-pdp__gallery > #shopify-section-{{ section.id }} .pp-ccb__cta {
+          grid-column: 2;
+          grid-row: 1;
+
+          min-width: 160px;
+        }
+
+        /* Left-align the promo strip + price badge instead of centered —
+           reads better at the narrower width under the gallery. */
+        .pp-pdp__gallery > #shopify-section-{{ section.id }} .pp-ccb__topbar {
+          justify-content: flex-start;
+          text-align: left;
+        }
+
+      }
+
+    </style>
+
+
+
+    <section
+      class="pp-ccb"
+      data-ccb-promo
+    >
+
+      <div class="page-width">
+
+
+        <div class="pp-ccb__widget">
+
+
+          <!-- =====================================================
+               TOP MESSAGE
+          ====================================================== -->
+
+          <div class="pp-ccb__topbar">
+
+            {%- if section.settings.heading != blank -%}
+
+              <strong>
+                {{ section.settings.heading }}
+              </strong>
+
+            {%- endif -%}
+
+
+            {%- if section.settings.description != blank -%}
+
+              <span class="pp-ccb__top-description">
+                {{ section.settings.description }}
+              </span>
+
+            {%- endif -%}
+
+
+            {%- if section.settings.show_box_price and box_price_variant != blank -%}
+
+              <span class="pp-ccb__price-badge">
+                {{ section.settings.box_price_label }}: {{ box_price_variant.price | money }}
+              </span>
+
+            {%- endif -%}
+
+          </div>
+
+
+
+          <!-- =====================================================
+               MAIN BODY
+          ====================================================== -->
+
+          <div class="pp-ccb__body">
+
+
+            <!-- ===================================================
+                 CURRENT PRODUCT
+            ==================================================== -->
+
+            <div class="pp-ccb__product">
+
+
+              {%- if section.settings.show_product_image or section.settings.promo_image != blank -%}
+
+                <div class="pp-ccb__thumb{% if section.settings.promo_image != blank %} pp-ccb__thumb--promo{% endif %}">
+
+
+                  {%- if section.settings.promo_image != blank -%}
+
+                    {%- liquid
+                      assign promo_image_display = section.settings.promo_image
+                      assign promo_image_mobile_display = section.settings.promo_image_mobile
+                    -%}
+                    <picture class="pp-ccb__promo-pic">
+                      {%- if promo_image_mobile_display != blank and promo_image_mobile_display != promo_image_display -%}
+                        <source media="(max-width: 620px)" srcset="{{ promo_image_mobile_display | image_url: width: 80 }} 80w, {{ promo_image_mobile_display | image_url: width: 120 }} 120w, {{ promo_image_mobile_display | image_url: width: 160 }} 160w, {{ promo_image_mobile_display | image_url: width: 180 }} 180w">
+                      {%- endif -%}
+                      {{
+                        promo_image_display
+                        | image_url: width: 180
+                        | image_tag:
+                          loading: 'lazy',
+                          widths: '80,120,160,180',
+                          alt: product.title
+                      }}
+                    </picture>
+
+
+                  {%- elsif product.featured_image -%}
+
+                    {{
+                      product.featured_image
+                      | image_url: width: 180
+                      | image_tag:
+                        loading: 'lazy',
+                        widths: '80,120,160,180',
+                        alt: product.title
+                    }}
+
+
+                  {%- else -%}
+
+                    {{ 'product-1' | placeholder_svg_tag }}
+
+                  {%- endif -%}
+
+
+                </div>
+
+              {%- endif -%}
+
+
+              <div class="pp-ccb__product-info">
+
+
+                {%- if section.settings.eyebrow != blank -%}
+
+                  <p class="pp-ccb__eyebrow">
+                    {{ section.settings.eyebrow }}
+                  </p>
+
+                {%- endif -%}
+
+
+                <p class="pp-ccb__product-title">
+                  {{ product.title }}
+                </p>
+
+
+                <span class="pp-ccb__selected">
+
+                  <span
+                    class="pp-ccb__selected-check"
+                    aria-hidden="true"
+                  >
+                    ✓
+                  </span>
+
+                  Already selected
+
+                </span>
+
+
+              </div>
+
+
+            </div>
+
+
+
+            <!-- ===================================================
+                 PROGRESS JOURNEY
+            ==================================================== -->
+
+            <div
+              class="pp-ccb__journey"
+              aria-label="Cuddle Care Box steps"
+            >
+
+
+              <div
+                class="pp-ccb__track"
+                aria-hidden="true"
+              >
+
+                <span class="pp-ccb__track-fill"></span>
+
+              </div>
+
+
+              <div class="pp-ccb__steps">
+
+
+                <!-- STEP 1 -->
+
+                <div class="pp-ccb__step pp-ccb__step--active">
+
+                  <span class="pp-ccb__node">
+                    ✓
+                  </span>
+
+                  <span class="pp-ccb__step-label">
+                    {{ section.settings.step_one }}
+                  </span>
+
+                </div>
+
+
+                <!-- STEP 2 -->
+
+                <div class="pp-ccb__step">
+
+                  <span class="pp-ccb__node">
+                    2
+                  </span>
+
+                  <span class="pp-ccb__step-label">
+                    {{ section.settings.step_two }}
+                  </span>
+
+                </div>
+
+
+                <!-- STEP 3 -->
+
+                <div class="pp-ccb__step">
+
+                  <span class="pp-ccb__node">
+                    3
+                  </span>
+
+                  <span class="pp-ccb__step-label">
+                    {{ section.settings.step_three }}
+                  </span>
+
+                </div>
+
+
+              </div>
+
+
+            </div>
+
+
+
+            <!-- ===================================================
+                 CTA
+            ==================================================== -->
+
+            <a
+              class="pp-ccb__cta"
+              href="{{ cta_url }}"
+              data-ccb-cta
+              data-builder-url="{{ builder_url }}"
+              data-product-handle="{{ product.handle }}"
+              data-default-variant="{{ current_variant.id }}"
+            >
+
+              {{ section.settings.button_text }}
+
+            </a>
+
+
+
+            <!-- ===================================================
+                 THEME EDITOR ONLY MESSAGE
+            ==================================================== -->
+
+            {%- if request.design_mode and is_eligible == false -%}
+
+              <div class="pp-ccb__setup">
+
+                <strong>
+                  Preview only.
+                </strong>
+
+                This product is not currently inside the selected
+                eligible collection
+
+                {%- if eligible_collection != blank -%}
+                  ({{ eligible_collection.title }})
+                {%- endif -%}
+
+                . Shoppers will not see this section until the
+                product becomes eligible.
+
+              </div>
+
+            {%- endif -%}
+
+
+          </div>
+
+
+        </div>
+
+
+      </div>
+
+    </section>
+
+
+  {%- endif -%}
+
+{%- endif -%}
+
+
+
 {% schema %}
-{"name":"PDP Cuddle Care Box","settings":[{"type":"checkbox","id":"enable","label":"Enable","default":true},{"type":"collection","id":"eligible_collection","label":"Eligible collection"},{"type":"page","id":"builder_page","label":"Builder page"},{"type":"text","id":"eyebrow","label":"Eyebrow"},{"type":"text","id":"heading","label":"Heading"},{"type":"textarea","id":"description","label":"Description"},{"type":"text","id":"step_one","label":"Step one"},{"type":"text","id":"step_two","label":"Step two"},{"type":"text","id":"step_three","label":"Step three"},{"type":"text","id":"button_text","label":"Button text"},{"type":"color","id":"section_background","label":"Section background","default":"#ffffff"},{"type":"color","id":"card_background","label":"Card background","default":"#ffffff"},{"type":"color","id":"accent_color","label":"Accent","default":"#ff5a0a"},{"type":"range","id":"border_radius","label":"Corner radius","min":0,"max":40,"step":2,"unit":"px","default":24}]}
+{
+  "name": "PDP Cuddle Care Box",
+  "tag": "section",
+  "class": "pp-ccb-section",
+
+  "enabled_on": {
+    "templates": [
+      "product"
+    ]
+  },
+
+  "settings": [
+
+    { "type": "checkbox", "id": "enable", "label": "Enable section", "default": true },
+
+    { "type": "header", "content": "Eligibility" },
+    { "type": "paragraph", "content": "Choose the same collection used by the Cuddle Care Box builder." },
+    { "type": "collection", "id": "eligible_collection", "label": "Eligible products collection" },
+    { "type": "page", "id": "builder_page", "label": "Cuddle Care Box page", "info": "Choose the page containing the Cuddle Care Box builder." },
+    { "type": "checkbox", "id": "use_metafield_override", "label": "Use metafield for eligibility", "default": false, "info": "Advanced. Uses custom.cuddle_care_box_eligible instead of collection membership." },
+
+    { "type": "header", "content": "Top message" },
+    { "type": "text", "id": "heading", "label": "Main message", "default": "Already found a favourite?" },
+    { "type": "text", "id": "description", "label": "Supporting message", "default": "This product is ready for your Cuddle Care Box." },
+
+    { "type": "header", "content": "Box price" },
+    { "type": "paragraph", "content": "Shows the fixed box price as a highlighted badge next to the top message. Pick the same fixed-price product used as the \"Box product\" in the Build Your Own Box section, so the number here always matches what shoppers are actually charged." },
+    { "type": "checkbox", "id": "show_box_price", "label": "Show box price badge", "default": true },
+    { "type": "product", "id": "box_price_product", "label": "Box product (for price)" },
+    { "type": "text", "id": "box_price_label", "label": "Price badge label", "default": "Box price" },
+    { "type": "color", "id": "price_badge_background", "label": "Price badge background", "default": "#351042" },
+    { "type": "color", "id": "price_badge_text", "label": "Price badge text colour", "default": "#ffffff" },
+
+    { "type": "header", "content": "Product" },
+    { "type": "text", "id": "eyebrow", "label": "Small product label", "default": "YOUR PICK" },
+    { "type": "checkbox", "id": "show_product_image", "label": "Show current product image", "default": true },
+    { "type": "image_picker", "id": "promo_image", "label": "Custom image", "info": "Optional. Overrides the current product image." },
+    { "type": "image_picker", "id": "promo_image_mobile", "label": "Custom image — mobile (optional)", "info": "Shown at 620px and narrower instead of the custom image above. Leave empty to use the same image on mobile." },
+    { "type": "select", "id": "promo_image_fit", "label": "Custom image fit", "default": "contain", "options": [ { "value": "contain", "label": "Contain" }, { "value": "cover", "label": "Cover" } ] },
+    { "type": "select", "id": "promo_image_position", "label": "Custom image position", "default": "center center", "options": [ { "value": "center center", "label": "Center" }, { "value": "top center", "label": "Top" }, { "value": "bottom center", "label": "Bottom" }, { "value": "center left", "label": "Left" }, { "value": "center right", "label": "Right" } ] },
+    { "type": "select", "id": "promo_image_fit_mobile", "label": "Custom image fit — mobile", "default": "contain", "options": [ { "value": "contain", "label": "Contain" }, { "value": "cover", "label": "Cover" } ] },
+    { "type": "select", "id": "promo_image_position_mobile", "label": "Custom image position — mobile", "default": "center center", "options": [ { "value": "center center", "label": "Center" }, { "value": "top center", "label": "Top" }, { "value": "bottom center", "label": "Bottom" }, { "value": "center left", "label": "Left" }, { "value": "center right", "label": "Right" } ] },
+    { "type": "range", "id": "promo_image_radius", "min": 0, "max": 40, "step": 2, "unit": "px", "label": "Custom image corner radius (0 = theme default)", "default": 0 },
+    { "type": "range", "id": "promo_image_radius_mobile", "min": 0, "max": 40, "step": 2, "unit": "px", "label": "Custom image corner radius — mobile (0 = theme default)", "default": 0 },
+    { "type": "range", "id": "promo_image_width", "min": 0, "max": 160, "step": 4, "unit": "px", "label": "Custom image size (0 = same as product thumbnail size below)", "default": 0 },
+    { "type": "range", "id": "promo_image_width_mobile", "min": 0, "max": 120, "step": 4, "unit": "px", "label": "Custom image size — mobile (0 = same as desktop)", "default": 0 },
+    { "type": "range", "id": "product_image_size", "min": 48, "max": 84, "step": 4, "unit": "px", "label": "Product thumbnail size", "default": 64 },
+
+    { "type": "header", "content": "Cuddle Care steps" },
+    { "type": "text", "id": "step_one", "label": "Step 1", "default": "Product added" },
+    { "type": "text", "id": "step_two", "label": "Step 2", "default": "Pick favourites" },
+    { "type": "text", "id": "step_three", "label": "Step 3", "default": "Complete your box" },
+
+    { "type": "header", "content": "Button" },
+    { "type": "text", "id": "button_text", "label": "Button text", "default": "Build My Cuddle Care Box" },
+
+    { "type": "header", "content": "Colours" },
+    { "type": "color", "id": "section_background", "label": "Outside background", "default": "#ffffff" },
+    { "type": "color", "id": "card_background", "label": "Widget background", "default": "#ffffff" },
+    { "type": "color", "id": "top_bar_background", "label": "Top message background", "default": "#fff5f1" },
+    { "type": "color", "id": "top_bar_text", "label": "Top message colour", "default": "#e85b1b" },
+    { "type": "color", "id": "heading_color", "label": "Main text colour", "default": "#351042" },
+    { "type": "color", "id": "text_color", "label": "Secondary text colour", "default": "#6a5872" },
+    { "type": "color", "id": "accent_color", "label": "Product label colour", "default": "#e85b1b" },
+    { "type": "color", "id": "progress_color", "label": "Progress highlight", "default": "#e85b1b" },
+    { "type": "color", "id": "progress_track", "label": "Progress line", "default": "#e7e3e9" },
+    { "type": "color", "id": "button_background", "label": "Button background", "default": "#e85b1b" },
+    { "type": "color", "id": "button_text_color", "label": "Button text colour", "default": "#ffffff" },
+    { "type": "color", "id": "border_color", "label": "Border colour", "default": "#eadfe9" },
+    { "type": "color", "id": "image_background", "label": "Product thumbnail background", "default": "#f8f7fa" },
+
+    { "type": "header", "content": "Layout" },
+    { "type": "range", "id": "border_radius", "min": 6, "max": 28, "step": 2, "unit": "px", "label": "Corner radius", "default": 14 },
+    { "type": "range", "id": "content_width", "min": 0, "max": 1500, "step": 20, "unit": "px", "label": "Maximum width (0 = page width)", "default": 0 },
+
+    { "type": "header", "content": "Section spacing" },
+    { "type": "range", "id": "padding_top", "min": 0, "max": 80, "step": 4, "unit": "px", "label": "Top spacing — desktop", "default": 16 },
+    { "type": "range", "id": "padding_bottom", "min": 0, "max": 80, "step": 4, "unit": "px", "label": "Bottom spacing — desktop", "default": 16 },
+    { "type": "range", "id": "padding_top_mobile", "min": 0, "max": 60, "step": 4, "unit": "px", "label": "Top spacing — mobile", "default": 12 },
+    { "type": "range", "id": "padding_bottom_mobile", "min": 0, "max": 60, "step": 4, "unit": "px", "label": "Bottom spacing — mobile", "default": 12 }
+
+  ],
+
+  "presets": [
+    { "name": "PDP Cuddle Care Box" }
+  ]
+}
 {% endschema %}

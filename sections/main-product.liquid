@@ -1,32 +1,1984 @@
-<section class="pp-pdp" data-product-root>
+{% render 'section-editor-styles', section: section %}
+{{ 'pp-pdp-main-life.css' | asset_url | stylesheet_tag }}
+{% liquid
+  assign product_type = product.type | default: section.settings.fallback_type
+  assign product_kicker = product.metafields.custom.pdp_kicker | default: product.metafields.custom.short_tagline | default: section.settings.fallback_kicker
+  assign product_tagline = product.metafields.custom.tagline | default: section.settings.fallback_tagline
+  assign key_benefits = product.metafields.custom.key_benefits
+  assign how_to_use = product.metafields.custom.how_to_use
+  assign ingredients = product.metafields.custom.ingredients
+  assign warnings = product.metafields.custom.warnings
+  assign suitable_for = product.metafields.custom.suitable_for
+  assign pet_types = product.metafields.custom.pet_types
+  assign life_stages = product.metafields.custom.life_stages
+  assign benefit_items = product.metafields.custom.benefit_items.value
+  assign ingredient_items = product.metafields.custom.ingredient_items.value
+  assign faq_items = product.metafields.custom.faq_items.value
+  assign delivery_note = product.metafields.custom.delivery_note.value | default: product.metafields.custom.delivery_note
+%}
+
+<section class="pp-pdp" style="--pdp-gallery-bg:{{ section.settings.gallery_background }}" data-product-root>
+
+  <script src="{{ 'pp-pdp-cuddle-relocate.js' | asset_url }}" defer="defer"></script>
+
   <div class="page-width">
-    {% if section.settings.show_breadcrumbs %}<nav class="pp-breadcrumb" aria-label="{{ 'products.breadcrumb' | t }}"><a href="{{ routes.root_url }}">{{ section.settings.home_label }}</a><span aria-hidden="true">/</span><span>{{ product.title }}</span></nav>{% endif %}
+
+    {% if section.settings.show_breadcrumbs %}
+      <nav class="pp-breadcrumb" aria-label="Breadcrumb">
+
+        <a href="{{ routes.root_url }}">
+          {{ section.settings.home_label }}
+        </a>
+
+        <span>/</span>
+
+        {% if product.collections.first %}
+
+          <a href="{{ product.collections.first.url }}">
+            {{ product.collections.first.title }}
+          </a>
+
+          <span>/</span>
+
+        {% endif %}
+
+        <span>
+          {{ product.title }}
+        </span>
+
+      </nav>
+    {% endif %}
+
+
     <div class="pp-pdp__top">
-      <div class="pp-pdp__gallery{% unless section.settings.show_thumbnails %} pp-pdp__gallery--no-thumbs{% endunless %}" data-pdp-gallery>
-        {% if section.settings.show_thumbnails and product.media.size > 1 %}<div class="pp-pdp__thumbs">{% for media in product.media %}{% if media.media_type == 'image' %}<button class="pp-pdp__thumb{% if forloop.first %} is-active{% endif %}" type="button" data-media-src="{{ media | image_url: width: 1400 }}" aria-label="{{ 'products.show_image' | t: index: forloop.index }}">{{ media | image_url: width: 160 | image_tag: loading: 'lazy', alt: media.alt }}</button>{% endif %}{% endfor %}</div>{% endif %}
-        <div class="pp-pdp__stage{% if section.settings.enable_image_zoom %} pp-pdp__stage--zoom{% endif %}">
-          {% if section.settings.show_stage_labels %}<span class="pp-pdp__stage-kicker">{{ section.settings.stage_kicker }}</span>{% endif %}
-          {% if product.featured_image %}{{ product.featured_image | image_url: width: 1600 | image_tag: class: 'pp-pdp__main-image', data-pdp-main: '', alt: product.featured_image.alt | default: product.title }}{% else %}{{ 'product-1' | placeholder_svg_tag: 'pp-pdp__main-image' }}{% endif %}
-          {% if section.settings.show_stage_labels %}<span class="pp-pdp__stage-note">{{ section.settings.stage_note }}</span>{% endif %}
+
+
+      <div
+        class="pp-pdp__gallery{% unless section.settings.show_thumbnails %} pp-pdp__gallery--no-thumbs{% endunless %}"
+        data-pdp-gallery
+      >
+
+
+        {% if section.settings.show_thumbnails and product.media.size > 1 %}
+
+          <div
+            class="pp-pdp__thumbs"
+            aria-label="Product media thumbnails"
+          >
+
+            {% for media in product.media %}
+
+              {% if media.preview_image %}
+
+                <button
+                  type="button"
+                  class="pp-pdp__thumb {% if forloop.first %}is-active{% endif %}"
+                  data-media-index="{{ forloop.index0 }}"
+                  data-media-src="{{ media.preview_image | image_url: width: 1800 }}"
+                  data-media-alt="{{ media.alt | default: product.title | escape }}"
+                >
+
+                  {{
+                    media.preview_image
+                    | image_url: width: 180
+                    | image_tag:
+                      loading: 'lazy',
+                      alt: media.alt | default: product.title
+                  }}
+
+                </button>
+
+              {% endif %}
+
+            {% endfor %}
+
+          </div>
+
+        {% endif %}
+
+
+
+        <div
+          class="pp-pdp__stage{% if section.settings.enable_image_zoom %} pp-pdp__stage--zoom{% endif %}"
+        >
+
+
+          {% if section.settings.show_stage_labels and section.settings.stage_kicker != blank %}
+
+            <span class="pp-pdp__stage-kicker">
+              {{ section.settings.stage_kicker }}
+            </span>
+
+          {% endif %}
+
+
+
+          {% assign first_media = product.media.first %}
+
+
+          {% if first_media and first_media.preview_image %}
+
+            <img
+              class="pp-pdp__main-image"
+              data-pdp-main
+              src="{{ first_media.preview_image | image_url: width: 1800 }}"
+              alt="{{ first_media.alt | default: product.title | escape }}"
+              width="{{ first_media.preview_image.width }}"
+              height="{{ first_media.preview_image.height }}"
+              loading="eager"
+              style="cursor: zoom-in;"
+              onclick="this.closest('[data-pdp-gallery]').querySelector('[data-media-lightbox]').click();"
+            >
+
+          {% elsif product.featured_image %}
+
+            <img
+              class="pp-pdp__main-image"
+              data-pdp-main
+              src="{{ product.featured_image | image_url: width: 1800 }}"
+              alt="{{ product.title | escape }}"
+              width="{{ product.featured_image.width }}"
+              height="{{ product.featured_image.height }}"
+              loading="eager"
+              style="cursor: zoom-in;"
+              onclick="this.closest('[data-pdp-gallery]').querySelector('[data-media-lightbox]').click();"
+            >
+
+          {% else %}
+
+            {{ 'product-1' | placeholder_svg_tag }}
+
+          {% endif %}
+
+
+
+          {% if product.media.size > 1 %}
+
+            <div class="pp-pdp__media-nav">
+
+              <button
+                type="button"
+                data-media-prev
+                aria-label="Previous image"
+              >
+                ←
+              </button>
+
+              <span>
+                <b data-media-current>1</b>
+                /
+                {{ product.media.size }}
+              </span>
+
+              <button
+                type="button"
+                data-media-next
+                aria-label="Next image"
+              >
+                →
+              </button>
+
+            </div>
+
+          {% endif %}
+
+
+
+          <button
+            type="button"
+            class="pp-pdp__zoom-trigger"
+            data-media-lightbox
+            aria-label="Open product image full screen"
+          >
+            ⌕
+          </button>
+
+
+
+          {% if section.settings.show_stage_labels and section.settings.stage_note != blank %}
+
+            <span class="pp-pdp__stage-note">
+              {{ section.settings.stage_note }}
+            </span>
+
+          {% endif %}
+
+
         </div>
+
       </div>
+
+
+
       <div class="pp-pdp__info">
-        <p class="pp-pdp__micro">{{ product.type | default: section.settings.fallback_type }}</p>
-        <h1>{{ product.title }}</h1>
-        {% assign tagline = product.metafields.custom.short_tagline.value | default: product.metafields.custom.short_tagline %}{% if tagline != blank %}<p class="pp-pdp__tagline">{{ tagline }}</p>{% endif %}
-        {% if section.settings.show_description %}<div class="pp-pdp__desc rte">{{ product.description }}</div>{% endif %}
-        <div class="pp-pdp__price-row"><span class="pp-pdp__price" data-sticky-price>{{ product.selected_or_first_available_variant.price | money }}</span>{% if product.selected_or_first_available_variant.compare_at_price > product.selected_or_first_available_variant.price %}<s>{{ product.selected_or_first_available_variant.compare_at_price | money }}</s>{% endif %}</div>
-        {% form 'product', product, class: 'pp-pdp__form' %}
-          {% unless product.has_only_default_variant %}<label class="pp-pdp__variant-label" for="Variant-{{ section.id }}">{{ section.settings.variant_label }}</label><select id="Variant-{{ section.id }}" name="id" data-variant-select>{% for variant in product.variants %}<option value="{{ variant.id }}" data-price="{{ variant.price | money }}"{% if variant.featured_image %} data-image="{{ variant.featured_image | image_url: width: 1600 }}"{% endif %}{% if variant == product.selected_or_first_available_variant %} selected{% endif %}{% unless variant.available %} disabled{% endunless %}>{{ variant.title }}{% unless variant.available %} — {{ section.settings.sold_out_label }}{% endunless %}</option>{% endfor %}</select>{% else %}<input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">{% endunless %}
-          <div class="pp-pdp__buyrow"><div class="pp-qty" data-qty><button type="button" data-qty-minus aria-label="{{ 'products.decrease_quantity' | t }}">−</button><input type="number" name="quantity" value="1" min="1" aria-label="{{ 'products.quantity' | t }}"><button type="button" data-qty-plus aria-label="{{ 'products.increase_quantity' | t }}">+</button></div><button class="pp-btn pp-btn--orange pp-pdp__add" type="submit" name="add"{% unless product.available %} disabled{% endunless %}>{% if product.available %}{{ section.settings.add_label }}{% else %}{{ section.settings.sold_out_label }}{% endif %}</button>{% if section.settings.enable_buy_now %}{{ form | payment_button }}{% endif %}</div>
-          <small class="pp-pdp__checkout-note">{{ section.settings.checkout_note }}</small>
+
+
+        <div class="pp-kicker pp-kicker--pink">
+
+          {{ product_type }}
+
+          {% if section.settings.show_weight and product.selected_or_first_available_variant.weight > 0 %}
+            · {{ product.selected_or_first_available_variant.weight | weight_with_unit }}
+          {% endif %}
+
+        </div>
+
+
+
+        {% if product_kicker != blank %}
+
+          <div class="pp-pdp__micro">
+            {{ product_kicker }}
+          </div>
+
+        {% endif %}
+
+
+        <h1>
+          {{ product.title }}
+        </h1>
+
+
+        {%- if section.settings.enable_pdp_tags -%}
+          {%- assign pdp_tags = product.metafields.pups_paws.pdp_tags.value -%}
+          {%- if pdp_tags != blank -%}
+            <div class="pp-pdp__tags">
+              {%- for tag in pdp_tags limit: 3 -%}
+                {%- assign tag_bg = tag.background_color.value | default: section.settings.pdp_tag_background -%}
+                {%- assign tag_text = tag.text_color.value | default: section.settings.pdp_tag_text -%}
+                <span
+                  class="pp-pdp__tag"
+                  style="background-color: {{ tag_bg }}; color: {{ tag_text }}; border-color: {{ tag_bg }};"
+                >
+                  {{ tag.label.value }}
+                </span>
+              {%- endfor -%}
+            </div>
+          {%- endif -%}
+        {%- endif -%}
+
+
+        {% if product_tagline != blank %}
+
+          <h2 class="pp-pdp__tagline">
+            {{ product_tagline }}
+          </h2>
+
+        {% endif %}
+
+
+
+        <div class="pp-pdp__price-row">
+
+          <strong
+            class="pp-pdp__price"
+            data-product-price
+          >
+            {{ product.selected_or_first_available_variant.price | money }}
+          </strong>
+
+
+          {% if product.selected_or_first_available_variant.compare_at_price > product.selected_or_first_available_variant.price %}
+
+            <s>
+              {{ product.selected_or_first_available_variant.compare_at_price | money }}
+            </s>
+
+          {% endif %}
+
+        </div>
+
+
+
+        {% if section.settings.show_description and product.description != blank %}
+
+          <div class="pp-pdp__desc rte">
+            {{ product.description }}
+          </div>
+
+        {% endif %}
+
+
+
+        {% if suitable_for != blank or pet_types != blank or life_stages != blank %}
+
+          <div class="pp-pdp__chips">
+
+            <span>
+              Suitable for
+            </span>
+
+
+            {% if pet_types != blank %}
+
+              {% for item in pet_types.value %}
+                <b>{{ item }}</b>
+              {% endfor %}
+
+            {% endif %}
+
+
+            {% if life_stages != blank %}
+
+              {% for item in life_stages.value %}
+                <b>{{ item }}</b>
+              {% endfor %}
+
+            {% endif %}
+
+
+            {% if suitable_for != blank %}
+
+              {% for item in suitable_for.value %}
+                <b>{{ item }}</b>
+              {% endfor %}
+
+            {% endif %}
+
+          </div>
+
+        {% endif %}
+
+
+
+        {% form 'product', product, class:'pp-pdp__form' %}
+
+
+          {% unless product.has_only_default_variant %}
+
+            <label
+              class="pp-pdp__variant-label"
+              for="Variant-{{ section.id }}"
+            >
+              {{ section.settings.variant_label }}
+            </label>
+
+
+            <select
+              id="Variant-{{ section.id }}"
+              name="id"
+              data-variant-select
+            >
+
+              {% for variant in product.variants %}
+
+                <option
+                  value="{{ variant.id }}"
+                  data-price="{{ variant.price | money | escape }}"
+                  {% if variant.featured_image %}
+                    data-image="{{ variant.featured_image | image_url: width: 1800 }}"
+                  {% endif %}
+                  {% if variant == product.selected_or_first_available_variant %}
+                    selected
+                  {% endif %}
+                  {% unless variant.available %}
+                    disabled
+                  {% endunless %}
+                >
+
+                  {{ variant.title }} — {{ variant.price | money }}
+
+                </option>
+
+              {% endfor %}
+
+            </select>
+
+
+          {% else %}
+
+            <input
+              type="hidden"
+              name="id"
+              value="{{ product.selected_or_first_available_variant.id }}"
+            >
+
+          {% endunless %}
+
+
+
+          <div class="pp-pdp__buyrow">
+
+
+            <div
+              class="pp-qty"
+              data-qty
+            >
+
+              <button
+                type="button"
+                data-qty-minus
+                aria-label="Decrease quantity"
+              >
+                −
+              </button>
+
+
+              <input
+                type="number"
+                name="quantity"
+                min="1"
+                value="1"
+                aria-label="Quantity"
+              >
+
+
+              <button
+                type="button"
+                data-qty-plus
+                aria-label="Increase quantity"
+              >
+                +
+              </button>
+
+            </div>
+
+
+
+            <button
+              class="pp-btn pp-btn--orange pp-pdp__add"
+              type="submit"
+              {% unless product.available %}disabled{% endunless %}
+            >
+
+              {% if product.available %}
+                {{ section.settings.add_label }}
+              {% else %}
+                {{ section.settings.sold_out_label }}
+              {% endif %}
+
+              {% render 'icon-arrow' %}
+
+            </button>
+
+
+            {% if section.settings.enable_buy_now and product.available %}
+
+              <button
+                class="pp-btn pp-btn--purple pp-pdp__buynow"
+                type="submit"
+                name="checkout"
+              >
+
+                {{ section.settings.buy_now_label }}
+
+              </button>
+
+            {% endif %}
+
+
+          </div>
+
+
         {% endform %}
-        {% if section.settings.show_trust %}<div class="pp-pdp__trust">{% for block in section.blocks %}<div {{ block.shopify_attributes }}><b>{{ block.settings.icon }}</b><span><strong>{{ block.settings.heading }}</strong><small>{{ block.settings.text }}</small></span></div>{% endfor %}</div>{% endif %}
+
+
+
+        {% if delivery_note != blank %}
+
+          <small class="pp-pdp__checkout-note">
+            {{ delivery_note }}
+          </small>
+
+        {% elsif section.settings.checkout_note != blank %}
+
+          <small class="pp-pdp__checkout-note">
+            {{ section.settings.checkout_note }}
+          </small>
+
+        {% endif %}
+
+
+
+        <div class="pp-pdp__accordions">
+
+
+          {% if key_benefits != blank %}
+
+            <details open>
+
+              <summary>
+                Why pet parents pick it
+                <span>+</span>
+              </summary>
+
+              <div class="rte">
+                {{ key_benefits | metafield_tag }}
+              </div>
+
+            </details>
+
+
+          {% elsif benefit_items != blank %}
+
+            <details open>
+
+              <summary>
+                Why pet parents pick it
+                <span>+</span>
+              </summary>
+
+              <div class="pp-pdp__structured-list">
+
+                {% for item in benefit_items %}
+
+                  <div>
+
+                    <strong>
+                      {{ item.title.value | default: item.title }}
+                    </strong>
+
+                    {% if item.description.value != blank %}
+
+                      <p>
+                        {{ item.description.value }}
+                      </p>
+
+                    {% endif %}
+
+                  </div>
+
+                {% endfor %}
+
+              </div>
+
+            </details>
+
+          {% endif %}
+
+
+
+          {% if how_to_use != blank %}
+
+            <details>
+
+              <summary>
+                How to use
+                <span>+</span>
+              </summary>
+
+              <div class="rte">
+                {{ how_to_use | metafield_tag }}
+              </div>
+
+            </details>
+
+          {% endif %}
+
+
+
+          {% if ingredients != blank %}
+
+            <details>
+
+              <summary>
+                Ingredients
+                <span>+</span>
+              </summary>
+
+              <div class="rte">
+                {{ ingredients | metafield_tag }}
+              </div>
+
+            </details>
+
+
+          {% elsif ingredient_items != blank %}
+
+            <details>
+
+              <summary>
+                Ingredients
+                <span>+</span>
+              </summary>
+
+              <div class="pp-pdp__ingredient-list">
+
+                {% for item in ingredient_items %}
+
+                  <div>
+
+                    <strong>
+                      {{ item.name.value | default: item.name }}
+                    </strong>
+
+
+                    {% if item.short_benefit.value != blank %}
+
+                      <span>
+                        {{ item.short_benefit.value }}
+                      </span>
+
+                    {% endif %}
+
+
+                    {% if item.description.value != blank %}
+
+                      <div class="rte">
+                        {{ item.description | metafield_tag }}
+                      </div>
+
+                    {% endif %}
+
+                  </div>
+
+                {% endfor %}
+
+              </div>
+
+            </details>
+
+          {% endif %}
+
+
+
+          {% if warnings != blank %}
+
+            <details>
+
+              <summary>
+                Good to know
+                <span>+</span>
+              </summary>
+
+              <div class="rte">
+                {{ warnings | metafield_tag }}
+              </div>
+
+            </details>
+
+          {% endif %}
+
+
+
+          {% if faq_items != blank %}
+
+            {% for item in faq_items %}
+
+              <details>
+
+                <summary>
+                  {{ item.question.value | default: item.question }}
+                  <span>+</span>
+                </summary>
+
+                <div class="rte">
+                  {{ item.answer | metafield_tag }}
+                </div>
+
+              </details>
+
+            {% endfor %}
+
+          {% endif %}
+
+
+
+          {% for block in section.blocks %}
+
+            {% if block.type == 'accordion' %}
+
+              <details
+                data-pp-block-id="{{ block.id }}"
+                {{ block.shopify_attributes }}
+              >
+
+                <summary>
+                  {{ block.settings.heading }}
+                  <span>+</span>
+                </summary>
+
+                <div class="rte">
+                  {{ block.settings.content }}
+                </div>
+
+              </details>
+
+            {% endif %}
+
+          {% endfor %}
+
+
+        </div>
+
+
+
+        {% if section.settings.show_trust %}
+
+          <div class="pp-pdp__trust">
+
+            {% for block in section.blocks %}
+
+              {% if block.type == 'trust_point' %}
+
+                <div
+                  data-pp-block-id="{{ block.id }}"
+                  {{ block.shopify_attributes }}
+                >
+
+                  <b>
+                    {{ block.settings.icon }}
+                  </b>
+
+                  <span>
+
+                    <strong>
+                      {{ block.settings.heading }}
+                    </strong>
+
+                    <small>
+                      {{ block.settings.text }}
+                    </small>
+
+                  </span>
+
+                </div>
+
+              {% endif %}
+
+            {% endfor %}
+
+          </div>
+
+        {% endif %}
+
+
       </div>
+
     </div>
+
   </div>
+
+
+
+  {% if section.settings.mobile_sticky_atc or section.settings.desktop_sticky_atc %}
+
+    <div
+      class="pp-sticky-atc{% if section.settings.desktop_sticky_atc %} pp-sticky-atc--desktop{% endif %}"
+      data-sticky-atc
+    >
+
+      <div>
+
+        <span data-sticky-price>
+          {{ product.selected_or_first_available_variant.price | money }}
+        </span>
+
+      </div>
+
+
+      <button
+        type="button"
+        class="pp-btn pp-btn--orange"
+        data-sticky-add
+      >
+        {{ section.settings.add_label }}
+      </button>
+
+    </div>
+
+  {% endif %}
+
+
+
+  <!-- =========================================================
+       FULLSCREEN PRODUCT IMAGE LIGHTBOX
+  ========================================================== -->
+
+  <div
+    class="pp-lightbox"
+    data-lightbox
+    aria-hidden="true"
+  >
+
+
+    <button
+      type="button"
+      class="pp-lightbox__backdrop"
+      data-lightbox-close
+      aria-label="Close image"
+    ></button>
+
+
+
+    {% if product.media.size > 1 %}
+
+      <button
+        type="button"
+        class="pp-lightbox__nav pp-lightbox__nav--prev"
+        data-lightbox-prev
+        aria-label="Previous product image"
+      >
+        ‹
+      </button>
+
+    {% endif %}
+
+
+
+    <div class="pp-lightbox__inner">
+
+
+      <button
+        type="button"
+        data-lightbox-close
+        class="pp-lightbox__close"
+        aria-label="Close image"
+      >
+        ×
+      </button>
+
+
+      <img
+        data-lightbox-image
+        alt="{{ product.title | escape }}"
+        width="{{ product.featured_image.width | default: 1800 }}"
+        height="{{ product.featured_image.height | default: 1800 }}"
+      >
+
+
+    </div>
+
+
+
+    {% if product.media.size > 1 %}
+
+      <button
+        type="button"
+        class="pp-lightbox__nav pp-lightbox__nav--next"
+        data-lightbox-next
+        aria-label="Next product image"
+      >
+        ›
+      </button>
+
+    {% endif %}
+
+
+  </div>
+
+
+
+  <!-- =========================================================
+       LIGHTBOX PREVIOUS / NEXT STYLING
+       ONLY affects fullscreen navigation arrows
+  ========================================================== -->
+
+  <style>
+
+    #shopify-section-{{ section.id }} .pp-lightbox__nav {
+      position: absolute;
+
+      top: 50%;
+
+      transform: translateY(-50%);
+
+      z-index: 20;
+
+      width: 48px;
+      height: 48px;
+
+      display: flex;
+
+      align-items: center;
+      justify-content: center;
+
+      padding: 0;
+
+      background: rgba(255, 255, 255, 0.96);
+
+      color: #351042;
+
+      border: 1px solid rgba(53, 16, 66, 0.12);
+
+      border-radius: 50%;
+
+      box-shadow:
+        0 5px 18px rgba(53, 16, 66, 0.14);
+
+      font-family: Arial, sans-serif;
+
+      font-size: 34px;
+
+      font-weight: 400;
+
+      line-height: 1;
+
+      cursor: pointer;
+
+      transition:
+        transform 0.2s ease,
+        background 0.2s ease,
+        box-shadow 0.2s ease;
+    }
+
+
+    #shopify-section-{{ section.id }} .pp-lightbox__nav:hover {
+      transform:
+        translateY(-50%)
+        scale(1.06);
+
+      background: #ffffff;
+
+      box-shadow:
+        0 8px 24px rgba(53, 16, 66, 0.18);
+    }
+
+
+    #shopify-section-{{ section.id }} .pp-lightbox__nav--prev {
+      left: 22px;
+    }
+
+
+    #shopify-section-{{ section.id }} .pp-lightbox__nav--next {
+      right: 22px;
+    }
+
+
+    @media screen and (max-width: 749px) {
+
+      #shopify-section-{{ section.id }} .pp-lightbox__nav {
+        width: 40px;
+        height: 40px;
+
+        font-size: 29px;
+      }
+
+
+      #shopify-section-{{ section.id }} .pp-lightbox__nav--prev {
+        left: 8px;
+      }
+
+
+      #shopify-section-{{ section.id }} .pp-lightbox__nav--next {
+        right: 8px;
+      }
+
+    }
+
+  </style>
+
+
+
+  <!-- =========================================================
+       LIGHTBOX PREVIOUS / NEXT FUNCTIONALITY
+
+       Reuses existing PDP gallery arrows so nothing else
+       about the gallery logic changes.
+  ========================================================== -->
+
+  <script>
+
+    (function () {
+
+      var section =
+        document.getElementById(
+          'shopify-section-{{ section.id }}'
+        );
+
+
+      if (!section) {
+        return;
+      }
+
+
+      var gallery =
+        section.querySelector(
+          '[data-pdp-gallery]'
+        );
+
+
+      var lightbox =
+        section.querySelector(
+          '[data-lightbox]'
+        );
+
+
+      if (!gallery || !lightbox) {
+        return;
+      }
+
+
+      if (
+        lightbox.getAttribute(
+          'data-lightbox-navigation-ready'
+        ) === 'true'
+      ) {
+        return;
+      }
+
+
+      lightbox.setAttribute(
+        'data-lightbox-navigation-ready',
+        'true'
+      );
+
+
+      var mainImage =
+        gallery.querySelector(
+          '[data-pdp-main]'
+        );
+
+
+      var lightboxImage =
+        lightbox.querySelector(
+          '[data-lightbox-image]'
+        );
+
+
+      var galleryPrev =
+        gallery.querySelector(
+          '[data-media-prev]'
+        );
+
+
+      var galleryNext =
+        gallery.querySelector(
+          '[data-media-next]'
+        );
+
+
+      var lightboxPrev =
+        lightbox.querySelector(
+          '[data-lightbox-prev]'
+        );
+
+
+      var lightboxNext =
+        lightbox.querySelector(
+          '[data-lightbox-next]'
+        );
+
+
+
+      function syncLightboxImage() {
+
+        if (!mainImage || !lightboxImage) {
+          return;
+        }
+
+
+        var source =
+          mainImage.currentSrc ||
+          mainImage.getAttribute('src');
+
+
+        if (source) {
+          lightboxImage.setAttribute(
+            'src',
+            source
+          );
+        }
+
+
+        var imageAlt =
+          mainImage.getAttribute('alt');
+
+
+        if (imageAlt) {
+          lightboxImage.setAttribute(
+            'alt',
+            imageAlt
+          );
+        }
+
+      }
+
+
+
+      function syncAfterGalleryChange() {
+
+        window.requestAnimationFrame(
+          function () {
+
+            window.requestAnimationFrame(
+              function () {
+
+                syncLightboxImage();
+
+              }
+            );
+
+          }
+        );
+
+      }
+
+
+
+      if (
+        lightboxPrev &&
+        galleryPrev
+      ) {
+
+        lightboxPrev.addEventListener(
+          'click',
+          function (event) {
+
+            event.preventDefault();
+
+            event.stopPropagation();
+
+            galleryPrev.click();
+
+            syncAfterGalleryChange();
+
+          }
+        );
+
+      }
+
+
+
+      if (
+        lightboxNext &&
+        galleryNext
+      ) {
+
+        lightboxNext.addEventListener(
+          'click',
+          function (event) {
+
+            event.preventDefault();
+
+            event.stopPropagation();
+
+            galleryNext.click();
+
+            syncAfterGalleryChange();
+
+          }
+        );
+
+      }
+
+
+    })();
+
+  </script>
+
+
 </section>
-{% stylesheet %}.pp-breadcrumb{display:flex;gap:9px;align-items:center}.pp-pdp__main-image{width:100%;height:100%;object-fit:contain}.shopify-payment-button{min-width:0}.shopify-payment-button__button{border-radius:999px!important;min-height:54px!important}{% endstylesheet %}
+
+
+
 {% schema %}
-{"name":"Main product","settings":[{"type":"checkbox","id":"show_breadcrumbs","label":"Show breadcrumbs","default":true},{"type":"text","id":"home_label","label":"Home label","default":"Home"},{"type":"checkbox","id":"show_thumbnails","label":"Show thumbnails","default":true},{"type":"checkbox","id":"enable_image_zoom","label":"Enable image zoom","default":true},{"type":"color","id":"gallery_background","label":"Gallery background","default":"#fff9f5"},{"type":"checkbox","id":"show_stage_labels","label":"Show image labels","default":true},{"type":"text","id":"stage_kicker","label":"Image kicker","default":"ONE NEED. ONE CLEAR JOB."},{"type":"text","id":"stage_note","label":"Image note","default":"still cuddle-ready ↗"},{"type":"text","id":"fallback_type","label":"Fallback product type","default":"Pet care"},{"type":"checkbox","id":"show_description","label":"Show description","default":true},{"type":"text","id":"variant_label","label":"Variant label","default":"Choose option"},{"type":"text","id":"add_label","label":"Add label","default":"Add to care bag"},{"type":"text","id":"sold_out_label","label":"Sold-out label","default":"Sold out"},{"type":"checkbox","id":"enable_buy_now","label":"Enable buy now","default":true},{"type":"text","id":"buy_now_label","label":"Buy-now label","default":"Buy now"},{"type":"text","id":"checkout_note","label":"Checkout note"},{"type":"checkbox","id":"show_trust","label":"Show trust points","default":true}],"blocks":[{"type":"trust_point","name":"Trust point","settings":[{"type":"text","id":"icon","label":"Icon"},{"type":"text","id":"heading","label":"Heading"},{"type":"text","id":"text","label":"Text"}]}]}
+{
+  "name": "Main product",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_breadcrumbs",
+      "label": "Show breadcrumbs",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "home_label",
+      "label": "Home breadcrumb label",
+      "default": "Home"
+    },
+    {
+      "type": "header",
+      "content": "Product gallery"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_thumbnails",
+      "label": "Show image thumbnails",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_image_zoom",
+      "label": "Zoom image on hover",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "gallery_background",
+      "label": "Gallery background",
+      "default": "#fff9f5"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_stage_labels",
+      "label": "Show gallery labels",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "stage_kicker",
+      "label": "Top gallery label",
+      "default": "ONE NEED. ONE CLEAR JOB."
+    },
+    {
+      "type": "text",
+      "id": "stage_note",
+      "label": "Bottom gallery note",
+      "default": "still cuddle-ready ↗"
+    },
+    {
+      "type": "header",
+      "content": "Product information"
+    },
+    {
+      "type": "text",
+      "id": "fallback_type",
+      "label": "Fallback product type",
+      "default": "Pet care"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_weight",
+      "label": "Show product weight",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "fallback_kicker",
+      "label": "Fallback micro heading",
+      "default": "Made for real pet routines"
+    },
+    {
+      "type": "text",
+      "id": "fallback_tagline",
+      "label": "Fallback tagline"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_description",
+      "label": "Show product description",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "variant_label",
+      "label": "Variant selector label",
+      "default": "Choose option"
+    },
+    {
+      "type": "text",
+      "id": "add_label",
+      "label": "Add button label",
+      "default": "Add to care bag"
+    },
+    {
+      "type": "text",
+      "id": "sold_out_label",
+      "label": "Sold out label",
+      "default": "Sold out"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_buy_now",
+      "label": "Show Buy now button",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "buy_now_label",
+      "label": "Buy now button label",
+      "default": "Buy Now"
+    },
+    {
+      "type": "text",
+      "id": "checkout_note",
+      "label": "Checkout note",
+      "default": "Secure checkout · Easy care-bag updates before payment"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_trust",
+      "label": "Show trust points",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "mobile_sticky_atc",
+      "label": "Show sticky add to cart on mobile",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "desktop_sticky_atc",
+      "label": "Also show sticky add to cart on desktop",
+      "default": true,
+      "info": "Appears bottom-right once the main Add to Cart button scrolls out of view, and hides again when it's back on screen."
+    },
+    {
+      "type": "header",
+      "content": "Product tags"
+    },
+    {
+      "type": "paragraph",
+      "content": "Up to 3 colored badges shown below the product title. Each badge is a \"PDP Tag\" entry (Shopify admin → Content → Metaobjects → PDP Tag) with its own label, background colour and text colour — create as many as you like there, then pick up to 3 for each product under that product's metafields (Custom → pups_paws.pdp_tags)."
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_pdp_tags",
+      "label": "Show product tags",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "pdp_tag_background",
+      "label": "Fallback tag background",
+      "info": "Only used if a PDP Tag entry is missing a background colour.",
+      "default": "#f6effd"
+    },
+    {
+      "type": "color",
+      "id": "pdp_tag_text",
+      "label": "Fallback tag text colour",
+      "info": "Only used if a PDP Tag entry is missing a text colour.",
+      "default": "#47105d"
+    },
+    {
+      "type": "header",
+      "content": "Professional section controls"
+    },
+    {
+      "type": "paragraph",
+      "content": "Optional overrides. Leave disabled to preserve the original V7 design."
+    },
+    {
+      "type": "checkbox",
+      "id": "pp_custom_colors",
+      "label": "Override section colours",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "pp_background",
+      "label": "Background colour",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "pp_text_color",
+      "label": "Text colour",
+      "default": "#351042"
+    },
+    {
+      "type": "color",
+      "id": "pp_accent_color",
+      "label": "Accent colour",
+      "default": "#ff5a0a"
+    },
+    {
+      "type": "checkbox",
+      "id": "pp_custom_type",
+      "label": "Override section typography",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "pp_heading_font",
+      "label": "Heading font",
+      "default": "theme",
+      "options": [
+        {
+          "value": "theme",
+          "label": "Use theme default"
+        },
+        {
+          "value": "aquatail",
+          "label": "Aquatail — included"
+        },
+        {
+          "value": "futura",
+          "label": "Futura — included"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "pp_heading_weight",
+      "label": "Heading weight",
+      "default": "700",
+      "options": [
+        {
+          "value": "400",
+          "label": "Regular"
+        },
+        {
+          "value": "600",
+          "label": "Semibold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        },
+        {
+          "value": "900",
+          "label": "Black"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "pp_heading_size",
+      "min": 24,
+      "max": 104,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading size — desktop",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "pp_heading_size_mobile",
+      "min": 22,
+      "max": 70,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading size — mobile",
+      "default": 44
+    },
+    {
+      "type": "range",
+      "id": "pp_heading_tracking",
+      "min": -8,
+      "max": 10,
+      "step": 1,
+      "unit": "%",
+      "label": "Heading letter spacing",
+      "default": -3
+    },
+    {
+      "type": "select",
+      "id": "pp_body_font",
+      "label": "Body font",
+      "default": "theme",
+      "options": [
+        {
+          "value": "theme",
+          "label": "Use theme default"
+        },
+        {
+          "value": "aquatail",
+          "label": "Aquatail — included"
+        },
+        {
+          "value": "futura",
+          "label": "Futura — included"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "pp_body_weight",
+      "label": "Body weight",
+      "default": "400",
+      "options": [
+        {
+          "value": "400",
+          "label": "Regular"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semibold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "pp_body_size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Body size — desktop",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "pp_body_size_mobile",
+      "min": 12,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "label": "Body size — mobile",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "pp_line_height",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "label": "Body line height",
+      "default": 16
+    },
+    {
+      "type": "checkbox",
+      "id": "pp_custom_spacing",
+      "label": "Override section spacing",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "pp_padding_top",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding — desktop",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "pp_padding_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding — desktop",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "pp_padding_top_mobile",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding — mobile",
+      "default": 56
+    },
+    {
+      "type": "range",
+      "id": "pp_padding_bottom_mobile",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding — mobile",
+      "default": 56
+    },
+    {
+      "type": "range",
+      "id": "pp_content_width",
+      "min": 0,
+      "max": 1800,
+      "step": 100,
+      "unit": "px",
+      "label": "Content width (0 = theme default)",
+      "default": 0
+    },
+    {
+      "type": "checkbox",
+      "id": "pp_disable_motion",
+      "label": "Disable motion in this section",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "pp_min_height",
+      "min": 0,
+      "max": 1000,
+      "step": 50,
+      "unit": "px",
+      "label": "Section minimum height (0 = automatic)",
+      "default": 0
+    }
+  ],
+
+  "blocks": [
+    {
+      "type": "trust_point",
+      "name": "Trust point",
+      "settings": [
+        {
+          "type": "text",
+          "id": "icon",
+          "label": "Icon or symbol",
+          "default": "♢"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Purpose-built"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "One clear concern"
+        },
+        {
+          "type": "header",
+          "content": "Individual block design"
+        },
+        {
+          "type": "checkbox",
+          "id": "pp_block_custom",
+          "label": "Customize this block",
+          "default": false
+        },
+        {
+          "type": "color",
+          "id": "pp_block_background",
+          "label": "Card / block background",
+          "default": "#ffffff"
+        },
+        {
+          "type": "color",
+          "id": "pp_block_text",
+          "label": "Text colour",
+          "default": "#351042"
+        },
+        {
+          "type": "color",
+          "id": "pp_block_accent",
+          "label": "Accent / border colour",
+          "default": "#ff5a0a"
+        },
+        {
+          "type": "select",
+          "id": "pp_block_heading_font",
+          "label": "Heading font",
+          "default": "theme",
+          "options": [
+            {
+              "value": "theme",
+              "label": "Use theme default"
+            },
+            {
+              "value": "aquatail",
+              "label": "Aquatail — included"
+            },
+            {
+              "value": "futura",
+              "label": "Futura — included"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "pp_block_body_font",
+          "label": "Body font",
+          "default": "theme",
+          "options": [
+            {
+              "value": "theme",
+              "label": "Use theme default"
+            },
+            {
+              "value": "aquatail",
+              "label": "Aquatail — included"
+            },
+            {
+              "value": "futura",
+              "label": "Futura — included"
+            }
+          ]
+        },
+        {
+          "type": "range",
+          "id": "pp_block_heading_size",
+          "min": 16,
+          "max": 64,
+          "step": 2,
+          "unit": "px",
+          "label": "Heading size",
+          "default": 28
+        },
+        {
+          "type": "range",
+          "id": "pp_block_body_size",
+          "min": 10,
+          "max": 24,
+          "step": 1,
+          "unit": "px",
+          "label": "Body size",
+          "default": 14
+        },
+        {
+          "type": "range",
+          "id": "pp_block_padding",
+          "min": 0,
+          "max": 64,
+          "step": 4,
+          "unit": "px",
+          "label": "Inner padding",
+          "default": 24
+        },
+        {
+          "type": "range",
+          "id": "pp_block_height",
+          "min": 0,
+          "max": 800,
+          "step": 40,
+          "unit": "px",
+          "label": "Minimum height (0 = automatic)",
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "pp_block_image_height",
+          "min": 0,
+          "max": 600,
+          "step": 30,
+          "unit": "px",
+          "label": "Image height (0 = automatic)",
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "pp_block_radius",
+          "min": 0,
+          "max": 48,
+          "step": 4,
+          "unit": "px",
+          "label": "Corner radius",
+          "default": 24
+        },
+        {
+          "type": "select",
+          "id": "pp_block_animation",
+          "label": "Entrance animation",
+          "default": "inherit",
+          "options": [
+            {
+              "value": "inherit",
+              "label": "Section default"
+            },
+            {
+              "value": "fade",
+              "label": "Fade"
+            },
+            {
+              "value": "rise",
+              "label": "Rise up"
+            },
+            {
+              "value": "pop",
+              "label": "Soft pop"
+            },
+            {
+              "value": "wave",
+              "label": "Gentle wave"
+            },
+            {
+              "value": "none",
+              "label": "None"
+            }
+          ]
+        },
+        {
+          "type": "range",
+          "id": "pp_block_animation_delay",
+          "min": 0,
+          "max": 1000,
+          "step": 100,
+          "unit": "ms",
+          "label": "Animation delay",
+          "default": 0
+        }
+      ]
+    },
+
+    {
+      "type": "accordion",
+      "name": "Custom accordion",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "More details"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Content",
+          "default": "<p>Add product-specific information here.</p>"
+        },
+        {
+          "type": "header",
+          "content": "Individual block design"
+        },
+        {
+          "type": "checkbox",
+          "id": "pp_block_custom",
+          "label": "Customize this block",
+          "default": false
+        },
+        {
+          "type": "color",
+          "id": "pp_block_background",
+          "label": "Card / block background",
+          "default": "#ffffff"
+        },
+        {
+          "type": "color",
+          "id": "pp_block_text",
+          "label": "Text colour",
+          "default": "#351042"
+        },
+        {
+          "type": "color",
+          "id": "pp_block_accent",
+          "label": "Accent / border colour",
+          "default": "#ff5a0a"
+        },
+        {
+          "type": "select",
+          "id": "pp_block_heading_font",
+          "label": "Heading font",
+          "default": "theme",
+          "options": [
+            {
+              "value": "theme",
+              "label": "Use theme default"
+            },
+            {
+              "value": "aquatail",
+              "label": "Aquatail — included"
+            },
+            {
+              "value": "futura",
+              "label": "Futura — included"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "pp_block_body_font",
+          "label": "Body font",
+          "default": "theme",
+          "options": [
+            {
+              "value": "theme",
+              "label": "Use theme default"
+            },
+            {
+              "value": "aquatail",
+              "label": "Aquatail — included"
+            },
+            {
+              "value": "futura",
+              "label": "Futura — included"
+            }
+          ]
+        },
+        {
+          "type": "range",
+          "id": "pp_block_heading_size",
+          "min": 16,
+          "max": 64,
+          "step": 2,
+          "unit": "px",
+          "label": "Heading size",
+          "default": 28
+        },
+        {
+          "type": "range",
+          "id": "pp_block_body_size",
+          "min": 10,
+          "max": 24,
+          "step": 1,
+          "unit": "px",
+          "label": "Body size",
+          "default": 14
+        },
+        {
+          "type": "range",
+          "id": "pp_block_padding",
+          "min": 0,
+          "max": 64,
+          "step": 4,
+          "unit": "px",
+          "label": "Inner padding",
+          "default": 24
+        },
+        {
+          "type": "range",
+          "id": "pp_block_height",
+          "min": 0,
+          "max": 800,
+          "step": 40,
+          "unit": "px",
+          "label": "Minimum height (0 = automatic)",
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "pp_block_image_height",
+          "min": 0,
+          "max": 600,
+          "step": 30,
+          "unit": "px",
+          "label": "Image height (0 = automatic)",
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "pp_block_radius",
+          "min": 0,
+          "max": 48,
+          "step": 4,
+          "unit": "px",
+          "label": "Corner radius",
+          "default": 24
+        },
+        {
+          "type": "select",
+          "id": "pp_block_animation",
+          "label": "Entrance animation",
+          "default": "inherit",
+          "options": [
+            {
+              "value": "inherit",
+              "label": "Section default"
+            },
+            {
+              "value": "fade",
+              "label": "Fade"
+            },
+            {
+              "value": "rise",
+              "label": "Rise up"
+            },
+            {
+              "value": "pop",
+              "label": "Soft pop"
+            },
+            {
+              "value": "wave",
+              "label": "Gentle wave"
+            },
+            {
+              "value": "none",
+              "label": "None"
+            }
+          ]
+        },
+        {
+          "type": "range",
+          "id": "pp_block_animation_delay",
+          "min": 0,
+          "max": 1000,
+          "step": 100,
+          "unit": "ms",
+          "label": "Animation delay",
+          "default": 0
+        }
+      ]
+    }
+  ],
+
+  "max_blocks": 10
+}
 {% endschema %}

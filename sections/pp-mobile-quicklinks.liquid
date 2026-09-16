@@ -1,27 +1,255 @@
+{% comment %}
+  Mobile-only "quick links" strip: two equal, compact, tappable cards that
+  keep Cuddle Care Box and Creator Club visible on mobile once the main nav
+  collapses into the hamburger menu (theme.css hides .pp-nav and shows
+  .pp-menu-toggle at max-width:990px — this section uses that exact same
+  990px boundary for its own "mobile only" default, so it appears at
+  precisely the breakpoint where those two destinations lose their normal
+  nav visibility, not at an arbitrary phone-only width).
+
+  Each card is a single <a> wrapping icon + heading + text + button label,
+  so a tap anywhere in the card (icon, text, empty padding) follows the
+  link — no separate nested button needed. Layout is a CSS Grid with
+  repeat(auto-fit, minmax(...)) rather than a fixed 2-column rule with a
+  manual stacking breakpoint: it keeps both cards side by side down to
+  very narrow widths on its own (comfortably below 320px, this section's
+  narrowest required test width) and only truly reflows to a single
+  column if the available width drops below what a card actually needs —
+  which is what "stack only if there isn't enough horizontal space, don't
+  hard-code a breakpoint" means in practice. No carousel, no horizontal
+  scroll: both cards always render in the document at once.
+
+  Entrance animation reuses the theme's own existing reveal system rather
+  than adding new JS: assets/theme.js auto-observes any .pp-section
+  element and adds .is-visible via IntersectionObserver, and
+  .pp-reveal/.pp-reveal.is-visible in theme.css do the fade+rise — already
+  wired to respect prefers-reduced-motion and body.pp-motion-off. Adding
+  the pp-section class (done conditionally below, per the "Entrance
+  animation" toggle) is the entire implementation.
+
+  Namespacing: every rule below is scoped under this section's own
+  #shopify-section-{{ section.id }} id, and every class is pp-quicklinks*
+  — nothing here can match .pp-card (product cards) or any other
+  section's markup.
+{% endcomment %}
+{% liquid
+  assign qc_mobile_only = false
+  if section.settings.visibility == 'mobile_only'
+    assign qc_mobile_only = true
+  endif
+%}
+<style>
+  #shopify-section-{{ section.id }} .pp-quicklinks {
+    display: block;
+    padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;
+    background: {{ section.settings.section_background }};
+  }
+  {% if qc_mobile_only %}
+    #shopify-section-{{ section.id }} .pp-quicklinks {
+      display: none;
+    }
+    @media (max-width: 990px) {
+      #shopify-section-{{ section.id }} .pp-quicklinks {
+        display: block;
+      }
+    }
+  {% endif %}
+  #shopify-section-{{ section.id }} .pp-quicklinks__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(126px, 1fr));
+    gap: {{ section.settings.card_gap }}px;
+  }
+  #shopify-section-{{ section.id }} .pp-quicklinks__card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    background: var(--qc-bg, #fff);
+    border: 1.5px solid var(--qc-border, rgba(71, 16, 93, .12));
+    border-radius: 18px;
+    padding: 16px 14px;
+    min-height: 150px;
+    text-align: left;
+    box-shadow: 0 4px 14px rgba(63, 14, 80, .05);
+    transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+  }
+  #shopify-section-{{ section.id }} .pp-quicklinks__card:hover,
+  #shopify-section-{{ section.id }} .pp-quicklinks__card:focus-visible {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 22px rgba(63, 14, 80, .10);
+    border-color: var(--qc-accent, #ff5a0a);
+  }
+  #shopify-section-{{ section.id }} .pp-quicklinks__card:active {
+    transform: translateY(0) scale(.98);
+  }
+  #shopify-section-{{ section.id }} .pp-quicklinks__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    flex: 0 0 38px;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--qc-accent, #ff5a0a) 14%, white);
+    color: var(--qc-accent, #ff5a0a);
+  }
+  #shopify-section-{{ section.id }} .pp-quicklinks__icon svg {
+    width: 20px;
+    height: 20px;
+  }
+  #shopify-section-{{ section.id }} .pp-quicklinks__icon img {
+    width: 22px;
+    height: 22px;
+    object-fit: contain;
+  }
+  #shopify-section-{{ section.id }} .pp-quicklinks__body {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+    width: 100%;
+  }
+  #shopify-section-{{ section.id }} .pp-quicklinks__heading {
+    font-family: 'PP Aquatail', Georgia, serif;
+    font-weight: 700;
+    font-size: {{ section.settings.heading_size }}px;
+    line-height: 1.15;
+    color: var(--ink, #351042);
+  }
+  #shopify-section-{{ section.id }} .pp-quicklinks__text {
+    font-family: 'PP Futura', Arial, sans-serif;
+    font-weight: 400;
+    font-size: {{ section.settings.body_size }}px;
+    line-height: 1.35;
+    color: var(--muted, #776a7d);
+  }
+  #shopify-section-{{ section.id }} .pp-quicklinks__btn {
+    margin-top: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding-top: 4px;
+    font-family: 'PP Futura', Arial, sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: .02em;
+    color: var(--qc-accent, #ff5a0a);
+  }
+  #shopify-section-{{ section.id }} .pp-quicklinks__btn svg {
+    width: 13px;
+    height: 13px;
+    transition: transform .18s ease;
+  }
+  #shopify-section-{{ section.id }} .pp-quicklinks__card:hover .pp-quicklinks__btn svg {
+    transform: translateX(3px);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #shopify-section-{{ section.id }} .pp-quicklinks__card,
+    #shopify-section-{{ section.id }} .pp-quicklinks__btn svg {
+      transition: none !important;
+    }
+  }
+</style>
 {% if section.settings.enable %}
-  <section class="pp-mobile-quicklinks pp-mobile-quicklinks--{{ section.settings.visibility }}" style="--quicklinks-bg: {{ section.settings.section_background }}; --quicklinks-gap: {{ section.settings.card_gap }}px; --quicklinks-pt: {{ section.settings.padding_top }}px; --quicklinks-pb: {{ section.settings.padding_bottom }}px;">
-    <div class="page-width pp-mobile-quicklinks__grid">
+<div
+  class="pp-quicklinks{% if section.settings.enable_animation %} pp-section{% endif %}"
+  data-pp-quicklinks
+>
+  <div class="page-width">
+    <div class="pp-quicklinks__grid">
       {% for block in section.blocks %}
-        <article class="pp-mobile-quicklinks__card{% if section.settings.enable_animation %} pp-reveal{% endif %}" style="--card-bg: {{ block.settings.background_color }}; --card-border: {{ block.settings.border_color }}; --card-accent: {{ block.settings.accent_color }};" {{ block.shopify_attributes }}>
-          <span class="pp-mobile-quicklinks__icon" aria-hidden="true">{% if block.settings.icon == 'camera' %}◎{% else %}◇{% endif %}</span>
-          <div><h2>{{ block.settings.heading }}</h2><p>{{ block.settings.text }}</p></div>
-          {% if block.settings.link != blank %}<a class="pp-btn pp-btn--outline" href="{{ block.settings.link }}">{{ block.settings.button_label }}</a>{% endif %}
-        </article>
+        {% liquid
+          assign card_link = block.settings.link | default: '#'
+        %}
+        {% assign custom_icon_img = block.settings.custom_icon %}
+{% assign custom_icon_img_mobile = block.settings.custom_icon_mobile %}
+{% assign custom_icon_display = custom_icon_img | default: custom_icon_img_mobile %}
+{% assign custom_icon_fit = block.settings.custom_icon_fit | default: 'contain' %}
+{% assign custom_icon_position = block.settings.custom_icon_position | default: 'center center' %}
+{% assign custom_icon_fit_m = block.settings.custom_icon_fit_mobile | default: 'contain' %}
+{% assign custom_icon_position_m = block.settings.custom_icon_position_mobile | default: 'center center' %}
+{% assign custom_icon_radius = block.settings.custom_icon_radius | default: 0 %}
+{% assign custom_icon_radius_m = block.settings.custom_icon_radius_mobile | default: 0 %}
+{% assign custom_icon_w = block.settings.custom_icon_max_width | default: 0 %}
+{% assign custom_icon_h = block.settings.custom_icon_max_height | default: 0 %}
+{% assign custom_icon_w_m = block.settings.custom_icon_max_width_mobile | default: 0 %}
+{% assign custom_icon_h_m = block.settings.custom_icon_max_height_mobile | default: 0 %}
+{% assign custom_icon_ha = block.settings.custom_icon_h_align | default: 'default' %}
+{% assign custom_icon_va = block.settings.custom_icon_v_align | default: 'default' %}
+{% assign custom_icon_ha_m = block.settings.custom_icon_h_align_mobile | default: 'default' %}
+{% assign custom_icon_va_m = block.settings.custom_icon_v_align_mobile | default: 'default' %}
+        <style>@media (min-width: 991px) {
+  #shopify-section-{{ section.id }} .pp-quicklinks__card[data-pp-block-id="{{ block.id }}"] .pp-quicklinks__icon img { object-fit: {{ custom_icon_fit }}; object-position: {{ custom_icon_position }}; }
+  #shopify-section-{{ section.id }} .pp-quicklinks__card[data-pp-block-id="{{ block.id }}"] .pp-quicklinks__icon {
+    {% if custom_icon_radius > 0 %}border-radius: {{ custom_icon_radius }}px; overflow: hidden;{% endif %}
+    {% if custom_icon_w > 0 %}width: min({{ custom_icon_w }}px, 100%); max-width: 100%;{% endif %}
+    {% if custom_icon_h > 0 %}height: min({{ custom_icon_h }}px, 100%); max-height: 100%;{% endif %}
+    {% if custom_icon_ha == 'left' %}margin-left: 0; margin-right: auto;{% endif %}
+    {% if custom_icon_ha == 'center' %}margin-left: auto; margin-right: auto;{% endif %}
+    {% if custom_icon_ha == 'right' %}margin-left: auto; margin-right: 0;{% endif %}
+    {% if custom_icon_va == 'top' %}align-self: flex-start;{% endif %}
+    {% if custom_icon_va == 'center' %}align-self: center;{% endif %}
+    {% if custom_icon_va == 'bottom' %}align-self: flex-end;{% endif %}
+  }
+}
+@media (max-width: 990px) {
+  #shopify-section-{{ section.id }} .pp-quicklinks__card[data-pp-block-id="{{ block.id }}"] .pp-quicklinks__icon img { object-fit: {{ custom_icon_fit_m }}; object-position: {{ custom_icon_position_m }}; }
+  #shopify-section-{{ section.id }} .pp-quicklinks__card[data-pp-block-id="{{ block.id }}"] .pp-quicklinks__icon {
+    {% if custom_icon_radius_m > 0 %}border-radius: {{ custom_icon_radius_m }}px; overflow: hidden;{% endif %}
+    {% if custom_icon_w_m > 0 %}width: min({{ custom_icon_w_m }}px, 100%); max-width: 100%;{% endif %}
+    {% if custom_icon_h_m > 0 %}height: min({{ custom_icon_h_m }}px, 100%); max-height: 100%;{% endif %}
+    {% if custom_icon_ha_m == 'left' %}margin-left: 0; margin-right: auto;{% endif %}
+    {% if custom_icon_ha_m == 'center' %}margin-left: auto; margin-right: auto;{% endif %}
+    {% if custom_icon_ha_m == 'right' %}margin-left: auto; margin-right: 0;{% endif %}
+    {% if custom_icon_va_m == 'top' %}align-self: flex-start;{% endif %}
+    {% if custom_icon_va_m == 'center' %}align-self: center;{% endif %}
+    {% if custom_icon_va_m == 'bottom' %}align-self: flex-end;{% endif %}
+  }
+}</style>
+        <a
+          class="pp-quicklinks__card"
+          href="{{ card_link }}"
+          style="--qc-accent:{{ block.settings.accent_color }};--qc-bg:{{ block.settings.background_color }};--qc-border:{{ block.settings.border_color }}"
+          data-pp-block-id="{{ block.id }}"
+          {{ block.shopify_attributes }}
+        >
+          <span class="pp-quicklinks__icon" aria-hidden="true">
+            {% if custom_icon_display != blank %}
+  <picture>
+    {% if custom_icon_img_mobile != blank and custom_icon_img_mobile != custom_icon_img %}
+      <source media="(max-width: 990px)" srcset="{{ custom_icon_img_mobile | image_url: width: 400 }} 400w, {{ custom_icon_img_mobile | image_url: width: 600 }} 600w, {{ custom_icon_img_mobile | image_url: width: 800 }} 800w, {{ custom_icon_img_mobile | image_url: width: 1000 }} 1000w" sizes="100vw">
+    {% endif %}
+    {{ custom_icon_display | image_url: width: 64 | image_tag: loading: 'lazy', alt: '' }}
+  </picture>
+            {% else %}
+              {% case block.settings.icon %}
+                {% when 'paw' %}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="9" r="1.6"/><circle cx="12" cy="6.5" r="1.6"/><circle cx="17" cy="9" r="1.6"/><path d="M12 12.5c-3 0-5.5 1.9-5.5 4.6 0 1.6 1.3 2.4 2.9 2 1-.3 1.7-.7 2.6-.7s1.6.4 2.6.7c1.6.4 2.9-.4 2.9-2 0-2.7-2.5-4.6-5.5-4.6Z"/></svg>
+                {% when 'camera' %}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1Z"/><circle cx="12" cy="13" r="3.4"/></svg>
+                {% when 'creator' %}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.2 4.6 5 .7-3.6 3.5.9 5-4.5-2.4-4.5 2.4.9-5-3.6-3.5 5-.7L12 3Z"/></svg>
+                {% else %}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8l9-4 9 4-9 4-9-4Z"/><path d="M3 8v8l9 4 9-4V8"/><path d="M12 12v8"/></svg>
+              {% endcase %}
+            {% endif %}
+          </span>
+          <span class="pp-quicklinks__body">
+            <span class="pp-quicklinks__heading">{{ block.settings.heading }}</span>
+            {% if block.settings.text != blank %}<span class="pp-quicklinks__text">{{ block.settings.text }}</span>{% endif %}
+            {% if block.settings.button_label != blank %}
+              <span class="pp-quicklinks__btn">
+                {{ block.settings.button_label }}
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </span>
+            {% endif %}
+          </span>
+        </a>
       {% endfor %}
     </div>
-  </section>
+  </div>
+</div>
 {% endif %}
-
-{% stylesheet %}
-  .pp-mobile-quicklinks{background:var(--quicklinks-bg);padding:var(--quicklinks-pt) 0 var(--quicklinks-pb)}
-  .pp-mobile-quicklinks__grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--quicklinks-gap)}
-  .pp-mobile-quicklinks__card{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;padding:18px;border:1px solid var(--card-border);border-radius:20px;background:var(--card-bg)}
-  .pp-mobile-quicklinks__icon{display:grid;place-items:center;width:42px;height:42px;border-radius:50%;background:color-mix(in srgb,var(--card-accent) 14%,white);color:var(--card-accent);font-size:24px}
-  .pp-mobile-quicklinks h2{font-size:18px;margin:0 0 4px}.pp-mobile-quicklinks p{font-size:13px;margin:0;color:var(--muted)}
-  @media(min-width:751px){.pp-mobile-quicklinks--mobile_only{display:none}}
-  @media(max-width:750px){.pp-mobile-quicklinks__grid{grid-template-columns:1fr}.pp-mobile-quicklinks__card{grid-template-columns:auto 1fr}.pp-mobile-quicklinks__card .pp-btn{grid-column:1/-1}}
-{% endstylesheet %}
-
 {% schema %}
-{"name":"Mobile quick links","settings":[{"type":"checkbox","id":"enable","label":"Enable section","default":true},{"type":"select","id":"visibility","label":"Visibility","options":[{"value":"mobile_only","label":"Mobile only"},{"value":"all","label":"All screens"}],"default":"mobile_only"},{"type":"checkbox","id":"enable_animation","label":"Enable animation","default":true},{"type":"range","id":"card_gap","label":"Card gap","min":0,"max":32,"step":1,"unit":"px","default":10},{"type":"range","id":"padding_top","label":"Top padding","min":0,"max":100,"step":2,"unit":"px","default":20},{"type":"range","id":"padding_bottom","label":"Bottom padding","min":0,"max":100,"step":2,"unit":"px","default":28},{"type":"range","id":"heading_size","label":"Heading size","min":12,"max":28,"step":1,"unit":"px","default":16},{"type":"range","id":"body_size","label":"Body size","min":10,"max":20,"step":1,"unit":"px","default":13},{"type":"color","id":"section_background","label":"Background","default":"#ffffff"}],"blocks":[{"type":"quicklink","name":"Quick link","settings":[{"type":"text","id":"heading","label":"Heading"},{"type":"textarea","id":"text","label":"Text"},{"type":"text","id":"button_label","label":"Button label"},{"type":"url","id":"link","label":"Link"},{"type":"select","id":"icon","label":"Icon","options":[{"value":"box","label":"Box"},{"value":"camera","label":"Camera"}],"default":"box"},{"type":"color","id":"accent_color","label":"Accent","default":"#ff5a0a"},{"type":"color","id":"background_color","label":"Background","default":"#ffffff"},{"type":"color","id":"border_color","label":"Border","default":"#f7ded0"}]}],"presets":[{"name":"Mobile quick links"}]}
+{"name":"Mobile quick links","settings":[{"type":"header","content":"Content"},{"type":"checkbox","id":"enable","label":"Show this section","default":true},{"type":"select","id":"visibility","label":"Show on","default":"mobile_only","options":[{"value":"mobile_only","label":"Mobile only (≤990px)"},{"value":"all_devices","label":"All devices"}]},{"type":"checkbox","id":"enable_animation","label":"Entrance animation","info":"Uses the theme's existing scroll-reveal fade/rise. Automatically off when a visitor has reduced motion enabled, or when the theme's 'Enable animations' setting is off.","default":true},{"type":"header","content":"Layout"},{"type":"range","id":"card_gap","min":6,"max":24,"step":2,"unit":"px","label":"Space between cards","default":10},{"type":"range","id":"padding_top","min":0,"max":80,"step":4,"unit":"px","label":"Top padding","default":20},{"type":"range","id":"padding_bottom","min":0,"max":80,"step":4,"unit":"px","label":"Bottom padding","default":28},{"type":"range","id":"heading_size","min":14,"max":22,"step":1,"unit":"px","label":"Card heading size","default":16},{"type":"range","id":"body_size","min":11,"max":16,"step":1,"unit":"px","label":"Supporting text size","default":13},{"type":"color","id":"section_background","label":"Section background","default":"#ffffff"}],"blocks":[{"type":"quicklink","name":"Quick link card","settings":[{"type":"text","id":"heading","label":"Heading"},{"type":"textarea","id":"text","label":"Supporting text"},{"type":"text","id":"button_label","label":"Button label"},{"type":"url","id":"link","label":"Link"},{"type":"select","id":"icon","label":"Icon","default":"box","options":[{"value":"box","label":"Box (outline)"},{"value":"paw","label":"Paw (outline)"},{"value":"camera","label":"Camera (outline)"},{"value":"creator","label":"Creator star (outline)"}]},{"type":"header","content":"Custom icon image (optional) — desktop"},{"type":"image_picker","id":"custom_icon","label":"Custom icon image (optional) (desktop)","info":"A transparent PNG works best."},{"type":"header","content":"Custom icon image (optional) — mobile"},{"type":"image_picker","id":"custom_icon_mobile","label":"Custom icon image (optional) — mobile (optional)","info":"Shown at 990px and narrower instead of the desktop image above. Leave empty to use the same image on mobile."},{"type":"header","content":"Image fit — desktop"},{"type":"select","id":"custom_icon_fit","label":"How the photo fills its box","default":"contain","options":[{"value":"contain","label":"Show the whole photo (may leave empty space)"},{"value":"cover","label":"Fill the box completely (may crop)"}]},{"type":"select","id":"custom_icon_position","label":"Photo alignment inside its box","info":"Only matters when the photo's shape doesn't exactly match the box.","default":"center center","options":[{"value":"left top","label":"Top left"},{"value":"center top","label":"Top center"},{"value":"right top","label":"Top right"},{"value":"left center","label":"Middle left"},{"value":"center center","label":"Middle center"},{"value":"right center","label":"Middle right"},{"value":"left bottom","label":"Bottom left"},{"value":"center bottom","label":"Bottom center"},{"value":"right bottom","label":"Bottom right"}]},{"type":"header","content":"Image fit — mobile"},{"type":"select","id":"custom_icon_fit_mobile","label":"How the photo fills its box","default":"contain","options":[{"value":"contain","label":"Show the whole photo (may leave empty space)"},{"value":"cover","label":"Fill the box completely (may crop)"}]},{"type":"select","id":"custom_icon_position_mobile","label":"Photo alignment inside its box","info":"Only matters when the photo's shape doesn't exactly match the box.","default":"center center","options":[{"value":"left top","label":"Top left"},{"value":"center top","label":"Top center"},{"value":"right top","label":"Top right"},{"value":"left center","label":"Middle left"},{"value":"center center","label":"Middle center"},{"value":"right center","label":"Middle right"},{"value":"left bottom","label":"Bottom left"},{"value":"center bottom","label":"Bottom center"},{"value":"right bottom","label":"Bottom right"}]},{"type":"header","content":"Corner rounding — desktop"},{"type":"range","id":"custom_icon_radius","min":0,"max":60,"step":2,"unit":"px","label":"Corner rounding (0 = theme default)","default":0},{"type":"header","content":"Corner rounding — mobile"},{"type":"range","id":"custom_icon_radius_mobile","min":0,"max":60,"step":2,"unit":"px","label":"Corner rounding (0 = theme default)","default":0},{"type":"header","content":"Image size — desktop"},{"type":"range","id":"custom_icon_max_width","min":0,"max":1500,"step":50,"unit":"px","label":"Image width (0 = automatic)","info":"Applies at 991px and wider. Automatically shrinks to fit if the layout doesn't have room, so it never overlaps other content.","default":0},{"type":"range","id":"custom_icon_max_height","min":0,"max":1000,"step":50,"unit":"px","label":"Image height (0 = automatic)","info":"Applies at 991px and wider. Automatically shrinks to fit if the layout doesn't have room, so it never overlaps other content.","default":0},{"type":"header","content":"Image size — mobile"},{"type":"range","id":"custom_icon_max_width_mobile","min":0,"max":900,"step":25,"unit":"px","label":"Image width (0 = automatic)","info":"Applies at 990px and narrower (phones and tablets). Automatically shrinks to fit if the layout doesn't have room, so it never overlaps other content.","default":0},{"type":"range","id":"custom_icon_max_height_mobile","min":0,"max":700,"step":25,"unit":"px","label":"Image height (0 = automatic)","info":"Applies at 990px and narrower (phones and tablets). Automatically shrinks to fit if the layout doesn't have room, so it never overlaps other content.","default":0},{"type":"header","content":"Box position — desktop"},{"type":"select","id":"custom_icon_h_align","label":"Horizontal position","info":"Applies at 991px and wider. \"Default\" keeps the theme's original spacing.","default":"default","options":[{"value":"default","label":"Default (theme spacing)"},{"value":"left","label":"Left"},{"value":"center","label":"Center"},{"value":"right","label":"Right"}]},{"type":"select","id":"custom_icon_v_align","label":"Vertical position","info":"Applies at 991px and wider. \"Default\" keeps the theme's original spacing.","default":"default","options":[{"value":"default","label":"Default (theme spacing)"},{"value":"top","label":"Top"},{"value":"center","label":"Center"},{"value":"bottom","label":"Bottom"}]},{"type":"header","content":"Box position — mobile"},{"type":"select","id":"custom_icon_h_align_mobile","label":"Horizontal position","info":"Applies at 990px and narrower (phones and tablets). \"Default\" keeps the theme's original spacing.","default":"default","options":[{"value":"default","label":"Default (theme spacing)"},{"value":"left","label":"Left"},{"value":"center","label":"Center"},{"value":"right","label":"Right"}]},{"type":"select","id":"custom_icon_v_align_mobile","label":"Vertical position","info":"Applies at 990px and narrower (phones and tablets). \"Default\" keeps the theme's original spacing.","default":"default","options":[{"value":"default","label":"Default (theme spacing)"},{"value":"top","label":"Top"},{"value":"center","label":"Center"},{"value":"bottom","label":"Bottom"}]},{"type":"color","id":"accent_color","label":"Accent colour","default":"#ff5a0a"},{"type":"color","id":"background_color","label":"Card background","default":"#ffffff"},{"type":"color","id":"border_color","label":"Border colour","default":"#f3e6d9"}]}],"max_blocks":2,"presets":[{"name":"Mobile quick links","blocks":[{"type":"quicklink","settings":{"heading":"Build Your Cuddle Care Box","text":"Pick their favourites. Pack the cuddles.","button_label":"Build a Box","link":"/pages/build-your-own-box","icon":"box","accent_color":"#ff5a0a","background_color":"#ffffff","border_color":"#f7ded0"}},{"type":"quicklink","settings":{"heading":"Join the Creator Club","text":"Share the love. Earn with your pack.","button_label":"Join the Pack","link":"/pages/pet-parent-creator-club","icon":"camera","accent_color":"#ff2b78","background_color":"#ffffff","border_color":"#ffe0ea"}}]}]}
 {% endschema %}

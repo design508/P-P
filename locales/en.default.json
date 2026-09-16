@@ -17,26 +17,7 @@
     "product": {
       "add_to_cart": "Add to cart",
       "sold_out": "Sold out"
-    },
-    "breadcrumb": "Breadcrumb",
-    "show_image": "Show image {{ index }}",
-    "quantity": "Quantity",
-    "decrease_quantity": "Decrease quantity",
-    "increase_quantity": "Increase quantity",
-    "follow_directions": "Follow the directions on the product label."
-  },
-  "search": {
-    "eyebrow": "Find their favourites",
-    "title": "Search",
-    "label": "Search the store",
-    "placeholder": "Search products and pages",
-    "submit": "Search",
-    "results": "{{ count }} results for “{{ terms }}”",
-    "no_results": "No results found."
-  },
-  "collections": {
-    "eyebrow": "Shop by collection",
-    "title": "All collections"
+    }
   },
   "cart": {
     "general": {

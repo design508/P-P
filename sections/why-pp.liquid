@@ -1,299 +1,75 @@
 {% render 'section-editor-styles', section: section %}
-{% liquid
-  assign guide = product.metafields.custom.care_guide.value
-  assign when_to_use = product.metafields.custom.when_to_use
-  assign how_to_use = product.metafields.custom.how_to_use
-%}
-<style>
-  #shopify-section-{{ section.id }} .pp-care-guide {
-    padding: clamp(65px, 5.2778vw, 103px) 0 clamp(70px, 5.6944vw, 111px);
-    background: {{ section.settings.section_background }};
-    color: {{ section.settings.heading_color }};
-  }
-  #shopify-section-{{ section.id }} .pp-care-guide__head {
-    max-width: clamp(952px, 77.7778vw, 1512px);
-    margin: 0 auto clamp(41px, 3.3333vw, 65px);
-    text-align: center;
-  }
-  #shopify-section-{{ section.id }} .pp-care-guide__head .pp-kicker {
-    margin-bottom: 18px;
-    color: {{ section.settings.eyebrow_color }};
-    font-size: clamp(11px, .9028vw, 18px);
-    font-weight: 600;
-    letter-spacing: .04em;
-  }
-  #shopify-section-{{ section.id }} .pp-care-guide__head h2 {
-    max-width: clamp(901px, 73.6111vw, 1431px);
-    margin: 0 auto;
-    color: {{ section.settings.heading_color }};
-    font-size: clamp(48px, 5.4vw, 111px);
-    font-weight: 700;
-    line-height: .98;
-    letter-spacing: -.035em;
-    text-transform: uppercase;
-  }
-  #shopify-section-{{ section.id }} .pp-care-guide__grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: clamp(20px, 1.6667vw, 32px);
-    align-items: stretch;
-  }
-  #shopify-section-{{ section.id }} .pp-care-guide__card {
-    position: relative;
-    overflow: hidden;
-    min-height: 0 !important;
-    height: auto !important;
-    padding: clamp(43px, 3.4722vw, 68px) clamp(41px, 3.3333vw, 65px);
-    border: 0;
-    border-radius: clamp(29px, 2.3611vw, 46px);
-    box-shadow: none;
-  }
-  #shopify-section-{{ section.id }} .pp-care-guide__card > * {
-    position: relative;
-    z-index: 1;
-  }
-  #shopify-section-{{ section.id }} .pp-care-guide__when:before {
-    content: "☀";
-    position: absolute;
-    right: -20px;
-    bottom: -40px;
-    z-index: 0;
-    font-size: clamp(140px, 12vw, 220px);
-    line-height: 1;
-    color: color-mix(in srgb, {{ section.settings.when_accent }} 14%, transparent);
-    pointer-events: none;
-  }
-  #shopify-section-{{ section.id }} .pp-care-guide__how:before {
-    content: "🐾";
-    position: absolute;
-    right: -10px;
-    bottom: -30px;
-    z-index: 0;
-    font-size: clamp(110px, 10vw, 180px);
-    line-height: 1;
-    opacity: .08;
-    pointer-events: none;
-  }
-  #shopify-section-{{ section.id }} .pp-care-guide__when {
-    background: {{ section.settings.when_background }};
-    color: {{ section.settings.when_text_color }};
-  }
-  #shopify-section-{{ section.id }} .pp-care-guide__how {
-    background: {{ section.settings.how_background }};
-    color: {{ section.settings.how_text_color }};
-  }
-  #shopify-section-{{ section.id }} .pp-care-guide__card .pp-kicker {
-    margin-bottom: 3px;
-    font-size: clamp(11px, .9028vw, 18px);
-    font-weight: 700;
-    letter-spacing: .025em;
-  }
-  #shopify-section-{{ section.id }} .pp-care-guide__when .pp-kicker {
-    color: {{ section.settings.when_accent }};
-  }
-  #shopify-section-{{ section.id }} .pp-care-guide__how .pp-kicker {
-    margin-bottom: clamp(17px, 1.3889vw, 27px);
-    color: {{ section.settings.step_accent }};
-  }
-  #shopify-section-{{ section.id }} .pp-care-guide__when h3 {
-    max-width: clamp(510px, 41.6667vw, 810px);
-    margin: 0 0 4px;
-    color: inherit;
-    font-size: clamp(20px, 1.5972vw, 31px);
-    font-weight: 600;
-    line-height: 1.18;
-  }
-  #shopify-section-{{ section.id }} .pp-care-guide__when .rte {
-    color: {{ section.settings.when_body_color }};
-    font-size: clamp(14px, 1.1111vw, 22px);
-    line-height: 1.45;
-  }
-  #shopify-section-{{ section.id }} .pp-care-guide__when .rte p {
-    margin: 0;
-  }
-  #shopify-section-{{ section.id }} .pp-care-guide__how ol {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-  #shopify-section-{{ section.id }} .pp-care-guide__how li {
-    display: grid;
-    grid-template-columns: clamp(37px, 3.0556vw, 59px) 1fr;
-    gap: clamp(14px, 1.1111vw, 22px);
-    align-items: center;
-    min-height: clamp(56px, 4.5833vw, 89px);
-    border-bottom: 1px solid rgba(255,255,255,.14);
-    color: inherit;
-  }
-  #shopify-section-{{ section.id }} .pp-care-guide__how li:first-child {
-    border-top: 0;
-  }
-  #shopify-section-{{ section.id }} .pp-care-guide__how li b {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: clamp(32px, 2.6vw, 50px);
-    height: clamp(32px, 2.6vw, 50px);
-    flex: 0 0 auto;
-    border-radius: 50%;
-    background: color-mix(in srgb, {{ section.settings.step_accent }} 22%, transparent);
-    color: {{ section.settings.step_accent }};
-    font-size: clamp(13px, 1.05vw, 20px);
-    font-weight: 800;
-  }
-  #shopify-section-{{ section.id }} .pp-care-guide__how li span {
-    font-size: clamp(14px, 1.1111vw, 22px);
-    font-weight: 600;
-    line-height: 1.35;
-  }
-  #shopify-section-{{ section.id }} .pp-care-guide__how .rte {
-    color: inherit;
-  }
-  @media screen and (max-width: 749px) {
-    #shopify-section-{{ section.id }} .pp-care-guide {
-      padding: 54px 0 58px;
-    }
-    #shopify-section-{{ section.id }} .pp-care-guide__head {
-      margin-bottom: 32px;
-    }
-    #shopify-section-{{ section.id }} .pp-care-guide__head h2 {
-      font-size: clamp(38px, 12vw, 56px);
-    }
-    #shopify-section-{{ section.id }} .pp-care-guide__grid {
-      grid-template-columns: 1fr;
-      gap: clamp(14px, 1.1111vw, 22px);
-    }
-    #shopify-section-{{ section.id }} .pp-care-guide__card {
-      min-height: 0;
-      padding: 34px 26px;
-      border-radius: 26px;
-    }
-  }
-</style>
-<section class="pp-care-guide pp-reveal">
-  <div class="page-width">
-    <header class="pp-care-guide__head">
-      {% if section.settings.eyebrow != blank %}<div class="pp-kicker">{{ section.settings.eyebrow }}</div>{% endif %}
-      <h2>{% if guide != blank and guide.title.value != blank %}{{ guide.title.value }}{% else %}{{ section.settings.heading }}{% endif %}</h2>
-    </header>
-    <div class="pp-care-guide__grid">
-      <article class="pp-care-guide__card pp-care-guide__when">
-        <div class="pp-kicker pp-kicker--pink">{{ section.settings.when_label }}</div>
-        <h3>{{ section.settings.when_heading }}</h3>
-        <div class="rte">{% if when_to_use != blank %}{{ when_to_use | metafield_tag }}{% elsif guide != blank and guide.intro.value != blank %}<p>{{ guide.intro.value }}</p>{% else %}<p>{{ section.settings.when_fallback }}</p>{% endif %}</div>
-      </article>
-      <article class="pp-care-guide__card pp-care-guide__how">
-        <div class="pp-kicker">{{ section.settings.how_label }}</div>
-        {% if guide != blank and guide.steps.value != blank %}<ol>{% for step in guide.steps.value %}<li><b>{% if forloop.index < 10 %}0{% endif %}{{ forloop.index }}</b><span>{{ step }}</span></li>{% endfor %}</ol>
-        {% elsif how_to_use != blank %}<div class="rte">{{ how_to_use | metafield_tag }}</div>
-        {% else %}<ol>{% for block in section.blocks %}<li data-pp-block-id="{{ block.id }}" {{ block.shopify_attributes }}><b>{% if forloop.index < 10 %}0{% endif %}{{ forloop.index }}</b><span>{{ block.settings.text }}</span></li>{% endfor %}</ol>{% endif %}
-      </article>
+<section class="pp-why" style="--why-bg:{{ section.settings.background }};--why-blob-1:{{ section.settings.blob_color_1 }};--why-blob-2:{{ section.settings.blob_color_2 }};--why-heading:{{ section.settings.heading_color }};--why-card:{{ section.settings.card_background }};--sticker-bg:{{ section.settings.sticker_background }}">
+  <div class="page-width pp-center">
+    <div class="pp-kicker pp-kicker--light">{{ section.settings.eyebrow }}</div>
+    <h2>{{ section.settings.heading | newline_to_br }}</h2>
+    <div class="pp-why__cards">
+      {% for block in section.blocks %}
+      <div class="pp-why__card" data-pp-block-id="{{ block.id }}" {{ block.shopify_attributes }} style="--accent:{{ block.settings.accent }}">
+        <h3>{{ block.settings.heading }}</h3><p>{{ block.settings.text }}</p>
+      </div>
+      {% endfor %}
     </div>
+    <div class="pp-sticker">{{ section.settings.sticker }}</div>
   </div>
 </section>
 {% schema %}
 {
-  "name": "Product care guide",
+  "name": "Why Pups & Paws",
   "settings": [
     {
       "type": "text",
       "id": "eyebrow",
       "label": "Eyebrow",
-      "default": "CARE MADE CLEAR"
+      "default": "WHY PUPS & PAWS"
     },
     {
-      "type": "text",
+      "type": "textarea",
       "id": "heading",
       "label": "Heading",
-      "default": "No guessing. No twenty-step routine."
+      "default": "VERY REAL PETS.\nVERY CLEAR CARE."
     },
     {
-      "type": "header",
-      "content": "Reference design colours"
+      "type": "textarea",
+      "id": "sticker",
+      "label": "Sticker",
+      "default": "MADE FOR MUD, MONSOONS & MAYHEM"
     },
     {
       "type": "color",
-      "id": "section_background",
+      "id": "background",
       "label": "Section background",
-      "default": "#ffffff"
+      "default": "#b28af4"
+    },
+    {
+      "type": "color",
+      "id": "blob_color_1",
+      "label": "Top corner colour",
+      "default": "#c6d8e2"
+    },
+    {
+      "type": "color",
+      "id": "blob_color_2",
+      "label": "Bottom corner colour",
+      "default": "#d8939b"
     },
     {
       "type": "color",
       "id": "heading_color",
-      "label": "Main heading colour",
-      "default": "#351042"
+      "label": "Heading colour",
+      "default": "#e9def8"
     },
     {
       "type": "color",
-      "id": "eyebrow_color",
-      "label": "Top label colour",
-      "default": "#ff5a0a"
+      "id": "card_background",
+      "label": "Card background",
+      "default": "#cdb3f8"
     },
     {
       "type": "color",
-      "id": "when_background",
-      "label": "When-to-use card background",
-      "default": "#fff0e7"
-    },
-    {
-      "type": "color",
-      "id": "when_text_color",
-      "label": "When-to-use heading colour",
-      "default": "#351042"
-    },
-    {
-      "type": "color",
-      "id": "when_body_color",
-      "label": "When-to-use body colour",
-      "default": "#7c647f"
-    },
-    {
-      "type": "color",
-      "id": "when_accent",
-      "label": "When-to-use label colour",
-      "default": "#ff5a0a"
-    },
-    {
-      "type": "color",
-      "id": "how_background",
-      "label": "How-to-use card background",
-      "default": "#47105d"
-    },
-    {
-      "type": "color",
-      "id": "how_text_color",
-      "label": "How-to-use text colour",
-      "default": "#ffffff"
-    },
-    {
-      "type": "color",
-      "id": "step_accent",
-      "label": "Step number accent",
-      "default": "#58ff4f"
-    },
-    {
-      "type": "text",
-      "id": "when_label",
-      "label": "When label",
-      "default": "WHEN TO USE"
-    },
-    {
-      "type": "text",
-      "id": "when_heading",
-      "label": "When heading",
-      "default": "After the park, a muddy walk or when cuddle readiness needs a reset."
-    },
-    {
-      "type": "textarea",
-      "id": "when_fallback",
-      "label": "When fallback",
-      "default": "The problem stays specific. The promise stays honest."
-    },
-    {
-      "type": "text",
-      "id": "how_label",
-      "label": "How label",
-      "default": "HOW TO USE"
+      "id": "sticker_background",
+      "label": "Sticker background",
+      "default": "#eb9b7d"
     },
     {
       "type": "header",
@@ -612,6 +388,58 @@
     },
     {
       "type": "range",
+      "id": "pp_card_image_height",
+      "min": 0,
+      "max": 600,
+      "step": 30,
+      "unit": "px",
+      "label": "Card image height (0 = automatic)",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Button controls"
+    },
+    {
+      "type": "checkbox",
+      "id": "pp_custom_buttons",
+      "label": "Customize buttons in this section",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "pp_button_background",
+      "label": "Button background",
+      "default": "#47105d"
+    },
+    {
+      "type": "color",
+      "id": "pp_button_text",
+      "label": "Button text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "pp_button_height",
+      "min": 32,
+      "max": 72,
+      "step": 4,
+      "unit": "px",
+      "label": "Button height",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "pp_button_radius",
+      "min": 0,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "label": "Button corner radius",
+      "default": 40
+    },
+    {
+      "type": "range",
       "id": "pp_min_height",
       "min": 0,
       "max": 1000,
@@ -623,14 +451,26 @@
   ],
   "blocks": [
     {
-      "type": "step",
-      "name": "Fallback step",
+      "type": "card",
+      "name": "Reason",
       "settings": [
         {
           "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "One need."
+        },
+        {
+          "type": "textarea",
           "id": "text",
-          "label": "Step",
-          "default": "Add approved product directions here."
+          "label": "Text",
+          "default": "No one-formula-fixes-all promises."
+        },
+        {
+          "type": "color",
+          "id": "accent",
+          "label": "Accent",
+          "default": "#5cf36b"
         },
         {
           "type": "header",
@@ -805,28 +645,19 @@
       ]
     }
   ],
-  "max_blocks": 5,
+  "max_blocks": 3,
   "presets": [
     {
-      "name": "Product care guide",
+      "name": "Why Pups & Paws",
       "blocks": [
         {
-          "type": "step",
-          "settings": {
-            "text": "Use as directed on the pack"
-          }
+          "type": "card"
         },
         {
-          "type": "step",
-          "settings": {
-            "text": "Apply or serve carefully"
-          }
+          "type": "card"
         },
         {
-          "type": "step",
-          "settings": {
-            "text": "Keep fresh water and praise nearby"
-          }
+          "type": "card"
         }
       ]
     }
