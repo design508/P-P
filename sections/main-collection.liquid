@@ -8,7 +8,10 @@
   assign range_heading = collection.products_count | append: ' clear solutions.'
   assign mf_eyebrow = collection.metafields.custom.eyebrow.value | default: collection.metafields.custom.eyebrow
   assign mf_description = collection.metafields.custom.short_description.value | default: collection.metafields.custom.short_description
-  assign mf_hero_image = collection.metafields.custom.hero_image.value
+  assign mf_hero_image_1 = collection.metafields.custom.hero_image_1.value
+  assign mf_hero_image_2 = collection.metafields.custom.hero_image_2.value
+  assign mf_hero_image_3 = collection.metafields.custom.hero_image_3.value
+  assign mf_hero_image_legacy = collection.metafields.custom.hero_image.value
   assign mf_accent = collection.metafields.custom.accent_color.value | default: collection.metafields.custom.accent_color
 
   if h == 'grooming'
@@ -54,10 +57,12 @@
     assign range_heading = section.settings.range_heading_override
   endif
 
-  assign has_custom_hero = false
-  if mf_hero_image != blank
-    assign has_custom_hero = true
+  assign has_collection_hero = false
+  if mf_hero_image_1 != blank or mf_hero_image_2 != blank or mf_hero_image_3 != blank or mf_hero_image_legacy != blank
+    assign has_collection_hero = true
   endif
+
+  assign has_custom_hero = has_collection_hero
   if section.settings.hero_image_1 != blank or section.settings.hero_image_1_mobile != blank
     assign has_custom_hero = true
   endif
@@ -81,9 +86,63 @@
     </div>
     {% if section.settings.show_hero_products %}
       <div class="pp-collection-hero__visual" data-float-zone>
-        {% if mf_hero_image != blank %}
-          <span class="pp-collection-float pp-collection-float--2">{{ mf_hero_image | image_url: width: 1100 | image_tag: loading:'eager', widths:'500,800,1100', alt:hero_heading }}</span>
+        {% if has_collection_hero %}
+          {% if mf_hero_image_1 != blank %}
+            <span class="pp-collection-float pp-collection-float--1">{{ mf_hero_image_1 | image_url: width: 900 | image_tag: loading: 'eager', widths: '400,600,900', alt: hero_heading }}</span>
+          {% endif %}
+          {% if mf_hero_image_2 != blank %}
+            <span class="pp-collection-float pp-collection-float--2">{{ mf_hero_image_2 | image_url: width: 900 | image_tag: loading: 'eager', widths: '400,600,900', alt: hero_heading }}</span>
+          {% elsif mf_hero_image_legacy != blank %}
+            <span class="pp-collection-float pp-collection-float--2">{{ mf_hero_image_legacy | image_url: width: 1100 | image_tag: loading: 'eager', widths: '500,800,1100', alt: hero_heading }}</span>
+          {% endif %}
+          {% if mf_hero_image_3 != blank %}
+            <span class="pp-collection-float pp-collection-float--3">{{ mf_hero_image_3 | image_url: width: 900 | image_tag: loading: 'eager', widths: '400,600,900', alt: hero_heading }}</span>
+          {% endif %}
         {% elsif has_custom_hero %}
+          {% liquid
+            assign hero_image_1_fit = section.settings.hero_image_1_fit | default: 'contain'
+            assign hero_image_1_position = section.settings.hero_image_1_position | default: 'center center'
+            assign hero_image_1_fit_m = section.settings.hero_image_1_fit_mobile | default: 'contain'
+            assign hero_image_1_position_m = section.settings.hero_image_1_position_mobile | default: 'center center'
+            assign hero_image_1_radius = section.settings.hero_image_1_radius | default: 0
+            assign hero_image_1_radius_m = section.settings.hero_image_1_radius_mobile | default: 0
+            assign hero_image_1_w = section.settings.hero_image_1_max_width | default: 0
+            assign hero_image_1_h = section.settings.hero_image_1_max_height | default: 0
+            assign hero_image_1_w_m = section.settings.hero_image_1_max_width_mobile | default: 0
+            assign hero_image_1_h_m = section.settings.hero_image_1_max_height_mobile | default: 0
+            assign hero_image_1_ha = section.settings.hero_image_1_h_align | default: 'default'
+            assign hero_image_1_va = section.settings.hero_image_1_v_align | default: 'default'
+            assign hero_image_1_ha_m = section.settings.hero_image_1_h_align_mobile | default: 'default'
+            assign hero_image_1_va_m = section.settings.hero_image_1_v_align_mobile | default: 'default'
+            assign hero_image_2_fit = section.settings.hero_image_2_fit | default: 'contain'
+            assign hero_image_2_position = section.settings.hero_image_2_position | default: 'center center'
+            assign hero_image_2_fit_m = section.settings.hero_image_2_fit_mobile | default: 'contain'
+            assign hero_image_2_position_m = section.settings.hero_image_2_position_mobile | default: 'center center'
+            assign hero_image_2_radius = section.settings.hero_image_2_radius | default: 0
+            assign hero_image_2_radius_m = section.settings.hero_image_2_radius_mobile | default: 0
+            assign hero_image_2_w = section.settings.hero_image_2_max_width | default: 0
+            assign hero_image_2_h = section.settings.hero_image_2_max_height | default: 0
+            assign hero_image_2_w_m = section.settings.hero_image_2_max_width_mobile | default: 0
+            assign hero_image_2_h_m = section.settings.hero_image_2_max_height_mobile | default: 0
+            assign hero_image_2_ha = section.settings.hero_image_2_h_align | default: 'default'
+            assign hero_image_2_va = section.settings.hero_image_2_v_align | default: 'default'
+            assign hero_image_2_ha_m = section.settings.hero_image_2_h_align_mobile | default: 'default'
+            assign hero_image_2_va_m = section.settings.hero_image_2_v_align_mobile | default: 'default'
+            assign hero_image_3_fit = section.settings.hero_image_3_fit | default: 'contain'
+            assign hero_image_3_position = section.settings.hero_image_3_position | default: 'center center'
+            assign hero_image_3_fit_m = section.settings.hero_image_3_fit_mobile | default: 'contain'
+            assign hero_image_3_position_m = section.settings.hero_image_3_position_mobile | default: 'center center'
+            assign hero_image_3_radius = section.settings.hero_image_3_radius | default: 0
+            assign hero_image_3_radius_m = section.settings.hero_image_3_radius_mobile | default: 0
+            assign hero_image_3_w = section.settings.hero_image_3_max_width | default: 0
+            assign hero_image_3_h = section.settings.hero_image_3_max_height | default: 0
+            assign hero_image_3_w_m = section.settings.hero_image_3_max_width_mobile | default: 0
+            assign hero_image_3_h_m = section.settings.hero_image_3_max_height_mobile | default: 0
+            assign hero_image_3_ha = section.settings.hero_image_3_h_align | default: 'default'
+            assign hero_image_3_va = section.settings.hero_image_3_v_align | default: 'default'
+            assign hero_image_3_ha_m = section.settings.hero_image_3_h_align_mobile | default: 'default'
+            assign hero_image_3_va_m = section.settings.hero_image_3_v_align_mobile | default: 'default'
+          %}
           <style>@media (min-width: 991px) {
   #shopify-section-{{ section.id }} .pp-collection-float--1 img { object-fit: {{ hero_image_1_fit }}; object-position: {{ hero_image_1_position }}; }
   #shopify-section-{{ section.id }} .pp-collection-float--1 {
