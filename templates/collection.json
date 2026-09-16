@@ -1,1 +1,178 @@
-{"sections":{"main":{"type":"main-collection","blocks":{"filter_grooming":{"type":"filter","settings":{"label":"Grooming","handle":"grooming","pp_block_custom":false,"pp_block_background":"#ffffff","pp_block_text":"#351042","pp_block_accent":"#ff5a0a","pp_block_heading_font":"theme","pp_block_body_font":"theme","pp_block_heading_size":28,"pp_block_body_size":14,"pp_block_padding":24,"pp_block_height":0,"pp_block_image_height":0,"pp_block_radius":24,"pp_block_animation":"inherit","pp_block_animation_delay":0}},"filter_nutrition":{"type":"filter","settings":{"label":"Nutrition","handle":"nutrition","pp_block_custom":false,"pp_block_background":"#ffffff","pp_block_text":"#351042","pp_block_accent":"#ff5a0a","pp_block_heading_font":"theme","pp_block_body_font":"theme","pp_block_heading_size":28,"pp_block_body_size":14,"pp_block_padding":24,"pp_block_height":0,"pp_block_image_height":0,"pp_block_radius":24,"pp_block_animation":"inherit","pp_block_animation_delay":0}},"filter_treats":{"type":"filter","settings":{"label":"Treats","handle":"treats","pp_block_custom":false,"pp_block_background":"#ffffff","pp_block_text":"#351042","pp_block_accent":"#ff5a0a","pp_block_heading_font":"theme","pp_block_body_font":"theme","pp_block_heading_size":28,"pp_block_body_size":14,"pp_block_padding":24,"pp_block_height":0,"pp_block_image_height":0,"pp_block_radius":24,"pp_block_animation":"inherit","pp_block_animation_delay":0}}},"block_order":["filter_grooming","filter_nutrition","filter_treats"],"settings":{"eyebrow_override":"","heading_override":"","text_override":"","range_eyebrow_override":"","range_heading_override":"","intro_text":"Choose a product to see benefits, when to use it and a simple routine.","show_view_all":true,"view_all_label":"View all products","view_all_link":"","show_hero_products":true,"hero_background":"#fffafd","hero_image_1":"shopify:\/\/shop_images\/4.png","hero_link_1":"","hero_image_2":"shopify:\/\/shop_images\/6.png","hero_link_2":"","hero_image_3":"shopify:\/\/shop_images\/3.png","hero_link_3":"","show_search_filters":true,"search_placeholder":"Search by product or concern","all_filter_label":"All","product_count_label":"products","products_per_page":24,"pp_custom_colors":false,"pp_background":"#ffffff","pp_text_color":"#351042","pp_accent_color":"#ff5a0a","pp_custom_type":false,"pp_heading_font":"theme","pp_heading_weight":"700","pp_heading_size":64,"pp_heading_size_mobile":44,"pp_heading_tracking":-3,"pp_body_font":"theme","pp_body_weight":"400","pp_body_size":16,"pp_body_size_mobile":15,"pp_line_height":16,"pp_custom_spacing":false,"pp_padding_top":80,"pp_padding_bottom":80,"pp_padding_top_mobile":56,"pp_padding_bottom_mobile":56,"pp_content_width":0,"pp_disable_motion":false,"pp_min_height":0}}},"order":["main"]}
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-collection",
+      "blocks": {
+        "filter_grooming": {
+          "type": "filter",
+          "settings": {
+            "label": "Grooming",
+            "handle": "grooming",
+            "pp_block_custom": false,
+            "pp_block_background": "#ffffff",
+            "pp_block_text": "#351042",
+            "pp_block_accent": "#ff5a0a",
+            "pp_block_heading_font": "theme",
+            "pp_block_body_font": "theme",
+            "pp_block_heading_size": 28,
+            "pp_block_body_size": 14,
+            "pp_block_padding": 24,
+            "pp_block_height": 0,
+            "pp_block_image_height": 0,
+            "pp_block_radius": 24,
+            "pp_block_animation": "inherit",
+            "pp_block_animation_delay": 0
+          }
+        },
+        "filter_nutrition": {
+          "type": "filter",
+          "settings": {
+            "label": "Nutrition",
+            "handle": "nutrition",
+            "pp_block_custom": false,
+            "pp_block_background": "#ffffff",
+            "pp_block_text": "#351042",
+            "pp_block_accent": "#ff5a0a",
+            "pp_block_heading_font": "theme",
+            "pp_block_body_font": "theme",
+            "pp_block_heading_size": 28,
+            "pp_block_body_size": 14,
+            "pp_block_padding": 24,
+            "pp_block_height": 0,
+            "pp_block_image_height": 0,
+            "pp_block_radius": 24,
+            "pp_block_animation": "inherit",
+            "pp_block_animation_delay": 0
+          }
+        },
+        "filter_treats": {
+          "type": "filter",
+          "settings": {
+            "label": "Treats",
+            "handle": "treats",
+            "pp_block_custom": false,
+            "pp_block_background": "#ffffff",
+            "pp_block_text": "#351042",
+            "pp_block_accent": "#ff5a0a",
+            "pp_block_heading_font": "theme",
+            "pp_block_body_font": "theme",
+            "pp_block_heading_size": 28,
+            "pp_block_body_size": 14,
+            "pp_block_padding": 24,
+            "pp_block_height": 0,
+            "pp_block_image_height": 0,
+            "pp_block_radius": 24,
+            "pp_block_animation": "inherit",
+            "pp_block_animation_delay": 0
+          }
+        }
+      },
+      "block_order": [
+        "filter_grooming",
+        "filter_nutrition",
+        "filter_treats"
+      ],
+      "settings": {
+        "eyebrow_override": "",
+        "heading_override": "",
+        "text_override": "",
+        "range_eyebrow_override": "",
+        "range_heading_override": "",
+        "intro_text": "Choose a product to see benefits, when to use it and a simple routine.",
+        "show_view_all": true,
+        "view_all_label": "View all products",
+        "view_all_link": "",
+        "show_hero_products": true,
+        "hero_background": "#fffafd",
+        "hero_image_1": "shopify://shop_images/CS1.png",
+        "hero_image_1_fit": "contain",
+        "hero_image_1_position": "center center",
+        "hero_image_1_fit_mobile": "contain",
+        "hero_image_1_position_mobile": "center center",
+        "hero_image_1_radius": 0,
+        "hero_image_1_radius_mobile": 0,
+        "hero_image_1_max_width": 0,
+        "hero_image_1_max_height": 0,
+        "hero_image_1_max_width_mobile": 0,
+        "hero_image_1_max_height_mobile": 0,
+        "hero_image_1_h_align": "default",
+        "hero_image_1_v_align": "default",
+        "hero_image_1_h_align_mobile": "default",
+        "hero_image_1_v_align_mobile": "default",
+        "hero_link_1": "",
+        "hero_image_2": "shopify://shop_images/6.png",
+        "hero_image_2_fit": "contain",
+        "hero_image_2_position": "center center",
+        "hero_image_2_fit_mobile": "contain",
+        "hero_image_2_position_mobile": "center center",
+        "hero_image_2_radius": 0,
+        "hero_image_2_radius_mobile": 0,
+        "hero_image_2_max_width": 0,
+        "hero_image_2_max_height": 0,
+        "hero_image_2_max_width_mobile": 0,
+        "hero_image_2_max_height_mobile": 0,
+        "hero_image_2_h_align": "default",
+        "hero_image_2_v_align": "default",
+        "hero_image_2_h_align_mobile": "default",
+        "hero_image_2_v_align_mobile": "default",
+        "hero_link_2": "",
+        "hero_image_3": "shopify://shop_images/3.png",
+        "hero_image_3_fit": "contain",
+        "hero_image_3_position": "center center",
+        "hero_image_3_fit_mobile": "contain",
+        "hero_image_3_position_mobile": "center center",
+        "hero_image_3_radius": 0,
+        "hero_image_3_radius_mobile": 0,
+        "hero_image_3_max_width": 0,
+        "hero_image_3_max_height": 0,
+        "hero_image_3_max_width_mobile": 0,
+        "hero_image_3_max_height_mobile": 0,
+        "hero_image_3_h_align": "default",
+        "hero_image_3_v_align": "default",
+        "hero_image_3_h_align_mobile": "default",
+        "hero_image_3_v_align_mobile": "default",
+        "hero_link_3": "",
+        "show_search_filters": true,
+        "search_placeholder": "Search by product or concern",
+        "all_filter_label": "All",
+        "product_count_label": "products",
+        "products_per_page": 24,
+        "pp_custom_colors": false,
+        "pp_background": "#ffffff",
+        "pp_text_color": "#351042",
+        "pp_accent_color": "#ff5a0a",
+        "pp_custom_type": false,
+        "pp_heading_font": "theme",
+        "pp_heading_weight": "700",
+        "pp_heading_size": 64,
+        "pp_heading_size_mobile": 44,
+        "pp_heading_tracking": -3,
+        "pp_body_font": "theme",
+        "pp_body_weight": "400",
+        "pp_body_size": 16,
+        "pp_body_size_mobile": 15,
+        "pp_line_height": 16,
+        "pp_custom_spacing": false,
+        "pp_padding_top": 80,
+        "pp_padding_bottom": 80,
+        "pp_padding_top_mobile": 56,
+        "pp_padding_bottom_mobile": 56,
+        "pp_content_width": 0,
+        "pp_disable_motion": false,
+        "pp_min_height": 0
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}
