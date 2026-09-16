@@ -24,31 +24,40 @@
   <div class="page-width">
 
     {% if section.settings.show_breadcrumbs %}
-      <nav class="pp-breadcrumb" aria-label="Breadcrumb">
+  <nav class="pp-breadcrumb" aria-label="Breadcrumb">
 
-        <a href="{{ routes.root_url }}">
-          {{ section.settings.home_label }}
-        </a>
+    <a href="{{ routes.root_url }}">
+      {{ section.settings.home_label }}
+    </a>
 
-        <span>/</span>
+    <span>/</span>
 
-        {% if product.collections.first %}
+    {% assign breadcrumb_collection = blank %}
 
-          <a href="{{ product.collections.first.url }}">
-            {{ product.collections.first.title }}
-          </a>
+    {% for product_collection in product.collections %}
+      {% if product_collection.handle == 'grooming'
+        or product_collection.handle == 'nutrition'
+        or product_collection.handle == 'treats'
+      %}
+        {% assign breadcrumb_collection = product_collection %}
+        {% break %}
+      {% endif %}
+    {% endfor %}
 
-          <span>/</span>
+    {% if breadcrumb_collection %}
+      <a href="{{ breadcrumb_collection.url }}">
+        {{ breadcrumb_collection.title }}
+      </a>
 
-        {% endif %}
-
-        <span>
-          {{ product.title }}
-        </span>
-
-      </nav>
+      <span>/</span>
     {% endif %}
 
+    <span aria-current="page">
+      {{ product.title }}
+    </span>
+
+  </nav>
+{% endif %}
 
     <div class="pp-pdp__top">
 
