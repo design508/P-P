@@ -1,0 +1,565 @@
+{% render 'section-editor-styles', section: section %}
+{{ 'pp-real-life-life.css' | asset_url | stylesheet_tag }}
+<section class="live-real-life pp-section" style="--life-bg:{{ section.settings.background }};--life-text:{{ section.settings.text_color }}">
+  <div class="page-width live-real-life__grid">
+    <div class="pp-reveal">
+      <div class="live-eyebrow live-eyebrow--light">{{ section.settings.eyebrow }}</div>
+      <h2>{{ section.settings.heading | newline_to_br }}</h2>
+    </div>
+    <div class="live-real-life__copy pp-reveal">
+      <p>{{ section.settings.text }}</p>
+      <div class="live-real-life__chips">{% for block in section.blocks %}<span data-pp-block-id="{{ block.id }}" {{ block.shopify_attributes }}><i style="background:{{ block.settings.color }};--chip-glow:{{ block.settings.color }}"></i>{{ block.settings.text }}</span>{% endfor %}</div>
+      {% if section.settings.button_label != blank %}<a class="pp-btn pp-btn--white" href="{{ section.settings.button_link | default: '/collections/grooming' }}">{{ section.settings.button_label }} {% render 'icon-arrow' %}</a>{% endif %}
+    </div>
+  </div>
+  <div class="live-real-life__marquee" aria-hidden="true"><span>{{ section.settings.marquee }}</span><span>{{ section.settings.marquee }}</span></div>
+</section>
+{% schema %}
+{
+  "name": "Built for real pet life",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "BUILT FOR REAL PET LIFE"
+    },
+    {
+      "type": "textarea",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Specific care.\nSimple routines."
+    },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Text",
+      "default": "For heat, humidity, muddy walks and the cuddle that follows."
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "Explore grooming"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "text",
+      "id": "marquee",
+      "label": "Moving line",
+      "default": "MUDDY WALKS · CLEAN CUDDLES · REAL HOMES · INDIA-READY · "
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background",
+      "default": "#47105d"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text colour",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Professional section controls"
+    },
+    {
+      "type": "paragraph",
+      "content": "Optional overrides. Leave disabled to preserve the original V7 design."
+    },
+    {
+      "type": "checkbox",
+      "id": "pp_custom_colors",
+      "label": "Override section colours",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "pp_background",
+      "label": "Background colour",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "pp_text_color",
+      "label": "Text colour",
+      "default": "#351042"
+    },
+    {
+      "type": "color",
+      "id": "pp_accent_color",
+      "label": "Accent colour",
+      "default": "#ff5a0a"
+    },
+    {
+      "type": "checkbox",
+      "id": "pp_custom_type",
+      "label": "Override section typography",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "pp_heading_font",
+      "label": "Heading font",
+      "default": "theme",
+      "options": [
+        {
+          "value": "theme",
+          "label": "Use theme default"
+        },
+        {
+          "value": "aquatail",
+          "label": "Aquatail — included"
+        },
+        {
+          "value": "futura",
+          "label": "Futura — included"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "pp_heading_weight",
+      "label": "Heading weight",
+      "default": "700",
+      "options": [
+        {
+          "value": "400",
+          "label": "Regular"
+        },
+        {
+          "value": "600",
+          "label": "Semibold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        },
+        {
+          "value": "900",
+          "label": "Black"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "pp_heading_size",
+      "min": 24,
+      "max": 104,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading size — desktop",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "pp_heading_size_mobile",
+      "min": 22,
+      "max": 70,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading size — mobile",
+      "default": 44
+    },
+    {
+      "type": "range",
+      "id": "pp_heading_tracking",
+      "min": -8,
+      "max": 10,
+      "step": 1,
+      "unit": "%",
+      "label": "Heading letter spacing",
+      "default": -3
+    },
+    {
+      "type": "select",
+      "id": "pp_body_font",
+      "label": "Body font",
+      "default": "theme",
+      "options": [
+        {
+          "value": "theme",
+          "label": "Use theme default"
+        },
+        {
+          "value": "aquatail",
+          "label": "Aquatail — included"
+        },
+        {
+          "value": "futura",
+          "label": "Futura — included"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "pp_body_weight",
+      "label": "Body weight",
+      "default": "400",
+      "options": [
+        {
+          "value": "400",
+          "label": "Regular"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semibold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "pp_body_size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Body size — desktop",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "pp_body_size_mobile",
+      "min": 12,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "label": "Body size — mobile",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "pp_line_height",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "label": "Body line height",
+      "default": 16
+    },
+    {
+      "type": "checkbox",
+      "id": "pp_custom_spacing",
+      "label": "Override section spacing",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "pp_padding_top",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding — desktop",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "pp_padding_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding — desktop",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "pp_padding_top_mobile",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding — mobile",
+      "default": 56
+    },
+    {
+      "type": "range",
+      "id": "pp_padding_bottom_mobile",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding — mobile",
+      "default": 56
+    },
+    {
+      "type": "range",
+      "id": "pp_content_width",
+      "min": 0,
+      "max": 1800,
+      "step": 100,
+      "unit": "px",
+      "label": "Content width (0 = theme default)",
+      "default": 0
+    },
+    {
+      "type": "checkbox",
+      "id": "pp_disable_motion",
+      "label": "Disable motion in this section",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Button controls"
+    },
+    {
+      "type": "checkbox",
+      "id": "pp_custom_buttons",
+      "label": "Customize buttons in this section",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "pp_button_background",
+      "label": "Button background",
+      "default": "#47105d"
+    },
+    {
+      "type": "color",
+      "id": "pp_button_text",
+      "label": "Button text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "pp_button_height",
+      "min": 32,
+      "max": 72,
+      "step": 4,
+      "unit": "px",
+      "label": "Button height",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "pp_button_radius",
+      "min": 0,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "label": "Button corner radius",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "pp_min_height",
+      "min": 0,
+      "max": 1000,
+      "step": 50,
+      "unit": "px",
+      "label": "Section minimum height (0 = automatic)",
+      "default": 0
+    }
+  ],
+  "blocks": [
+    {
+      "type": "point",
+      "name": "Life point",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "Heat & humidity"
+        },
+        {
+          "type": "color",
+          "id": "color",
+          "label": "Dot colour",
+          "default": "#61f46f"
+        },
+        {
+          "type": "header",
+          "content": "Individual block design"
+        },
+        {
+          "type": "checkbox",
+          "id": "pp_block_custom",
+          "label": "Customize this block",
+          "default": false
+        },
+        {
+          "type": "color",
+          "id": "pp_block_background",
+          "label": "Card / block background",
+          "default": "#ffffff"
+        },
+        {
+          "type": "color",
+          "id": "pp_block_text",
+          "label": "Text colour",
+          "default": "#351042"
+        },
+        {
+          "type": "color",
+          "id": "pp_block_accent",
+          "label": "Accent / border colour",
+          "default": "#ff5a0a"
+        },
+        {
+          "type": "select",
+          "id": "pp_block_heading_font",
+          "label": "Heading font",
+          "default": "theme",
+          "options": [
+            {
+              "value": "theme",
+              "label": "Use theme default"
+            },
+            {
+              "value": "aquatail",
+              "label": "Aquatail — included"
+            },
+            {
+              "value": "futura",
+              "label": "Futura — included"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "pp_block_body_font",
+          "label": "Body font",
+          "default": "theme",
+          "options": [
+            {
+              "value": "theme",
+              "label": "Use theme default"
+            },
+            {
+              "value": "aquatail",
+              "label": "Aquatail — included"
+            },
+            {
+              "value": "futura",
+              "label": "Futura — included"
+            }
+          ]
+        },
+        {
+          "type": "range",
+          "id": "pp_block_heading_size",
+          "min": 16,
+          "max": 64,
+          "step": 2,
+          "unit": "px",
+          "label": "Heading size",
+          "default": 28
+        },
+        {
+          "type": "range",
+          "id": "pp_block_body_size",
+          "min": 10,
+          "max": 24,
+          "step": 1,
+          "unit": "px",
+          "label": "Body size",
+          "default": 14
+        },
+        {
+          "type": "range",
+          "id": "pp_block_padding",
+          "min": 0,
+          "max": 64,
+          "step": 4,
+          "unit": "px",
+          "label": "Inner padding",
+          "default": 24
+        },
+        {
+          "type": "range",
+          "id": "pp_block_height",
+          "min": 0,
+          "max": 800,
+          "step": 40,
+          "unit": "px",
+          "label": "Minimum height (0 = automatic)",
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "pp_block_image_height",
+          "min": 0,
+          "max": 600,
+          "step": 30,
+          "unit": "px",
+          "label": "Image height (0 = automatic)",
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "pp_block_radius",
+          "min": 0,
+          "max": 48,
+          "step": 4,
+          "unit": "px",
+          "label": "Corner radius",
+          "default": 24
+        },
+        {
+          "type": "select",
+          "id": "pp_block_animation",
+          "label": "Entrance animation",
+          "default": "inherit",
+          "options": [
+            {
+              "value": "inherit",
+              "label": "Section default"
+            },
+            {
+              "value": "fade",
+              "label": "Fade"
+            },
+            {
+              "value": "rise",
+              "label": "Rise up"
+            },
+            {
+              "value": "pop",
+              "label": "Soft pop"
+            },
+            {
+              "value": "wave",
+              "label": "Gentle wave"
+            },
+            {
+              "value": "none",
+              "label": "None"
+            }
+          ]
+        },
+        {
+          "type": "range",
+          "id": "pp_block_animation_delay",
+          "min": 0,
+          "max": 1000,
+          "step": 100,
+          "unit": "ms",
+          "label": "Animation delay",
+          "default": 0
+        }
+      ]
+    }
+  ],
+  "max_blocks": 4,
+  "presets": [
+    {
+      "name": "Built for real pet life"
+    }
+  ]
+}
+{% endschema %}

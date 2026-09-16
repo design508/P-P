@@ -1,0 +1,51 @@
+{% liquid
+  assign card_product = product
+  assign fallback = settings.fallback_product
+  assign card_badges = card_product.metafields.custom.card_badges.value
+  assign short_tagline = card_product.metafields.custom.short_tagline.value | default: card_product.metafields.custom.short_tagline
+
+  if card_badges == blank
+    assign single_badge = card_product.metafields.custom.card_badge.value | default: card_product.metafields.custom.card_badge
+  endif
+%}
+<article class="pp-card">
+  <a class="pp-card__media" href="{{ card_product.url }}">
+    {%- if card_badges != blank -%}
+      <div class="pp-card__badges">
+        {%- for badge in card_badges limit: 4 -%}
+          {%- if badge != blank -%}<span class="pp-card__badge">{{ badge }}</span>{%- endif -%}
+        {%- endfor -%}
+      </div>
+    {%- elsif single_badge != blank -%}
+      <div class="pp-card__badges">
+        <span class="pp-card__badge">{{ single_badge }}</span>
+      </div>
+    {%- endif -%}
+    {% if card_product.featured_image %}
+      {{ card_product.featured_image | image_url: width: 900 | image_tag: loading: 'lazy', widths: '360,540,720,900', alt: card_product.title }}
+    {% elsif fallback != blank and fallback.featured_image %}
+      {{ fallback.featured_image | image_url: width: 900 | image_tag: loading: 'lazy', alt: card_product.title }}
+    {% else %}
+      <div class="pp-placeholder">{{ 'product-1' | placeholder_svg_tag }}</div>
+    {% endif %}
+  </a>
+  <div class="pp-card__body">
+    {% if eyebrow != blank %}<span class="pp-kicker">{{ eyebrow }}</span>{% endif %}
+    <h3><a href="{{ card_product.url }}">{{ card_product.title }}</a></h3>
+    {% if settings.card_show_description %}
+      {% if short_tagline != blank %}<p>{{ short_tagline }}</p>{% elsif card_product.description != blank %}<p>{{ card_product.description | strip_html | truncate: settings.card_description_length }}</p>{% endif %}
+    {% endif %}
+    <div class="pp-card__price">
+      {% if card_product.price_varies %}{{ settings.card_from_label }} {% endif %}{{ card_product.price | money }}
+      {% if settings.card_show_compare_price and card_product.compare_at_price > card_product.price %}
+        <s class="pp-card__compare">{{ card_product.compare_at_price | money }}</s>
+      {% endif %}
+    </div>
+    {% if settings.card_show_quick_add %}<form method="post" action="{{ routes.cart_add_url }}">
+      <input type="hidden" name="id" value="{{ card_product.selected_or_first_available_variant.id }}">
+      <button class="pp-btn pp-btn--orange pp-btn--wide" type="submit" {% unless card_product.available %}disabled{% endunless %}>
+        {% render 'icon-bag' %} {% if card_product.available %}{{ settings.card_add_label }}{% else %}{{ settings.card_sold_out_label }}{% endif %}
+      </button>
+    </form>{% endif %}
+  </div>
+</article>

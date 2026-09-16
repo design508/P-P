@@ -1,0 +1,15 @@
+{% if settings.popup_enable %}
+<div class="pp-popup" data-site-popup data-delay="{{ settings.popup_delay | times: 1000 }}" data-frequency="{{ settings.popup_frequency }}" aria-hidden="true">
+  <button class="pp-popup__overlay" data-popup-close aria-label="Close popup"></button>
+  <div class="pp-popup__card{% if settings.popup_image == blank %} pp-popup__card--text{% endif %}" role="dialog" aria-modal="true" aria-label="{{ settings.popup_heading | escape }}">
+    <button class="pp-popup__close" type="button" data-popup-close aria-label="Close popup">×</button>
+    {% if settings.popup_image != blank %}<div class="pp-popup__media">{{ settings.popup_image | image_url: width: 900 | image_tag: loading:'lazy', alt: settings.popup_heading }}</div>{% endif %}
+    <div class="pp-popup__copy">
+      {% if settings.popup_eyebrow != blank %}<span class="pp-kicker pp-kicker--pink">{{ settings.popup_eyebrow }}</span>{% endif %}
+      <h2>{{ settings.popup_heading }}</h2>
+      <p>{{ settings.popup_text }}</p>
+      {% if settings.popup_button_label != blank %}<a class="pp-btn pp-btn--orange" href="{{ settings.popup_button_link | default: routes.all_products_collection_url }}" data-popup-close>{{ settings.popup_button_label }} {% render 'icon-arrow' %}</a>{% endif %}
+    </div>
+  </div>
+</div>
+{% endif %}

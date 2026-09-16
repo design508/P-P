@@ -1,0 +1,75 @@
+/* ===========================================================================
+   "Start with what they need." (Shop by Collection) — drifting halo glow
+   behind each card's image on hover, plus a small hop on the "↗" arrow.
+   Loaded only by sections/live-collections.liquid. .live-collection-card__
+   visual already uses its own :before for a static soft-white backdrop
+   circle (theme.css), so the halo below uses :after instead and reads
+   the card's own --collection-accent, set inline per block, so it always
+   matches whatever colour the merchant picks with no extra configuration.
+   The visual box already has overflow:hidden, so the halo stays tidy
+   inside the card rather than spilling into the grid.
+   =========================================================================== */
+
+.live-collection-card__visual:after {
+  content: "";
+  position: absolute;
+  width: 70%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  left: 50%;
+  bottom: -10%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--collection-accent) 38%, transparent) 0%, transparent 72%);
+  opacity: 0;
+  transform: translateX(-50%) scale(0.85);
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.live-collection-card:hover .live-collection-card__visual:after {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .live-collection-card:hover .live-collection-card__visual:after {
+    animation: pp-collection-halo-drift 3.2s ease-in-out infinite;
+  }
+}
+
+@keyframes pp-collection-halo-drift {
+  0%, 100% { transform: translateX(-50%) scale(0.85) translateY(0); }
+  50% { transform: translateX(-46%) scale(1) translateY(-6px); }
+}
+
+.live-collection-card__copy > b {
+  display: inline-block;
+  transition: transform 0.2s ease;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .live-collection-card:hover .live-collection-card__copy > b {
+    animation: pp-arrow-hop 0.6s ease;
+  }
+}
+
+@keyframes pp-arrow-hop {
+  0%, 100% { transform: translate(0, 0); }
+  35% { transform: translate(3px, -3px); }
+  65% { transform: translate(-1px, 1px); }
+}
+
+@media screen and (max-width: 749px) {
+  .live-collection-card__visual:after { width: 55%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .live-collection-card:hover .live-collection-card__visual:after,
+  .live-collection-card:hover .live-collection-card__copy > b {
+    animation: none !important;
+  }
+}
+
+body.pp-motion-off .live-collection-card:hover .live-collection-card__visual:after,
+body.pp-motion-off .live-collection-card:hover .live-collection-card__copy > b {
+  animation: none !important;
+}

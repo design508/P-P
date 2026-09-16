@@ -1,0 +1,104 @@
+/* ===========================================================================
+   Live design hero — idle floating product pack + badge wobble.
+   Loaded only by sections/live-hero.liquid. Targets the existing
+   .live-hero__product--1..5 images directly (leaving the container's own
+   hover lift/rotate, defined in theme.css, completely untouched) and the
+   round "STILL ALLOWED ON THE BED" badge, so the hero reads as gently
+   alive rather than a frozen product shot even before anyone touches it.
+   This file loads after theme.css, so at equal specificity it wins the
+   cascade without needing !important anywhere except the explicit
+   motion-off override below.
+   =========================================================================== */
+
+@media (prefers-reduced-motion: no-preference) {
+  .live-hero__product img { animation: pp-hero-float 4.6s ease-in-out infinite; }
+  .live-hero__product--1 img { animation-delay: 0s; }
+  .live-hero__product--2 img { animation-delay: 0.5s; }
+  .live-hero__product--3 img { animation-delay: 1s; }
+  .live-hero__product--4 img { animation-delay: 1.5s; }
+  .live-hero__product--5 img { animation-delay: 2s; }
+
+  .live-hero__badge { animation: pp-hero-badge-wobble 6.5s ease-in-out infinite; }
+}
+
+@keyframes pp-hero-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-7px); }
+}
+
+@keyframes pp-hero-badge-wobble {
+  0%, 100% { transform: rotate(8deg); }
+  50% { transform: rotate(4deg); }
+}
+
+@media screen and (max-width: 749px) {
+  .live-hero__product img { animation-duration: 3.6s; }
+  @keyframes pp-hero-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .live-hero__product img,
+  .live-hero__badge {
+    animation: none !important;
+  }
+}
+
+body.pp-motion-off .live-hero__product img,
+body.pp-motion-off .live-hero__badge {
+  animation: none !important;
+}
+
+/* ===========================================================================
+   Main hero image shape fix. theme.css's .live-hero__lifestyle was built for
+   a faint, low-opacity background texture: border-radius:48% 52% 46% 54%
+   (an organic "blob" shape) plus opacity:.28 and mix-blend-mode:multiply.
+   live-hero.liquid's own inline <style> already forces opacity/blend back to
+   normal so the real hero photo shows at full strength once someone uploads
+   one — but it never touched the border-radius, so that photo still gets
+   clipped into the same blob the background texture was designed for,
+   instead of filling the plain rectangle the editor's own "Select main hero
+   image" placeholder shows (that placeholder uses a much more modest
+   clamp(24px,1.9444vw,38px) rounded-rectangle radius). Matching that same
+   radius here means the uploaded photo renders in exactly the shape/ratio of
+   the blank space next to the copy, the same box the placeholder previews. */
+.live-hero__lifestyle {
+  border-radius: clamp(24px, 1.9444vw, 38px);
+}
+
+/* theme.css also sets .live-hero__lifestyle img{object-fit:cover}, which
+   fills the box completely but crops whatever part of the photo doesn't
+   match the box's own proportions. Switched to contain so the whole
+   uploaded photo stays visible inside the placeholder's shape instead —
+   any leftover space this creates on the sides or top/bottom is preferred
+   over cropping the image. */
+.live-hero__lifestyle img {
+  object-fit: contain;
+}
+
+/* Desktop only (>=991px, matching the breakpoint theme.css itself already
+   uses for this section) — match the image column's height to the text
+   column's actual rendered height, instead of each column sizing off its
+   own independently-tuned min-height clamp() (theme.css:
+   .live-hero__grid{min-height:clamp(440px,36vw,700px)} and
+   .live-hero__stage{min-height:clamp(395px,32.3vw,628px)}), which is why
+   the two didn't line up before. Every child of .live-hero__stage (the
+   photo, blobs, floating word, product pack, badge) is positioned
+   absolutely, so the stage itself has no real height from its own content
+   — removing both min-heights and switching the grid to align-items:stretch
+   lets the row size itself entirely from .live-hero__copy (the only column
+   with real in-flow content) and then stretches the stage to that same
+   height, so the image always matches the text block exactly, however long
+   or short the copy is. Mobile/tablet (<=990px) keep their own separate
+   rules untouched below 991px, so this doesn't change anything there. */
+@media (min-width: 991px) {
+  .live-hero__grid {
+    align-items: stretch;
+    min-height: 0;
+  }
+  .live-hero__stage {
+    min-height: 0;
+  }
+}

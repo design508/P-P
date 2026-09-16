@@ -1,0 +1,141 @@
+{% comment %}
+  pp-footer-parade — "Goodnight Parade" (v2 — redesigned)
+  A small hand-drawn dog and cat stroll across the bottom of the footer, sit
+  together and form a tiny heart with their tails, then fade and loop. Pure
+  inline SVG + CSS (assets/pp-footer-parade.css) — no image or video files,
+  transparent background, colours read the footer's own Accent / Text colour
+  settings so the parade always matches the merchant's palette automatically.
+
+  v2 changes: solid cute "flat sticker" shapes instead of thin wireframe
+  outlines (bigger heads, filled bodies, soft dark linework on top), idle
+  ear-twitch + blink micro-animations for extra life, and a tap/click
+  interaction — clicking or tapping the pets makes them stop, sit and pop a
+  little heart + sparkles right away, then they resume their stroll. Hovering
+  one pet also quickens its tail/ear for a moment. JS is only used for that
+  click reaction and the hover accent; the walk/sit/heart/paw-print loop
+  itself stays pure CSS.
+{% endcomment %}
+<div class="pp-parade" data-pp-parade style="--parade-duration:{{ section.settings.parade_speed | default: 18 }}s;--pp-parade-accent:{{ section.settings.accent_color | default: '#61f46f' }};--pp-parade-cream:{{ section.settings.text_color | default: '#ffffff' }}">
+  <svg width="0" height="0" style="position:absolute">
+    <symbol id="pp-parade-print" viewBox="-6 -6 12 12">
+      <ellipse cx="0" cy="3.4" rx="3.3" ry="2.5" />
+      <circle cx="-3.3" cy="-1.1" r="1.1" />
+      <circle cx="0" cy="-2.4" r="1.15" />
+      <circle cx="3.3" cy="-1.1" r="1.1" />
+    </symbol>
+    <symbol id="pp-parade-spark" viewBox="0 0 20 20">
+      <path d="M10,0 L12,8 L20,10 L12,12 L10,20 L8,12 L0,10 L8,8 Z" />
+    </symbol>
+  </svg>
+
+  <span class="pp-parade__print" style="left:2%; animation-delay:calc(var(--parade-duration) * -0.05)"><svg viewBox="-6 -6 12 12" width="15" height="15" aria-hidden="true"><use href="#pp-parade-print" /></svg></span>
+  <span class="pp-parade__print" style="left:8%; animation-delay:calc(var(--parade-duration) * -0.12)"><svg viewBox="-6 -6 12 12" width="15" height="15" aria-hidden="true"><use href="#pp-parade-print" /></svg></span>
+  <span class="pp-parade__print" style="left:14%; animation-delay:calc(var(--parade-duration) * -0.19)"><svg viewBox="-6 -6 12 12" width="15" height="15" aria-hidden="true"><use href="#pp-parade-print" /></svg></span>
+  <span class="pp-parade__print" style="left:19%; animation-delay:calc(var(--parade-duration) * -0.26)"><svg viewBox="-6 -6 12 12" width="15" height="15" aria-hidden="true"><use href="#pp-parade-print" /></svg></span>
+  <span class="pp-parade__print" style="left:24%; animation-delay:calc(var(--parade-duration) * -0.33)"><svg viewBox="-6 -6 12 12" width="15" height="15" aria-hidden="true"><use href="#pp-parade-print" /></svg></span>
+
+  <div class="pp-parade__scene" tabindex="0" role="button" aria-label="Say hi to the pets">
+    <div class="pp-parade__bounce">
+      <svg class="pp-parade__svg" viewBox="0 0 170 76" preserveAspectRatio="xMidYMax meet" aria-hidden="true">
+
+        {% comment %} ===== CAT (left, faces right) ===== {% endcomment %}
+        <path class="pp-parade__tail pp-parade__tail--cat" style="transform-origin:14px 52px" d="M14,54 C4,50 2,36 10,26 C13,21 20,20 23,24" />
+        <ellipse class="pp-parade__body" cx="29" cy="50" rx="15" ry="11" />
+        <g class="pp-parade__legs pp-parade__legs--walk">
+          <rect x="19" y="57" width="5" height="11" rx="2.5" />
+          <rect x="26" y="58" width="5" height="11" rx="2.5" />
+          <rect x="33" y="58" width="5" height="11" rx="2.5" />
+          <rect x="40" y="57" width="5" height="11" rx="2.5" />
+        </g>
+        <g class="pp-parade__legs pp-parade__legs--sit">
+          <path d="M21,52 Q16,60 18,66" />
+          <path d="M38,54 Q41,60 39,66" />
+          <ellipse class="pp-parade__haunch" cx="30" cy="60" rx="16" ry="9" />
+        </g>
+        <g class="pp-parade__cat-head" style="transform-origin:44px 40px">
+          <g class="pp-parade__ear pp-parade__ear--cat">
+            <path class="pp-parade__ear-outer" d="M41,27 L38,17 L46,24 Z" />
+            <path class="pp-parade__ear-inner" d="M41.4,25.2 L40,19.5 L44.4,23.4 Z" />
+            <path class="pp-parade__ear-outer" d="M52,26 L57,17 L54,27 Z" />
+            <path class="pp-parade__ear-inner" d="M52.4,24.6 L55.4,19 L53.8,25 Z" />
+          </g>
+          <circle class="pp-parade__head" cx="48" cy="36" r="11.5" />
+          <circle class="pp-parade__eye pp-parade__eye--cat" cx="51.5" cy="35" r="1.4" />
+          <path class="pp-parade__nose" d="M56.2,36.6 L59.2,36.6 L57.7,38.6 Z" />
+          <path class="pp-parade__mouth" d="M57.7,38.6 Q55.2,40.6 52.8,39.2 M57.7,38.6 Q60.2,40.6 62.4,39" />
+          <line class="pp-parade__whisker" x1="52.5" y1="37.6" x2="45.5" y2="37" />
+        </g>
+
+        {% comment %} ===== SPARK BURST + HEART (between them) ===== {% endcomment %}
+        <use class="pp-parade__spark pp-parade__spark--1" href="#pp-parade-spark" x="60" y="24" width="7" height="7" />
+        <use class="pp-parade__spark pp-parade__spark--2" href="#pp-parade-spark" x="88" y="20" width="6" height="6" />
+        <use class="pp-parade__spark pp-parade__spark--3" href="#pp-parade-spark" x="72" y="16" width="5" height="5" />
+        <path class="pp-parade__heart" d="M74,38 C71,33 64,34 64,40 C64,45 74,52 74,52 C74,52 84,45 84,40 C84,34 77,33 74,38 Z" />
+
+        {% comment %} ===== DOG (right, faces left) ===== {% endcomment %}
+        <path class="pp-parade__tail pp-parade__tail--dog" style="transform-origin:157px 50px" d="M156,52 Q167,45 163,32" />
+        <ellipse class="pp-parade__body" cx="142" cy="50" rx="17" ry="12" />
+        <g class="pp-parade__legs pp-parade__legs--walk">
+          <rect x="125" y="58" width="6" height="12" rx="3" />
+          <rect x="133" y="59" width="6" height="12" rx="3" />
+          <rect x="141" y="59" width="6" height="12" rx="3" />
+          <rect x="149" y="58" width="6" height="12" rx="3" />
+        </g>
+        <g class="pp-parade__legs pp-parade__legs--sit">
+          <path d="M128,54 Q123,61 126,67" />
+          <path d="M150,55 Q154,61 151,67" />
+          <ellipse class="pp-parade__haunch" cx="143" cy="61" rx="18" ry="9" />
+        </g>
+        <g class="pp-parade__ear pp-parade__ear--dog" style="transform-origin:122px 27px">
+          <path class="pp-parade__ear-outer" d="M118,25 Q129,21 126,34 Q120,37 116,30 Z" />
+          <path class="pp-parade__ear-inner" d="M120,27.5 Q126,26 124,33 Q120.5,33.5 119.5,29.5 Z" />
+        </g>
+        <circle class="pp-parade__head" cx="112" cy="35" r="12.5" />
+        <ellipse class="pp-parade__snout" cx="98" cy="39" rx="7" ry="5" />
+        <circle class="pp-parade__eye pp-parade__eye--dog" cx="107.5" cy="33" r="1.5" />
+        <ellipse class="pp-parade__nose pp-parade__nose--dog" cx="92.5" cy="39" rx="2.2" ry="1.8" />
+        <path class="pp-parade__collar" d="M122,44 Q112,49.5 101,45" />
+        <circle class="pp-parade__collar-tag" cx="111.5" cy="49.5" r="1.6" />
+      </svg>
+    </div>
+
+    <button type="button" class="pp-parade__hit pp-parade__hit--cat" data-msg="{{ section.settings.parade_cat_message | default: "You're leaving already?" }}" aria-label="{{ section.settings.parade_cat_message | default: "You're leaving already?" }}"></button>
+    <button type="button" class="pp-parade__hit pp-parade__hit--dog" data-msg="{{ section.settings.parade_dog_message | default: 'One more belly rub?' }}" aria-label="{{ section.settings.parade_dog_message | default: 'One more belly rub?' }}"></button>
+  </div>
+</div>
+<script>
+(function () {
+  var scripts = document.getElementsByTagName('script');
+  var thisScript = scripts[scripts.length - 1];
+  var root = thisScript.closest ? thisScript.closest('.pp-parade') : (thisScript.previousElementSibling && thisScript.previousElementSibling.classList.contains('pp-parade') ? thisScript.previousElementSibling : null);
+  if (!root) { return; }
+  var scene = root.querySelector('.pp-parade__scene');
+  if (!scene) { return; }
+  var greetTimer;
+  function greet() {
+    root.classList.remove('is-greeting');
+    void root.offsetWidth;
+    root.classList.add('is-greeting');
+    clearTimeout(greetTimer);
+    greetTimer = setTimeout(function () { root.classList.remove('is-greeting'); }, 2200);
+  }
+  scene.addEventListener('click', greet);
+  scene.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+      e.preventDefault();
+      greet();
+    }
+  });
+  var hits = root.querySelectorAll('.pp-parade__hit');
+  for (var i = 0; i < hits.length; i++) {
+    (function (btn) {
+      var side = btn.classList.contains('pp-parade__hit--cat') ? 'cat' : 'dog';
+      btn.addEventListener('mouseenter', function () { root.classList.add('is-perked-' + side); });
+      btn.addEventListener('mouseleave', function () { root.classList.remove('is-perked-' + side); });
+      btn.addEventListener('focus', function () { root.classList.add('is-perked-' + side); });
+      btn.addEventListener('blur', function () { root.classList.remove('is-perked-' + side); });
+      btn.addEventListener('click', greet);
+    })(hits[i]);
+  }
+})();
+</script>

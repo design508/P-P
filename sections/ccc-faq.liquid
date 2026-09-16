@@ -1,0 +1,113 @@
+{% comment %}
+  Creator Club — FAQ (custom, accessible accordion)
+  Uses real <button> controls with aria-expanded/aria-controls, per the brief's
+  accessibility requirement (main-faq.liquid's <details> pattern is not reused
+  here on purpose). Behaviour lives in assets/pp-creator-club.js.
+{% endcomment %}
+{% render 'section-editor-styles', section: section %}
+<style>
+  #shopify-section-{{ section.id }} .pp-ccc-faq {
+    background: {{ section.settings.background }};
+    padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-faq h2 {
+    text-align: center;
+    font-family: var(--display); font-weight: 800;
+    font-size: clamp(26px,3.2vw,38px);
+    color: var(--ink,#351042);
+    margin: 0 0 32px;
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-faq__list { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+  #shopify-section-{{ section.id }} .pp-ccc-faq__item { border: 1px solid var(--line,#eee0ee); border-radius: 16px; background: #fff; overflow: hidden; }
+  #shopify-section-{{ section.id }} .pp-ccc-faq__trigger {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    background: transparent;
+    border: 0;
+    text-align: left;
+    padding: 18px 20px;
+    font-family: var(--body);
+    font-weight: 700;
+    font-size: 15.5px;
+    color: var(--ink,#351042);
+    cursor: pointer;
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-faq__trigger:focus-visible {
+    outline: 3px solid {{ section.settings.accent_color }};
+    outline-offset: -3px;
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-faq__icon { flex: 0 0 auto; transition: transform .2s ease; font-size: 18px; color: {{ section.settings.accent_color }}; }
+  #shopify-section-{{ section.id }} .pp-ccc-faq__trigger[aria-expanded="true"] .pp-ccc-faq__icon { transform: rotate(45deg); }
+  #shopify-section-{{ section.id }} .pp-ccc-faq__panel {
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height .28s ease;
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-faq__panel-inner {
+    padding: 0 20px 18px 17px;
+    border-left: 3px solid {{ section.settings.accent_color }};
+    font-family: var(--body); font-size: 14.5px; line-height: 1.6; color: var(--muted,#6b5b73);
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-faq__item:nth-child(3n+2) .pp-ccc-faq__panel-inner { border-left-color: var(--orange, #ff5a0a); }
+  #shopify-section-{{ section.id }} .pp-ccc-faq__item:nth-child(3n+3) .pp-ccc-faq__panel-inner { border-left-color: var(--pink, #ff2b78); }
+  body.pp-motion-off #shopify-section-{{ section.id }} .pp-ccc-faq__panel { transition: none !important; }
+</style>
+<section class="pp-ccc-faq pp-reveal" id="ccc-faq">
+  <div class="page-width">
+    <h2>{{ section.settings.heading }}</h2>
+    <div class="pp-ccc-faq__list" data-ccc-faq>
+      {% for block in section.blocks %}
+        {% if block.type == 'faq' %}
+          {% assign panel_id = 'ccc-faq-panel-' | append: block.id %}
+          {% assign trigger_id = 'ccc-faq-trigger-' | append: block.id %}
+          <div class="pp-ccc-faq__item" data-pp-block-id="{{ block.id }}" {{ block.shopify_attributes }}>
+            <h3 style="margin:0;">
+              <button type="button" class="pp-ccc-faq__trigger" id="{{ trigger_id }}" aria-expanded="false" aria-controls="{{ panel_id }}" data-ccc-faq-trigger>
+                <span>{{ block.settings.question }}</span>
+                <span class="pp-ccc-faq__icon" aria-hidden="true">+</span>
+              </button>
+            </h3>
+            <div class="pp-ccc-faq__panel" id="{{ panel_id }}" role="region" aria-labelledby="{{ trigger_id }}" data-ccc-faq-panel hidden>
+              <div class="pp-ccc-faq__panel-inner">{{ block.settings.answer }}</div>
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% schema %}
+{
+  "name": "Creator Club — FAQ",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Things pet parents ask us." },
+    { "type": "header", "content": "Colours" },
+    { "type": "color", "id": "background", "label": "Section background", "default": "#fdf7fb" },
+    { "type": "color", "id": "accent_color", "label": "Accent colour", "default": "#47105d" },
+    { "type": "header", "content": "Section spacing" },
+    { "type": "range", "id": "padding_top", "min": 0, "max": 160, "step": 4, "unit": "px", "label": "Top padding — desktop", "default": 64 },
+    { "type": "range", "id": "padding_bottom", "min": 0, "max": 160, "step": 4, "unit": "px", "label": "Bottom padding — desktop", "default": 64 }
+  ],
+  "blocks": [
+    { "type": "faq", "name": "Question", "settings": [
+      { "type": "text", "id": "question", "label": "Question", "default": "Do I need thousands of followers?" },
+      { "type": "richtext", "id": "answer", "label": "Answer", "default": "<p>Not at all. We care more about genuine pet-parent content than follower count.</p>" }
+    ]}
+  ],
+  "presets": [
+    { "name": "Creator Club — FAQ", "blocks": [
+      { "type": "faq", "settings": { "question": "Do I need thousands of followers?", "answer": "<p>Not at all. We care more about genuine pet-parent content than follower count.</p>" } },
+      { "type": "faq", "settings": { "question": "Does my pet need to be professionally trained?", "answer": "<p>Absolutely not. The funny, chaotic and completely natural moments are often the best ones.</p>" } },
+      { "type": "faq", "settings": { "question": "Do you provide a script?", "answer": "<p>No stiff scripts here. Create something that feels natural to you and your pet while showing the product clearly.</p>" } },
+      { "type": "faq", "settings": { "question": "Does the product need to appear in the reel?", "answer": "<p>Yes. The Pups & Paws product should be clearly visible and naturally included in the content.</p>" } },
+      { "type": "faq", "settings": { "question": "Can I submit an older reel?", "answer": "<p>You may submit it if it meets the current program requirements and features an eligible Pups & Paws purchase.</p>" } },
+      { "type": "faq", "settings": { "question": "How will my reel be verified?", "answer": "<p>Submit your reel link and order details through the form. Our team will review the information and contact you.</p>" } },
+      { "type": "faq", "settings": { "question": "When will I receive my reward?", "answer": "<p>Reward eligibility and processing depend on the final Creator Club terms.</p>" } },
+      { "type": "faq", "settings": { "question": "Can Pups & Paws repost my content?", "answer": "<p>Only according to the consent and content-usage permissions accepted during submission.</p>" } }
+    ]}
+  ]
+}
+{% endschema %}

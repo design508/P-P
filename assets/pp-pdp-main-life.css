@@ -1,0 +1,316 @@
+/* ===========================================================================
+   PDP — Main product section look-wise upgrade: a soft colour-tinted glow
+   behind the gallery image, and coloured circle badges behind the trust
+   point icons. .pp-pdp__stage / .pp-pdp__trust live in the shared
+   assets/theme.css, so this file adds new, more-specific rules rather than
+   editing that shared file. Loaded only by sections/main-product.liquid.
+   =========================================================================== */
+
+.pp-pdp__stage:before {
+  content: "";
+  position: absolute;
+  inset: 10%;
+  z-index: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--orange, #ff5a0a) 32%, transparent) 0%, transparent 70%);
+  opacity: .7;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .pp-pdp__stage:before {
+    animation: pp-pdp-glow-pulse 4.5s ease-in-out infinite;
+  }
+}
+
+@keyframes pp-pdp-glow-pulse {
+  0%, 100% { opacity: .45; transform: scale(1); }
+  50% { opacity: .75; transform: scale(1.06); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pp-pdp__stage:before { animation: none !important; opacity: .55; }
+}
+
+body.pp-motion-off .pp-pdp__stage:before {
+  animation: none !important;
+  opacity: .55;
+}
+
+/* Trust point icon badges — .pp-pdp__trust div b beats the shared
+   .pp-pdp__trust b rule in theme.css by specificity (extra type selector),
+   no !important needed. */
+.pp-pdp__trust > div b {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--orange, #ff5a0a) 16%, white);
+}
+
+.pp-pdp__trust > div:nth-child(3n+2) b {
+  background: color-mix(in srgb, var(--purple, #47105d) 14%, white);
+  color: var(--purple, #47105d);
+}
+
+.pp-pdp__trust > div:nth-child(3n+3) b {
+  background: color-mix(in srgb, var(--pink, #ff2b78) 16%, white);
+  color: var(--pink, #ff2b78);
+}
+
+/* ===========================================================================
+   PHASE 2 — vertical rhythm tightening, dual CTA buttons (Add to cart / Buy
+   now), gallery reposition, pagination redesign, hover shake, hidden thumb
+   scrollbar. This file loads after assets/theme.css (main-product.liquid's
+   stylesheet_tag call is textually after the <head> load), so same-property
+   rules here win the cascade by source order — matching !important where
+   theme.css's own "PDP gallery footer" block already used !important.
+   Nothing below changes font-size except the one deliberate, explicitly
+   requested exception: the mobile (<=620px) h1 title, called out below.
+   =========================================================================== */
+
+/* ---- Vertical rhythm: tighten the mobile-first defaults ---- */
+.pp-pdp { padding: 24px 0 48px; }
+.pp-breadcrumb { margin: 12px 0 24px; }
+.pp-pdp__info { padding-top: 0; }
+.pp-pdp__micro { margin: 14px 0 8px; }
+.pp-pdp__info h1 { margin: 0 0 14px; }
+.pp-pdp__tagline { margin: 0 0 14px; }
+.pp-pdp__price-row { margin: 6px 0 12px; }
+.pp-pdp__chips { margin: 12px 0; }
+.pp-pdp__benefits { margin: 14px 0; }
+.pp-pdp__accordions { margin-top: 16px; }
+.pp-pdp__trust { margin-top: 20px; padding-top: 16px; }
+
+/* ---- Desktop fluid scale (>=991px): tighten theme.css's clamp() values,
+       and shift the gallery/image column further right within its track. ---- */
+@media (min-width: 991px) {
+  .pp-pdp { padding: clamp(20px, 1.6vw, 32px) 0 clamp(28px, 2.2vw, 44px); }
+  .pp-breadcrumb { margin: clamp(10px, .8vw, 16px) 0 clamp(18px, 1.4vw, 28px); }
+  .pp-pdp__info { padding-top: clamp(4px, .4vw, 10px); }
+  .pp-pdp__micro { margin: clamp(10px, .8vw, 16px) 0 clamp(6px, .5vw, 10px); }
+  .pp-pdp__info h1 { margin-bottom: clamp(12px, 1vw, 18px); }
+  .pp-pdp__tagline { margin-bottom: clamp(12px, 1vw, 18px); }
+  .pp-pdp__price-row { margin: clamp(6px, .5vw, 10px) 0 clamp(10px, .8vw, 14px); }
+  .pp-pdp__chips { margin: clamp(10px, .8vw, 14px) 0; }
+  .pp-pdp__benefits { margin: clamp(12px, 1vw, 18px) 0; }
+  .pp-pdp__accordions { margin-top: clamp(14px, 1.1vw, 20px); }
+  .pp-pdp__trust { margin-top: clamp(16px, 1.3vw, 24px); padding-top: clamp(14px, 1.1vw, 20px); }
+
+  .pp-pdp__gallery {
+    justify-self: end;
+    width: min(100%, calc(100% - clamp(20px, 4vw, 64px)));
+  }
+
+  /* The stage's min-height and the image's max-height used to come from two
+     separately-tuned clamp() curves that don't scale at the same rate, so
+     the gap between them (dead space above the "still cuddle-ready" note)
+     changed size across desktop widths instead of staying fixed. Sizing the
+     image directly off the stage's own box removes that drift: it always
+     fills exactly what's left after the top (kicker) and bottom (note /
+     pagination) reserved strips, at every width. */
+  /* Square the stage off its own rendered width (not viewport vw units) so
+     it always matches the 1:1 product photos exactly, the same way the
+     mobile/tablet stage does. theme.css's min-height:clamp(536px,43.75vw,851px)
+     was tuned against viewport width, but the gallery column's actual width
+     comes from a fr-based grid track (.pp-pdp__top's minmax(...,.96fr)
+     column), which drifts out of step with 43.75vw as the window resizes. */
+  .pp-pdp__stage { aspect-ratio: 1 / 1; height: auto; min-height: 0; width: 100%; box-sizing: border-box; padding-top: 82px; padding-bottom: 86px !important; }
+
+  /* The kicker pill and the "still cuddle-ready" note used to keep their
+     theme.css default positions (top/left up to 38px, bottom 80px), so the
+     image had to reserve 100px + 115px = 215px of the square just to stay
+     clear of them. Since the source photos are themselves square (1:1),
+     shrinking that reserve left the photo's own aspect ratio to fill a much
+     shorter box than the square stage — object-fit:contain then centred the
+     (now small) square photo inside that wide short box, showing as a big
+     empty margin all the way round. Pinning the pill and note to small fixed
+     offsets instead of theme.css's scaling ones lets the reserve shrink to
+     just what each one actually needs, so the photo gets most of the square
+     back. Nothing here touches the ≤990px tablet/mobile rules below. */
+  .pp-pdp__stage-kicker { top: 20px; left: 20px; }
+  .pp-pdp__stage-note { bottom: 20px !important; }
+  .pp-pdp__main-image { position: absolute; top: 82px; left: 0; width: 100%; height: calc(100% - 168px); max-width: none; max-height: none; transform: none; }
+
+}
+
+/* ---- Buy row: qty stays fixed-width, Add to cart is cut to half width and
+       a new Buy now button fills the other half, at every breakpoint. ---- */
+.pp-pdp__buyrow {
+  grid-template-columns: 130px 1fr 1fr;
+  gap: 12px;
+}
+.pp-pdp__buyrow > * {
+  /* Grid items default to min-width:auto, so a track can grow past its 1fr
+     share to fit its content's intrinsic minimum (e.g. the icon inside
+     "Add to cart"). min-width:0 forces both button tracks to the exact
+     same width regardless of label/icon length. */
+  min-width: 0;
+}
+.pp-pdp__add,
+.pp-pdp__buynow {
+  width: 100%;
+  box-sizing: border-box;
+  /* theme.css only ever sets a height for .pp-pdp__add (54px base,
+     clamp(46px,3.75vw,73px) on desktop) because Buy Now didn't exist in the
+     original theme. Without a matching rule here, Buy Now's height falls
+     back to its own text+padding and renders visibly shorter than Add to
+     cart at every breakpoint. Give it this same base height; the desktop
+     clamp is matched right below (it has to come AFTER this unconditional
+     rule in the file — same specificity, and the later one in source order
+     wins at any width where both apply, so putting the clamp first would
+     have let this 54px win at desktop too and freeze the scaling). */
+  height: 54px;
+}
+
+/* Repeats theme.css's own .pp-qty,.pp-pdp__add{height:clamp(46px,3.75vw,73px)}
+   so Add to cart keeps scaling with the viewport on desktop exactly as it
+   did before, and extends the same clamp to Buy Now so the two stay equal
+   at every desktop width instead of both being frozen at 54px above. */
+@media (min-width: 991px) {
+  .pp-pdp__add,
+  .pp-pdp__buynow {
+    height: clamp(46px, 3.75vw, 73px);
+  }
+}
+
+/* ---- Tablet/mobile (<=990px): shrink the stage so the fold fits, without
+       touching any font-size — padding and max-height only. ---- */
+@media (max-width: 990px) {
+  .pp-pdp { padding-top: 16px; }
+  .pp-breadcrumb { margin-bottom: 16px; }
+  /* theme.css's .pp-pdp__top{gap:68px} is only overridden for column count
+     at this breakpoint (grid-template-columns:1fr), not for gap — so once
+     the gallery and info stack into two rows, that 68px still lands as a
+     large blank row-gap between the thumbnails and "GROOMING · 0.2 KG". */
+  .pp-pdp__top { gap: 16px; }
+  .pp-pdp__stage { aspect-ratio: 1 / 1; height: auto; min-height: 0; width: 100%; box-sizing: border-box; padding-top: 60px; padding-bottom: 64px !important; }
+  .pp-pdp__main-image { position: absolute; top: 60px; left: 0; width: 100%; height: calc(100% - 124px); max-width: none; max-height: none; transform: none; }
+  .pp-pdp__stage-kicker { top: 16px; left: 16px; }
+  .pp-pdp__micro { margin: 10px 0 6px; }
+  .pp-pdp__info h1 { margin-bottom: 10px; }
+  .pp-pdp__tagline { margin-bottom: 10px; }
+  .pp-pdp__price-row { margin: 4px 0 10px; }
+  .pp-pdp__chips { margin: 10px 0; }
+}
+
+/* ---- Phone (<=620px): fit everything through Add to cart / Buy now in one
+       screen. The breadcrumb is forced to a single scrollable line instead
+       of wrapping to 2-3 lines, and the title is capped at a phone-sized
+       clamp (the 50px base from theme.css was wrapping to 3 lines and, on
+       its own, blocking the one-screen goal — this is an explicit,
+       deliberate exception to "don't touch font-size", scoped to just this
+       one property at this one breakpoint). ---- */
+@media (max-width: 620px) {
+  .pp-pdp { padding-top: 10px; }
+  .pp-pdp__top { gap: 10px; }
+
+  .pp-breadcrumb {
+    margin: 8px 0 12px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .pp-breadcrumb::-webkit-scrollbar {
+    display: none;
+  }
+  .pp-breadcrumb a,
+  .pp-breadcrumb span {
+    white-space: nowrap;
+    flex: 0 0 auto;
+  }
+
+  .pp-pdp__info h1 {
+    font-size: clamp(26px, 7.5vw, 34px);
+    line-height: 1.05;
+  }
+
+  .pp-pdp__stage { aspect-ratio: 1 / 1; height: auto; min-height: 0; width: 100%; box-sizing: border-box; padding-top: 56px; padding-bottom: 40px !important; }
+  .pp-pdp__main-image { position: absolute; top: 56px; left: 0; width: 100%; height: calc(100% - 96px); max-width: none; max-height: none; transform: none; }
+  .pp-pdp__stage-kicker { top: 14px; left: 14px; }
+  .pp-pdp__stage-note { bottom: 12px !important; }
+
+  /* Stack the buy row: quantity on its own row, then Add to cart full
+     width, then Buy now full width underneath it — in that order. */
+  .pp-pdp__buyrow {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .pp-qty {
+    justify-self: start;
+    width: 100%;
+    max-width: 150px;
+  }
+  .pp-pdp__add,
+  .pp-pdp__buynow {
+    width: 100%;
+    padding: 13px 16px;
+    gap: 8px;
+  }
+}
+
+/* ---- Hide the thumbnail rail's scrollbar; it stays fully scrollable. ---- */
+.pp-pdp__thumbs {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.pp-pdp__thumbs::-webkit-scrollbar {
+  display: none;
+}
+
+/* ---- Gallery pagination: arrows only (no counter), vertically centered on
+       the left/right edges of the image, on desktop and phone alike. ---- */
+.pp-pdp__media-nav {
+  top: 0 !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  padding: 0 14px !important;
+  gap: 0 !important;
+  pointer-events: none !important;
+}
+.pp-pdp__media-nav button {
+  pointer-events: auto !important;
+}
+.pp-pdp__media-nav span {
+  display: none !important;
+}
+
+/* ---- A little shake on hover for the main product image. Keyframes bake in
+       the existing translateY offset from theme.css's footer-layout block so
+       hovering never "pops" the image to a different resting position. ---- */
+@keyframes pp-pdp-image-shake {
+  0%, 100% { transform: rotate(0deg); }
+  20% { transform: rotate(-1.4deg) translateX(-2px); }
+  40% { transform: rotate(1.3deg) translateX(2px); }
+  60% { transform: rotate(-1deg) translateX(-1px); }
+  80% { transform: rotate(1deg) translateX(1px); }
+}
+@keyframes pp-pdp-image-shake-mobile {
+  0%, 100% { transform: rotate(0deg); }
+  20% { transform: rotate(-1.4deg) translateX(-2px); }
+  40% { transform: rotate(1.3deg) translateX(2px); }
+  60% { transform: rotate(-1deg) translateX(-1px); }
+  80% { transform: rotate(1deg) translateX(1px); }
+}
+.pp-pdp__stage:not(.pp-pdp__stage--zoom) .pp-pdp__main-image:hover {
+  animation: pp-pdp-image-shake .5s ease-in-out;
+}
+@media (max-width: 620px) {
+  .pp-pdp__stage:not(.pp-pdp__stage--zoom) .pp-pdp__main-image:hover {
+    animation: pp-pdp-image-shake-mobile .5s ease-in-out;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pp-pdp__stage .pp-pdp__main-image:hover { animation: none !important; }
+}
+body.pp-motion-off .pp-pdp__stage .pp-pdp__main-image:hover {
+  animation: none !important;
+}

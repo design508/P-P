@@ -1,0 +1,339 @@
+/* ===========================================================================
+   Footer "Goodnight Parade" v2 — hand-drawn dog & cat walk, sit, and form a
+   heart with their tails at the bottom of the footer, then fade and loop.
+   Loaded only by sections/footer.liquid. Every loop timing value derives
+   from the single --parade-duration custom property (set inline from the
+   "Parade loop length" setting) so the walk, the leg-pose crossfade, the
+   heart reveal and the paw-print trail always stay perfectly in sync with
+   each other and with whatever speed the merchant picks. Colours read
+   var(--pp-parade-accent) / var(--pp-parade-cream), set inline from the
+   footer's own Accent / Text colour settings, so the parade always matches
+   the footer's palette without any extra configuration. Transparent
+   background, no images or video.
+
+   v2: solid "flat sticker" fills (not thin wireframe strokes) for a cuter,
+   more finished look; idle ear-twitch + blink micro-loops for extra life;
+   and a click/tap "greet" state (JS toggles .is-greeting) that stops the
+   pets, pops the heart + a little sparkle burst on demand, plus a hover
+   "perk" state that quickens one pet's tail/ear while you're pointed at it.
+   =========================================================================== */
+
+.pp-parade {
+  position: relative;
+  width: 100%;
+  height: clamp(58px, 10vw, 90px);
+  margin-top: 18px;
+  overflow: hidden;
+}
+
+.pp-parade__print {
+  position: absolute;
+  bottom: 4px;
+  left: 0;
+  width: 15px;
+  height: 15px;
+  color: var(--pp-parade-cream, #fff8ef);
+  opacity: 0;
+  pointer-events: none;
+  animation: pp-parade-print var(--parade-duration, 18s) linear infinite;
+}
+.pp-parade__print svg { display: block; width: 100%; height: 100%; fill: currentColor; }
+
+.pp-parade__scene {
+  position: absolute;
+  bottom: 0;
+  left: -30%;
+  width: clamp(112px, 26vw, 208px);
+  cursor: pointer;
+  animation: pp-parade-walk var(--parade-duration, 18s) ease-in-out infinite;
+}
+.pp-parade__scene:focus-visible {
+  outline: 2px solid var(--pp-parade-accent, #61f46f);
+  outline-offset: 4px;
+  border-radius: 12px;
+}
+
+.pp-parade__bounce {
+  animation: pp-parade-bob 0.55s ease-in-out infinite;
+}
+
+.pp-parade__svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+/* ---- base "flat sticker" fills ---------------------------------------- */
+.pp-parade__svg .pp-parade__body,
+.pp-parade__svg .pp-parade__haunch,
+.pp-parade__svg .pp-parade__head,
+.pp-parade__svg .pp-parade__snout,
+.pp-parade__ear-outer {
+  fill: var(--pp-parade-cream, #fff8ef);
+  stroke: rgba(43, 15, 51, 0.55);
+  stroke: color-mix(in srgb, var(--pp-parade-cream, #fff8ef) 25%, #2b0f33 75%);
+  stroke-width: 1.4;
+  stroke-linejoin: round;
+}
+
+.pp-parade__legs rect,
+.pp-parade__legs path {
+  fill: var(--pp-parade-cream, #fff8ef);
+  stroke: rgba(43, 15, 51, 0.55);
+  stroke: color-mix(in srgb, var(--pp-parade-cream, #fff8ef) 25%, #2b0f33 75%);
+  stroke-width: 1.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transform-box: fill-box;
+  transform-origin: 50% 0%;
+}
+
+.pp-parade__tail {
+  fill: none;
+  stroke: var(--pp-parade-cream, #fff8ef);
+  stroke-width: 5.5;
+  stroke-linecap: round;
+  transform-box: fill-box;
+}
+
+.pp-parade__ear-inner { fill: var(--pp-parade-accent, #61f46f); }
+.pp-parade__eye { fill: #2b0f33; transform-box: fill-box; transform-origin: center; }
+.pp-parade__nose { fill: var(--pp-parade-accent, #61f46f); }
+.pp-parade__nose--dog { fill: #2b0f33; }
+.pp-parade__mouth { fill: none; stroke: rgba(43, 15, 51, 0.55); stroke-width: 1; stroke-linecap: round; }
+.pp-parade__whisker { stroke: rgba(43, 15, 51, 0.35); stroke-width: 0.9; stroke-linecap: round; }
+.pp-parade__collar { fill: none; stroke: var(--pp-parade-accent, #61f46f); stroke-width: 2.2; stroke-linecap: round; }
+.pp-parade__collar-tag { fill: var(--pp-parade-accent, #61f46f); }
+
+/* ---- pose crossfade ----------------------------------------------------*/
+.pp-parade__legs--walk { animation: pp-parade-pose-walk var(--parade-duration, 18s) linear infinite; }
+.pp-parade__legs--sit { opacity: 0; animation: pp-parade-pose-sit var(--parade-duration, 18s) linear infinite; }
+.pp-parade__legs--walk rect { animation: pp-parade-trot 0.5s ease-in-out infinite; }
+.pp-parade__legs--walk rect:nth-child(2),
+.pp-parade__legs--walk rect:nth-child(4) { animation-delay: 0.25s; }
+
+/* ---- idle life: tail, ear twitch, blink, look-back ---------------------*/
+.pp-parade__tail--dog { animation: pp-parade-wag 1.1s ease-in-out infinite; }
+.pp-parade__tail--cat { animation: pp-parade-sway 2.4s ease-in-out infinite; }
+.pp-parade__cat-head { animation: pp-parade-lookback 6.5s ease-in-out infinite; }
+.pp-parade__ear--cat { transform-box: fill-box; transform-origin: 50% 100%; animation: pp-parade-twitch 5.4s ease-in-out infinite; }
+.pp-parade__ear--dog { animation: pp-parade-twitch 6.1s ease-in-out infinite 0.6s; }
+.pp-parade__eye--cat { animation: pp-parade-blink 4.6s ease-in-out infinite; }
+.pp-parade__eye--dog { animation: pp-parade-blink 5.3s ease-in-out infinite 0.4s; }
+
+.pp-parade__heart {
+  fill: var(--pp-parade-accent, #61f46f);
+  fill-opacity: 0.85;
+  stroke: rgba(43, 15, 51, 0.4);
+  stroke-width: 1;
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  animation: pp-parade-heart var(--parade-duration, 18s) ease-in-out infinite;
+}
+
+.pp-parade__spark {
+  color: var(--pp-parade-accent, #61f46f);
+  fill: currentColor;
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+}
+
+/* ---- hover / hit targets + tooltip --------------------------------------*/
+.pp-parade__hit {
+  position: absolute;
+  bottom: 0;
+  top: 0;
+  width: 45%;
+  appearance: none;
+  background: none;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+}
+.pp-parade__hit--cat { left: 0; }
+.pp-parade__hit--dog { right: 0; }
+
+.pp-parade__hit::after {
+  content: attr(data-msg);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translate(-50%, 4px);
+  margin-bottom: 6px;
+  white-space: nowrap;
+  background: var(--pp-parade-cream, #fff8ef);
+  color: #351042;
+  font-family: var(--body, inherit);
+  font-weight: 700;
+  font-size: 11.5px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  box-shadow: 0 8px 18px -8px rgba(0, 0, 0, 0.35);
+  opacity: 0;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  pointer-events: none;
+}
+.pp-parade__hit:hover::after,
+.pp-parade__hit:focus-visible::after,
+.pp-parade__hit:active::after {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+/* ---- hover "perk" state: quicken that pet's tail + ear -----------------*/
+.pp-parade.is-perked-cat .pp-parade__tail--cat { animation-duration: 0.85s; }
+.pp-parade.is-perked-cat .pp-parade__ear--cat { animation-duration: 1.1s; }
+.pp-parade.is-perked-dog .pp-parade__tail--dog { animation-duration: 0.55s; }
+.pp-parade.is-perked-dog .pp-parade__ear--dog { animation-duration: 0.9s; }
+
+/* ---- click "greet" state: stop, sit, heart + sparkle burst on demand ---*/
+.pp-parade.is-greeting .pp-parade__scene { left: 18% !important; opacity: 1 !important; }
+.pp-parade.is-greeting .pp-parade__legs--walk { opacity: 0 !important; }
+.pp-parade.is-greeting .pp-parade__legs--sit { opacity: 1 !important; }
+.pp-parade.is-greeting .pp-parade__heart { opacity: 1 !important; transform: scale(1.08) !important; }
+.pp-parade.is-greeting .pp-parade__spark { animation: pp-parade-spark 0.9s ease-out forwards; }
+.pp-parade.is-greeting .pp-parade__spark--1 { animation-delay: 0.05s; }
+.pp-parade.is-greeting .pp-parade__spark--2 { animation-delay: 0.18s; }
+.pp-parade.is-greeting .pp-parade__spark--3 { animation-delay: 0.3s; }
+
+@keyframes pp-parade-walk {
+  0%   { left: -30%; opacity: 0; }
+  4%   { opacity: 1; }
+  42%  { left: 18%; opacity: 1; }
+  88%  { left: 18%; opacity: 1; }
+  94%  { left: 18%; opacity: 0; }
+  100% { left: -30%; opacity: 0; }
+}
+
+@keyframes pp-parade-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-2px); }
+}
+
+@keyframes pp-parade-trot {
+  0%, 100% { transform: translateY(0) scaleY(1); }
+  50% { transform: translateY(-1.4px) scaleY(0.92); }
+}
+
+@keyframes pp-parade-pose-walk {
+  0%, 40% { opacity: 1; }
+  44%, 100% { opacity: 0; }
+}
+
+@keyframes pp-parade-pose-sit {
+  0%, 40% { opacity: 0; }
+  44%, 92% { opacity: 1; }
+  96%, 100% { opacity: 0; }
+}
+
+@keyframes pp-parade-heart {
+  0%, 46% { opacity: 0; transform: scale(0.4); }
+  50%, 90% { opacity: 1; transform: scale(1); }
+  94%, 100% { opacity: 0; transform: scale(0.4); }
+}
+
+@keyframes pp-parade-spark {
+  0% { opacity: 0; transform: scale(0.2) translateY(0); }
+  35% { opacity: 1; }
+  100% { opacity: 0; transform: scale(1.15) translateY(-10px); }
+}
+
+@keyframes pp-parade-wag {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(20deg); }
+}
+
+@keyframes pp-parade-sway {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(-12deg); }
+}
+
+@keyframes pp-parade-lookback {
+  0%, 78% { transform: rotate(0deg); }
+  86%, 92% { transform: rotate(-24deg); }
+  100% { transform: rotate(0deg); }
+}
+
+@keyframes pp-parade-twitch {
+  0%, 88%, 100% { transform: rotate(0deg); }
+  91% { transform: rotate(-8deg); }
+  94% { transform: rotate(6deg); }
+}
+
+@keyframes pp-parade-blink {
+  0%, 94%, 100% { transform: scaleY(1); }
+  96% { transform: scaleY(0.12); }
+}
+
+@keyframes pp-parade-print {
+  0%   { opacity: 0; }
+  4%   { opacity: 0.7; }
+  10%  { opacity: 0; }
+  100% { opacity: 0; }
+}
+
+@media screen and (max-width: 749px) {
+  .pp-parade { height: clamp(48px, 15vw, 66px); margin-top: 12px; }
+  .pp-parade__scene { width: clamp(92px, 36vw, 152px); }
+  @keyframes pp-parade-walk {
+    0%   { left: -34%; opacity: 0; }
+    4%   { opacity: 1; }
+    42%  { left: 30%; opacity: 1; }
+    88%  { left: 30%; opacity: 1; }
+    94%  { left: 30%; opacity: 0; }
+    100% { left: -34%; opacity: 0; }
+  }
+  .pp-parade.is-greeting .pp-parade__scene { left: 30% !important; }
+  .pp-parade__print:nth-child(4),
+  .pp-parade__print:nth-child(5) { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pp-parade__scene,
+  .pp-parade__bounce,
+  .pp-parade__legs--walk,
+  .pp-parade__legs--walk rect,
+  .pp-parade__legs--sit,
+  .pp-parade__tail,
+  .pp-parade__cat-head,
+  .pp-parade__ear--cat,
+  .pp-parade__ear--dog,
+  .pp-parade__eye--cat,
+  .pp-parade__eye--dog,
+  .pp-parade__heart,
+  .pp-parade__spark,
+  .pp-parade__print {
+    animation: none !important;
+  }
+  .pp-parade__scene { left: 18%; opacity: 1; }
+  .pp-parade__legs--walk { opacity: 0; }
+  .pp-parade__legs--sit { opacity: 1; }
+  .pp-parade__heart { opacity: 1; transform: scale(1); }
+  .pp-parade__print { opacity: 0; }
+}
+
+body.pp-motion-off .pp-parade__scene,
+body.pp-motion-off .pp-parade__bounce,
+body.pp-motion-off .pp-parade__legs--walk,
+body.pp-motion-off .pp-parade__legs--walk rect,
+body.pp-motion-off .pp-parade__legs--sit,
+body.pp-motion-off .pp-parade__tail,
+body.pp-motion-off .pp-parade__cat-head,
+body.pp-motion-off .pp-parade__ear--cat,
+body.pp-motion-off .pp-parade__ear--dog,
+body.pp-motion-off .pp-parade__eye--cat,
+body.pp-motion-off .pp-parade__eye--dog,
+body.pp-motion-off .pp-parade__heart,
+body.pp-motion-off .pp-parade__spark,
+body.pp-motion-off .pp-parade__print {
+  animation: none !important;
+}
+body.pp-motion-off .pp-parade__scene { left: 18%; opacity: 1; }
+body.pp-motion-off .pp-parade__legs--walk { opacity: 0; }
+body.pp-motion-off .pp-parade__legs--sit { opacity: 1; }
+body.pp-motion-off .pp-parade__heart { opacity: 1; transform: scale(1); }
+body.pp-motion-off .pp-parade__print { opacity: 0; }

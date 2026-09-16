@@ -1,0 +1,101 @@
+{%- comment -%}
+  pp-ambient-motion
+  A site-wide layer of slow-drifting, twinkling sparks, rendered once from
+  layout/theme.liquid so every page (not just sections with their own hero
+  art) feels a little alive.
+
+  v2: replaced the original large blurred colour-blob circles (looked like
+  flat static "spots" rather than motion) with small, crisp sparkle glyphs
+  — the same ✦ mark already used in the header marquee, so it reads as a
+  deliberate brand touch rather than decoration bolted on. Each one drifts,
+  rotates slightly and twinkles (fades in/out), which is what actually
+  registers as "moving" at a glance rather than a coloured dot sitting in
+  the margin.
+
+  Deliberately kept out of the readable content column: the sparks live in
+  the empty side margins outside --page (the boxed content width), so they
+  never sit on top of text, images, or buttons and can't affect layout,
+  contrast, or existing design. On narrower viewports, where there is no
+  visible margin, they simply don't show — nothing to disable per device.
+
+  Fully covered by the existing motion switches already wired up in
+  layout/theme.liquid: settings.enable_animations (adds body.pp-motion-off,
+  which forces animation:none on every element) and prefers-reduced-motion
+  (handled below directly, since this snippet's keyframes are self-contained).
+  This snippet also keeps its own theme-setting gate on top
+  (settings.enable_ambient_motion) so a merchant can turn off just the
+  ambient sparks while keeping hover/reveal motion elsewhere.
+{%- endcomment -%}
+
+{%- if settings.enable_ambient_motion -%}
+  <div class="pp-ambient" aria-hidden="true" data-ambient-motion>
+    <span class="pp-ambient__rail pp-ambient__rail--left">
+      <span class="pp-ambient__spark pp-ambient__spark--1">✦</span>
+      <span class="pp-ambient__spark pp-ambient__spark--2">✦</span>
+      <span class="pp-ambient__spark pp-ambient__spark--3">✦</span>
+    </span>
+    <span class="pp-ambient__rail pp-ambient__rail--right">
+      <span class="pp-ambient__spark pp-ambient__spark--4">✦</span>
+      <span class="pp-ambient__spark pp-ambient__spark--5">✦</span>
+      <span class="pp-ambient__spark pp-ambient__spark--6">✦</span>
+    </span>
+  </div>
+
+  <style>
+    .pp-ambient {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .pp-ambient__rail {
+      position: absolute;
+      top: 0;
+      width: max(0px, calc((100vw - var(--page)) / 2));
+      height: 100%;
+    }
+    .pp-ambient__rail--left { left: 0; }
+    .pp-ambient__rail--right { right: 0; }
+
+    .pp-ambient__spark {
+      position: absolute;
+      display: block;
+      line-height: 1;
+      will-change: transform, opacity;
+      transform: translate3d(0, var(--pp-scroll-shift, 0px), 0);
+    }
+
+    .pp-ambient__spark--1 { left: 24%; top: 12vh;  font-size: 20px; color: var(--green);   animation: pp-ambient-float-a 9s   ease-in-out infinite, pp-ambient-twinkle 4.5s ease-in-out infinite; }
+    .pp-ambient__spark--2 { left: 44%; top: 42vh;  font-size: 14px; color: var(--pink);    animation: pp-ambient-float-b 11s  ease-in-out infinite, pp-ambient-twinkle 5.5s ease-in-out infinite; animation-delay: -2s, -1s; }
+    .pp-ambient__spark--3 { left: 30%; top: 72vh;  font-size: 24px; color: var(--purple2); animation: pp-ambient-float-a 12.5s ease-in-out infinite, pp-ambient-twinkle 6s   ease-in-out infinite; animation-delay: -5s, -3s; }
+    .pp-ambient__spark--4 { right: 28%; top: 18vh; font-size: 16px; color: var(--orange);  animation: pp-ambient-float-b 10s  ease-in-out infinite, pp-ambient-twinkle 5s   ease-in-out infinite; animation-delay: -1s, -2s; }
+    .pp-ambient__spark--5 { right: 40%; top: 48vh; font-size: 22px; color: var(--green);   animation: pp-ambient-float-a 13s  ease-in-out infinite, pp-ambient-twinkle 4s   ease-in-out infinite; animation-delay: -7s, -2.5s; }
+    .pp-ambient__spark--6 { right: 22%; top: 78vh; font-size: 15px; color: var(--pink);    animation: pp-ambient-float-b 9.5s ease-in-out infinite, pp-ambient-twinkle 5.2s ease-in-out infinite; animation-delay: -3s, -1.5s; }
+
+    @keyframes pp-ambient-float-a {
+      0%, 100% { transform: translate3d(0, var(--pp-scroll-shift, 0px), 0) rotate(0deg); }
+      50%      { transform: translate3d(8px, calc(var(--pp-scroll-shift, 0px) - 26px), 0) rotate(16deg); }
+    }
+    @keyframes pp-ambient-float-b {
+      0%, 100% { transform: translate3d(0, var(--pp-scroll-shift, 0px), 0) rotate(0deg); }
+      50%      { transform: translate3d(-10px, calc(var(--pp-scroll-shift, 0px) + 22px), 0) rotate(-14deg); }
+    }
+    @keyframes pp-ambient-twinkle {
+      0%, 100% { opacity: .25; }
+      50%      { opacity: .8; }
+    }
+
+    /* Only worth showing once the margin is wide enough to hold a spark. */
+    @media (max-width: 1600px) {
+      .pp-ambient__spark--1, .pp-ambient__spark--4 { display: none; }
+    }
+    @media (max-width: 1340px) {
+      .pp-ambient { display: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .pp-ambient__spark { animation: none !important; opacity: .35; }
+    }
+  </style>
+{%- endif -%}

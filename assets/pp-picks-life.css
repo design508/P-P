@@ -1,0 +1,49 @@
+/* ===========================================================================
+   "Good places to begin." (Popular Picks) — light-shimmer sweep across each
+   product card image on hover. Loaded only by sections/live-popular-picks.
+   liquid, and scoped to .live-picks__grid so this stays specific to this
+   section rather than every product-card on the site (the card lift on
+   hover already exists globally via .pp-card in theme.css, so this file
+   only adds the shimmer). .pp-card__media is already position:relative in
+   theme.css; overflow is set to hidden here, scoped to this grid only, so
+   the sweep clips neatly without affecting the card badge inset inside it.
+   =========================================================================== */
+
+.live-picks__grid .pp-card__media {
+  overflow: hidden;
+}
+
+.live-picks__grid .pp-card__media:after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: linear-gradient(
+    115deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.55) 50%,
+    transparent 60%
+  );
+  transform: translateX(-120%);
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .live-picks__grid .pp-card:hover .pp-card__media:after {
+    animation: pp-pick-shimmer 1s ease-in-out;
+  }
+}
+
+@keyframes pp-pick-shimmer {
+  to { transform: translateX(120%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .live-picks__grid .pp-card:hover .pp-card__media:after {
+    animation: none !important;
+  }
+}
+
+body.pp-motion-off .live-picks__grid .pp-card:hover .pp-card__media:after {
+  animation: none !important;
+}

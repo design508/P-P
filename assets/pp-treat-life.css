@@ -1,0 +1,61 @@
+/* ===========================================================================
+   "The official bath-day apology." (Featured Treat) — an excited wobble on
+   the product image on hover, and the ✓ benefit chips revealing one after
+   another instead of all at once. Loaded only by sections/featured-treat.
+   liquid. .pp-treat__media img already has a slow idle float baked into
+   theme.css (shared with .pp-spotlight__visual img); the hover rule below
+   is more specific (adds :hover + img vs. media img) so it wins on hover
+   and simply reverts to the idle float once the pointer leaves.
+   =========================================================================== */
+
+@media (prefers-reduced-motion: no-preference) {
+  .pp-treat__media:hover img {
+    animation: pp-treat-wobble 0.6s ease-in-out 1;
+  }
+}
+
+@keyframes pp-treat-wobble {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  25% { transform: rotate(-3deg) scale(1.03); }
+  55% { transform: rotate(2.5deg) scale(1.03); }
+  80% { transform: rotate(-1deg) scale(1.01); }
+}
+
+/* Staggered chip reveal: the section root already gets .is-visible from
+   the site-wide scroll-reveal observer (theme.js watches every .pp-section),
+   so no extra JS is needed here — each chip just fades/slides in with its
+   own transition-delay once that class lands. */
+.pp-chips span {
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.pp-section.is-visible .pp-chips span {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.pp-chips span:nth-child(1) { transition-delay: 0.05s; }
+.pp-chips span:nth-child(2) { transition-delay: 0.22s; }
+.pp-chips span:nth-child(3) { transition-delay: 0.39s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .pp-treat__media:hover img {
+    animation: none !important;
+  }
+  .pp-chips span {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
+body.pp-motion-off .pp-treat__media:hover img {
+  animation: none !important;
+}
+body.pp-motion-off .pp-chips span {
+  opacity: 1 !important;
+  transform: none !important;
+  transition: none !important;
+}

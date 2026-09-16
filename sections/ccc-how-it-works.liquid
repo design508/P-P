@@ -1,0 +1,189 @@
+{% comment %} Creator Club — How It Works. Classes: pp-ccc-how* {% endcomment %}
+{% render 'section-editor-styles', section: section %}
+<style>
+  #shopify-section-{{ section.id }} .pp-ccc-how {
+    background: {{ section.settings.background }};
+    padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-how h2 {
+    font-family: var(--display);
+    font-weight: 800;
+    text-align: center;
+    font-size: clamp(28px, 3.4vw, 42px);
+    color: var(--ink, #351042);
+    margin: 0 0 40px;
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-how__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0,1fr));
+    gap: 24px;
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-how__card {
+    background: #fff;
+    border: 1px solid var(--line, #eee0ee);
+    border-radius: 24px;
+    padding: 32px 26px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    box-shadow: 0 10px 30px -18px rgba(53,16,66,.18);
+    transition: transform .3s cubic-bezier(.2,.8,.2,1), box-shadow .3s ease;
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-how__card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 40px -18px rgba(53,16,66,.28);
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-how__icon {
+    width: 56px; height: 56px;
+    border-radius: 16px;
+    display: grid; place-items: center;
+    background: {{ section.settings.icon_bg }};
+    margin-bottom: 18px;
+    transition: transform .35s cubic-bezier(.34,1.56,.64,1);
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-how__card:hover .pp-ccc-how__icon {
+    transform: rotate(-8deg) scale(1.08);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #shopify-section-{{ section.id }} .pp-ccc-how__card,
+    #shopify-section-{{ section.id }} .pp-ccc-how__icon { transition: none; }
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-how__icon img { width: 32px; height: 32px; object-fit: contain; }
+  #shopify-section-{{ section.id }} .pp-ccc-how__icon svg { width: 30px; height: 30px; stroke: {{ section.settings.icon_color }}; fill: none; }
+  #shopify-section-{{ section.id }} .pp-ccc-how__step {
+    font-family: var(--body);
+    font-weight: 800;
+    font-size: 12px;
+    letter-spacing: .12em;
+    color: {{ section.settings.accent_color }};
+    margin-bottom: 10px;
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-how__card h3 {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 22px;
+    color: var(--ink, #351042);
+    margin: 0 0 10px;
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-how__card p {
+    font-family: var(--body);
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--muted, #6b5b73);
+    margin: 0;
+  }
+  @media screen and (max-width: 900px) {
+    #shopify-section-{{ section.id }} .pp-ccc-how__grid { grid-template-columns: 1fr; }
+  }
+  /* Candy colours: each of the 3 cards gets its own icon tint instead of
+     sharing one colour, and the step label pops in with a little bounce
+     once the section scrolls into view (reuses the site-wide .pp-reveal /
+     .is-visible mechanism already on this section, no new JS). */
+  #shopify-section-{{ section.id }} .pp-ccc-how__grid > .pp-ccc-how__card:nth-child(3n+2) .pp-ccc-how__icon {
+    background: color-mix(in srgb, var(--pink, #ff2b78) 18%, white);
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-how__grid > .pp-ccc-how__card:nth-child(3n+3) .pp-ccc-how__icon {
+    background: color-mix(in srgb, var(--green, #61f46f) 30%, white);
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-how__step { display: inline-block; }
+  @media (prefers-reduced-motion: no-preference) {
+    #shopify-section-{{ section.id }} .pp-ccc-how.is-visible .pp-ccc-how__grid > .pp-ccc-how__card:nth-child(1) .pp-ccc-how__step {
+      animation: pp-ccc-step-pop .5s cubic-bezier(.34,1.56,.64,1) .15s both;
+    }
+    #shopify-section-{{ section.id }} .pp-ccc-how.is-visible .pp-ccc-how__grid > .pp-ccc-how__card:nth-child(2) .pp-ccc-how__step {
+      animation: pp-ccc-step-pop .5s cubic-bezier(.34,1.56,.64,1) .3s both;
+    }
+    #shopify-section-{{ section.id }} .pp-ccc-how.is-visible .pp-ccc-how__grid > .pp-ccc-how__card:nth-child(3) .pp-ccc-how__step {
+      animation: pp-ccc-step-pop .5s cubic-bezier(.34,1.56,.64,1) .45s both;
+    }
+  }
+  @keyframes pp-ccc-step-pop {
+    0% { transform: scale(.4); opacity: 0; }
+    70% { transform: scale(1.15); opacity: 1; }
+    100% { transform: scale(1); }
+  }
+  body.pp-motion-off #shopify-section-{{ section.id }} .pp-ccc-how__step { animation: none !important; }
+</style>
+<section class="pp-ccc-how pp-reveal" id="ccc-how-it-works">
+  <div class="page-width">
+    <h2>{{ section.settings.heading }}</h2>
+    <div class="pp-ccc-how__grid">
+      {% for block in section.blocks %}
+        {% if block.type == 'step' %}
+          <div class="pp-ccc-how__card" data-pp-block-id="{{ block.id }}" {{ block.shopify_attributes }}>
+            {% assign icon_image_img = block.settings.icon_image %}
+{% assign icon_image_img_mobile = block.settings.icon_image_mobile %}
+{% assign icon_image_display = icon_image_img | default: icon_image_img_mobile %}
+{% assign icon_image_fit = block.settings.icon_image_fit | default: 'contain' %}
+{% assign icon_image_position = block.settings.icon_image_position | default: 'center center' %}
+{% assign icon_image_fit_m = block.settings.icon_image_fit_mobile | default: 'contain' %}
+{% assign icon_image_position_m = block.settings.icon_image_position_mobile | default: 'center center' %}
+{% assign icon_image_radius = block.settings.icon_image_radius | default: 0 %}
+{% assign icon_image_radius_m = block.settings.icon_image_radius_mobile | default: 0 %}
+{% assign icon_image_w = block.settings.icon_image_max_width | default: 0 %}
+{% assign icon_image_h = block.settings.icon_image_max_height | default: 0 %}
+{% assign icon_image_w_m = block.settings.icon_image_max_width_mobile | default: 0 %}
+{% assign icon_image_h_m = block.settings.icon_image_max_height_mobile | default: 0 %}
+{% assign icon_image_ha = block.settings.icon_image_h_align | default: 'default' %}
+{% assign icon_image_va = block.settings.icon_image_v_align | default: 'default' %}
+{% assign icon_image_ha_m = block.settings.icon_image_h_align_mobile | default: 'default' %}
+{% assign icon_image_va_m = block.settings.icon_image_v_align_mobile | default: 'default' %}
+            <style>@media (min-width: 991px) {
+  #shopify-section-{{ section.id }} .pp-ccc-how__card[data-pp-block-id="{{ block.id }}"] .pp-ccc-how__icon img { object-fit: {{ icon_image_fit }}; object-position: {{ icon_image_position }}; }
+  #shopify-section-{{ section.id }} .pp-ccc-how__card[data-pp-block-id="{{ block.id }}"] .pp-ccc-how__icon {
+    {% if icon_image_radius > 0 %}border-radius: {{ icon_image_radius }}px; overflow: hidden;{% endif %}
+    {% if icon_image_w > 0 %}width: min({{ icon_image_w }}px, 100%); max-width: 100%;{% endif %}
+    {% if icon_image_h > 0 %}height: min({{ icon_image_h }}px, 100%); max-height: 100%;{% endif %}
+    {% if icon_image_ha == 'left' %}margin-left: 0; margin-right: auto;{% endif %}
+    {% if icon_image_ha == 'center' %}margin-left: auto; margin-right: auto;{% endif %}
+    {% if icon_image_ha == 'right' %}margin-left: auto; margin-right: 0;{% endif %}
+    {% if icon_image_va == 'top' %}align-self: flex-start;{% endif %}
+    {% if icon_image_va == 'center' %}align-self: center;{% endif %}
+    {% if icon_image_va == 'bottom' %}align-self: flex-end;{% endif %}
+  }
+}
+@media (max-width: 990px) {
+  #shopify-section-{{ section.id }} .pp-ccc-how__card[data-pp-block-id="{{ block.id }}"] .pp-ccc-how__icon img { object-fit: {{ icon_image_fit_m }}; object-position: {{ icon_image_position_m }}; }
+  #shopify-section-{{ section.id }} .pp-ccc-how__card[data-pp-block-id="{{ block.id }}"] .pp-ccc-how__icon {
+    {% if icon_image_radius_m > 0 %}border-radius: {{ icon_image_radius_m }}px; overflow: hidden;{% endif %}
+    {% if icon_image_w_m > 0 %}width: min({{ icon_image_w_m }}px, 100%); max-width: 100%;{% endif %}
+    {% if icon_image_h_m > 0 %}height: min({{ icon_image_h_m }}px, 100%); max-height: 100%;{% endif %}
+    {% if icon_image_ha_m == 'left' %}margin-left: 0; margin-right: auto;{% endif %}
+    {% if icon_image_ha_m == 'center' %}margin-left: auto; margin-right: auto;{% endif %}
+    {% if icon_image_ha_m == 'right' %}margin-left: auto; margin-right: 0;{% endif %}
+    {% if icon_image_va_m == 'top' %}align-self: flex-start;{% endif %}
+    {% if icon_image_va_m == 'center' %}align-self: center;{% endif %}
+    {% if icon_image_va_m == 'bottom' %}align-self: flex-end;{% endif %}
+  }
+}</style>
+            <div class="pp-ccc-how__icon">
+              {% if icon_image_display != blank %}
+  <picture>
+    {% if icon_image_img_mobile != blank and icon_image_img_mobile != icon_image_img %}
+      <source media="(max-width: 990px)" srcset="{{ icon_image_img_mobile | image_url: width: 400 }} 400w, {{ icon_image_img_mobile | image_url: width: 600 }} 600w, {{ icon_image_img_mobile | image_url: width: 800 }} 800w, {{ icon_image_img_mobile | image_url: width: 1000 }} 1000w" sizes="100vw">
+    {% endif %}
+    {{ icon_image_display | image_url: width: 96 | image_tag: loading: 'lazy', alt: '' }}
+  </picture>
+              {% else %}
+                {% case block.settings.icon %}
+                  {% when 'unbox' %}
+                    <svg viewBox="0 0 24 24" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8l9-4 9 4-9 4-9-4Z"/><path d="M3 8v8l9 4 9-4V8"/><path d="M12 12v8"/></svg>
+                  {% when 'camera' %}
+                    <svg viewBox="0 0 24 24" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-2h6l2 2h3v11H4Z"/><circle cx="12" cy="13" r="3.2"/></svg>
+                  {% else %}
+                    <svg viewBox="0 0 24 24" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 8.5c0-2-1.6-3.5-3.5-3.5-1.3 0-2.4.7-3 1.8L12 8l-1.5-1.2c-.6-1.1-1.7-1.8-3-1.8C5.6 5 4 6.5 4 8.5 4 13 12 18 12 18s8-5 8-9.5Z"/></svg>
+                {% endcase %}
+              {% endif %}
+            </div>
+            <span class="pp-ccc-how__step">{{ block.settings.step_label }}</span>
+            <h3>{{ block.settings.heading }}</h3>
+            <p>{{ block.settings.text }}</p>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% schema %}
+{"name":"CC — How It Works","settings":[{"type":"text","id":"heading","label":"Heading","default":"Three little steps. That's it."},{"type":"header","content":"Colours"},{"type":"color","id":"background","label":"Section background","default":"#fdf7fb"},{"type":"color","id":"accent_color","label":"Step-label colour","default":"#ff5a0a"},{"type":"color","id":"icon_bg","label":"Icon background","default":"#f3e9f8"},{"type":"color","id":"icon_color","label":"Icon stroke colour","default":"#47105d"},{"type":"header","content":"Section spacing"},{"type":"range","id":"padding_top","min":0,"max":160,"step":4,"unit":"px","label":"Top padding — desktop","default":64},{"type":"range","id":"padding_bottom","min":0,"max":160,"step":4,"unit":"px","label":"Bottom padding — desktop","default":64}],"blocks":[{"type":"step","name":"Step card","settings":[{"type":"text","id":"step_label","label":"Step label","default":"01 — UNBOX"},{"type":"text","id":"heading","label":"Heading","default":"Treat Your Pet"},{"type":"textarea","id":"text","label":"Copy","default":"Shop your pet's favourite Pups & Paws grooming or wellness product and wait for the order to arrive."},{"type":"select","id":"icon","label":"Outline icon (used if no image set)","default":"unbox","options":[{"value":"unbox","label":"Unbox"},{"value":"camera","label":"Camera"},{"value":"paw","label":"Paw / reward"}]},{"type":"header","content":"Custom icon image — desktop"},{"type":"image_picker","id":"icon_image","label":"Custom icon image (desktop)","info":"A transparent PNG works best."},{"type":"header","content":"Custom icon image — mobile"},{"type":"image_picker","id":"icon_image_mobile","label":"Custom icon image — mobile (optional)","info":"Shown at 990px and narrower instead of the desktop image above. Leave empty to use the same image on mobile."},{"type":"header","content":"Image fit — desktop"},{"type":"select","id":"icon_image_fit","label":"How the photo fills its box","default":"contain","options":[{"value":"contain","label":"Show the whole photo (may leave empty space)"},{"value":"cover","label":"Fill the box completely (may crop)"}]},{"type":"select","id":"icon_image_position","label":"Photo alignment inside its box","info":"Only matters when the photo's shape doesn't exactly match the box.","default":"center center","options":[{"value":"left top","label":"Top left"},{"value":"center top","label":"Top center"},{"value":"right top","label":"Top right"},{"value":"left center","label":"Middle left"},{"value":"center center","label":"Middle center"},{"value":"right center","label":"Middle right"},{"value":"left bottom","label":"Bottom left"},{"value":"center bottom","label":"Bottom center"},{"value":"right bottom","label":"Bottom right"}]},{"type":"header","content":"Image fit — mobile"},{"type":"select","id":"icon_image_fit_mobile","label":"How the photo fills its box","default":"contain","options":[{"value":"contain","label":"Show the whole photo (may leave empty space)"},{"value":"cover","label":"Fill the box completely (may crop)"}]},{"type":"select","id":"icon_image_position_mobile","label":"Photo alignment inside its box","info":"Only matters when the photo's shape doesn't exactly match the box.","default":"center center","options":[{"value":"left top","label":"Top left"},{"value":"center top","label":"Top center"},{"value":"right top","label":"Top right"},{"value":"left center","label":"Middle left"},{"value":"center center","label":"Middle center"},{"value":"right center","label":"Middle right"},{"value":"left bottom","label":"Bottom left"},{"value":"center bottom","label":"Bottom center"},{"value":"right bottom","label":"Bottom right"}]},{"type":"header","content":"Corner rounding — desktop"},{"type":"range","id":"icon_image_radius","min":0,"max":60,"step":2,"unit":"px","label":"Corner rounding (0 = theme default)","default":0},{"type":"header","content":"Corner rounding — mobile"},{"type":"range","id":"icon_image_radius_mobile","min":0,"max":60,"step":2,"unit":"px","label":"Corner rounding (0 = theme default)","default":0},{"type":"header","content":"Image size — desktop"},{"type":"range","id":"icon_image_max_width","min":0,"max":1500,"step":50,"unit":"px","label":"Image width (0 = automatic)","info":"Applies at 991px and wider. Automatically shrinks to fit if the layout doesn't have room, so it never overlaps other content.","default":0},{"type":"range","id":"icon_image_max_height","min":0,"max":1000,"step":50,"unit":"px","label":"Image height (0 = automatic)","info":"Applies at 991px and wider. Automatically shrinks to fit if the layout doesn't have room, so it never overlaps other content.","default":0},{"type":"header","content":"Image size — mobile"},{"type":"range","id":"icon_image_max_width_mobile","min":0,"max":900,"step":25,"unit":"px","label":"Image width (0 = automatic)","info":"Applies at 990px and narrower (phones and tablets). Automatically shrinks to fit if the layout doesn't have room, so it never overlaps other content.","default":0},{"type":"range","id":"icon_image_max_height_mobile","min":0,"max":700,"step":25,"unit":"px","label":"Image height (0 = automatic)","info":"Applies at 990px and narrower (phones and tablets). Automatically shrinks to fit if the layout doesn't have room, so it never overlaps other content.","default":0},{"type":"header","content":"Box position — desktop"},{"type":"select","id":"icon_image_h_align","label":"Horizontal position","info":"Applies at 991px and wider. \"Default\" keeps the theme's original spacing.","default":"default","options":[{"value":"default","label":"Default (theme spacing)"},{"value":"left","label":"Left"},{"value":"center","label":"Center"},{"value":"right","label":"Right"}]},{"type":"select","id":"icon_image_v_align","label":"Vertical position","info":"Applies at 991px and wider. \"Default\" keeps the theme's original spacing.","default":"default","options":[{"value":"default","label":"Default (theme spacing)"},{"value":"top","label":"Top"},{"value":"center","label":"Center"},{"value":"bottom","label":"Bottom"}]},{"type":"header","content":"Box position — mobile"},{"type":"select","id":"icon_image_h_align_mobile","label":"Horizontal position","info":"Applies at 990px and narrower (phones and tablets). \"Default\" keeps the theme's original spacing.","default":"default","options":[{"value":"default","label":"Default (theme spacing)"},{"value":"left","label":"Left"},{"value":"center","label":"Center"},{"value":"right","label":"Right"}]},{"type":"select","id":"icon_image_v_align_mobile","label":"Vertical position","info":"Applies at 990px and narrower (phones and tablets). \"Default\" keeps the theme's original spacing.","default":"default","options":[{"value":"default","label":"Default (theme spacing)"},{"value":"top","label":"Top"},{"value":"center","label":"Center"},{"value":"bottom","label":"Bottom"}]}]}],"presets":[{"name":"CC — How It Works","blocks":[{"type":"step","settings":{"step_label":"01 — UNBOX","heading":"Treat Your Pet","text":"Shop your pet's favourite Pups & Paws grooming or wellness product and wait for the order to arrive.","icon":"unbox"}},{"type":"step","settings":{"step_label":"02 — ROLL CAMERA","heading":"Capture the Chaos","text":"Film a natural reel featuring your pet and the product. No stiff scripts or studio setup needed.","icon":"camera"}},{"type":"step","settings":{"step_label":"03 — FETCH REWARDS","heading":"Share & Get Rewarded","text":"Post the reel, tag our official Instagram account and submit the reel link for verification.","icon":"paw"}}]}]}
+{% endschema %}

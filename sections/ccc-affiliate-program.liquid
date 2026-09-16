@@ -1,0 +1,355 @@
+{% comment %}
+  Creator Club — Affiliate Program add-on.
+  ------------------------------------------------------------------------
+  This is a NEW, self-contained section appended to the END of the
+  existing templates/page.pet-parent-creator-club.json order array. It
+  does not edit, replace, reorder or remove any of the page's existing
+  sections (ccc_hero, ccc_ticker, ccc_intro, ccc_how, ccc_tiers,
+  ccc_inspiration, ccc_reels, ccc_join, ccc_form, ccc_faq, ccc_cta) —
+  those are untouched, both in content and in their relative order.
+
+  Visual language: matches the existing ccc-* sections on this page —
+  var(--display)/var(--body) fonts, var(--ink)/var(--muted) text colours,
+  var(--orange)/var(--pink) accents, the same card shape (24px radius,
+  soft shadow, hover lift) used in ccc-how-it-works, the same icon-tile
+  treatment, and the same .pp-reveal scroll-in animation every other
+  section on this page already uses (theme.js auto-observes .pp-reveal
+  elements and adds .is-visible — no new JS needed here). Classes are
+  namespaced pp-ccc-aff* so nothing here can collide with product cards,
+  the existing ccc-how-it-works section, or any other page.
+
+  This section is UI only. It does not implement discount codes, referral
+  tracking, commission math or payouts itself — that is intentionally left
+  to the UpPromote Affiliate Marketing app, per instruction not to fake an
+  affiliate system in theme code. The two buttons and the terms link point
+  at plain URL settings (registration_url, login_url, terms_url) that stay
+  blank and safely non-clickable (rendered as a disabled-look span, with an
+  editor-only reminder) until a real UpPromote URL is pasted in here.
+{% endcomment %}
+{% render 'section-editor-styles', section: section %}
+<style>
+  #shopify-section-{{ section.id }} .pp-ccc-aff {
+    background: {{ section.settings.background }};
+    padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-aff__inner {
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-aff__eyebrow {
+    display: inline-block;
+    font-family: var(--body);
+    font-weight: 800;
+    font-size: 12px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: {{ section.settings.accent_color }};
+    background: {{ section.settings.icon_bg }};
+    border-radius: 999px;
+    padding: 7px 16px;
+    margin: 0 0 16px;
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-aff h2 {
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: clamp({{ section.settings.heading_size_mobile }}px, 3.4vw, {{ section.settings.heading_size }}px);
+    color: {{ section.settings.heading_color }};
+    margin: 0 0 14px;
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-aff__benefit {
+    font-family: var(--body);
+    font-size: {{ section.settings.body_size }}px;
+    line-height: 1.6;
+    color: var(--muted, #6b5b73);
+    max-width: 56ch;
+    margin: 0 auto 30px;
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-aff__actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-aff__btn--disabled {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 13px 26px;
+    border-radius: 999px;
+    font-family: var(--body);
+    font-weight: 800;
+    font-size: 13px;
+    background: #efe9f0;
+    color: #a598a9;
+    cursor: not-allowed;
+    user-select: none;
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-aff__editor-note {
+    font-family: var(--body);
+    font-size: 12.5px;
+    color: #b23b1f;
+    background: #fff1ea;
+    border-radius: 10px;
+    padding: 8px 14px;
+    display: inline-block;
+    margin: 0 0 10px;
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-aff__terms {
+    font-family: var(--body);
+    font-size: 13px;
+    margin: 0 0 36px;
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-aff__terms a {
+    color: {{ section.settings.accent_color }};
+    font-weight: 700;
+    text-decoration: underline;
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-aff__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 22px;
+    text-align: left;
+    margin-bottom: 26px;
+  }
+  @media screen and (max-width: 900px) {
+    #shopify-section-{{ section.id }} .pp-ccc-aff__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-aff__card {
+    background: #fff;
+    border: 1px solid var(--line, #eee0ee);
+    border-radius: 24px;
+    padding: 26px 22px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    box-shadow: 0 10px 30px -18px rgba(53, 16, 66, .18);
+    transition: transform .3s cubic-bezier(.2, .8, .2, 1), box-shadow .3s ease;
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-aff__card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 40px -18px rgba(53, 16, 66, .28);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #shopify-section-{{ section.id }} .pp-ccc-aff__card {
+      transition: none;
+    }
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-aff__icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+    display: grid;
+    place-items: center;
+    background: {{ section.settings.icon_bg }};
+    margin-bottom: 16px;
+    transition: transform .35s cubic-bezier(.34, 1.56, .64, 1);
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-aff__card:hover .pp-ccc-aff__icon {
+    transform: rotate(-8deg) scale(1.08);
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-aff__icon svg {
+    width: 26px;
+    height: 26px;
+    stroke: {{ section.settings.icon_color }};
+    fill: none;
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-aff__icon img {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-aff__card h3 {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--ink, #351042);
+    margin: 0 0 8px;
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-aff__card p {
+    font-family: var(--body);
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--muted, #6b5b73);
+    margin: 0;
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-aff__note {
+    display: inline-flex;
+    align-items: flex-start;
+    gap: 8px;
+    text-align: left;
+    max-width: 62ch;
+    margin: 0 auto;
+    background: {{ section.settings.icon_bg }};
+    border-radius: 14px;
+    padding: 12px 16px;
+    font-family: var(--body);
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--ink, #351042);
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-aff__note span[aria-hidden] {
+    flex: 0 0 auto;
+    font-size: 15px;
+    line-height: 1.4;
+  }
+  @media screen and (max-width: 749px) {
+    #shopify-section-{{ section.id }} .pp-ccc-aff {
+      padding: {{ section.settings.padding_top_mobile }}px 0 {{ section.settings.padding_bottom_mobile }}px;
+    }
+  }
+</style>
+{% if section.settings.enable %}
+  {% liquid
+    assign has_registration_url = false
+    if section.settings.registration_url != blank
+      assign has_registration_url = true
+    endif
+
+    assign has_login_url = false
+    if section.settings.login_url != blank
+      assign has_login_url = true
+    endif
+
+    assign has_terms_url = false
+    if section.settings.terms_url != blank
+      assign has_terms_url = true
+    endif
+  %}
+  <section class="pp-ccc-aff pp-reveal" id="ccc-affiliate">
+    <div class="page-width">
+      <div class="pp-ccc-aff__inner">
+        {% if section.settings.eyebrow != blank %}
+          <span class="pp-ccc-aff__eyebrow">{{ section.settings.eyebrow }}</span>
+        {% endif %}
+        {% if section.settings.heading != blank %}
+          <h2>{{ section.settings.heading }}</h2>
+        {% endif %}
+        {% if section.settings.benefit_line != blank %}
+          <p class="pp-ccc-aff__benefit">{{ section.settings.benefit_line }}</p>
+        {% endif %}
+
+        {% if request.design_mode and has_registration_url == false %}
+          <div class="pp-ccc-aff__editor-note">⚠️ No affiliate registration URL set — the "{{ section.settings.apply_button_label }}" button is shown disabled on the storefront until you add one below.</div>
+        {% endif %}
+        {% if request.design_mode and has_login_url == false %}
+          <div class="pp-ccc-aff__editor-note">⚠️ No creator login URL set — the "{{ section.settings.login_button_label }}" button is shown disabled on the storefront until you add one below.</div>
+        {% endif %}
+
+        <div class="pp-ccc-aff__actions">
+          {% if section.settings.apply_button_label != blank %}
+            {% if has_registration_url %}
+              <a href="{{ section.settings.registration_url }}" class="pp-btn pp-btn--orange" target="_blank" rel="noopener">{{ section.settings.apply_button_label }}</a>
+            {% else %}
+              <span class="pp-ccc-aff__btn--disabled" aria-disabled="true">{{ section.settings.apply_button_label }}</span>
+            {% endif %}
+          {% endif %}
+          {% if section.settings.login_button_label != blank %}
+            {% if has_login_url %}
+              <a href="{{ section.settings.login_url }}" class="pp-btn pp-btn--outline" target="_blank" rel="noopener">{{ section.settings.login_button_label }}</a>
+            {% else %}
+              <span class="pp-ccc-aff__btn--disabled" aria-disabled="true">{{ section.settings.login_button_label }}</span>
+            {% endif %}
+          {% endif %}
+        </div>
+
+        {% if has_terms_url %}
+          <p class="pp-ccc-aff__terms">
+            <a href="{{ section.settings.terms_url }}" target="_blank" rel="noopener">{{ section.settings.terms_link_label | default: 'View Creator Affiliate Terms' }}</a>
+          </p>
+        {% elsif request.design_mode %}
+          <p class="pp-ccc-aff__terms" style="color:#b23b1f;">⚠️ No Creator Affiliate Terms URL set — this link is hidden on the storefront until you add one below.</p>
+        {% endif %}
+
+        <div class="pp-ccc-aff__grid">
+          {% for block in section.blocks %}
+            {% if block.type == 'earn_step' %}
+              <div class="pp-ccc-aff__card" data-pp-block-id="{{ block.id }}" {{ block.shopify_attributes }}>
+                {% assign icon_image_img = block.settings.icon_image %}
+{% assign icon_image_img_mobile = block.settings.icon_image_mobile %}
+{% assign icon_image_display = icon_image_img | default: icon_image_img_mobile %}
+{% assign icon_image_fit = block.settings.icon_image_fit | default: 'contain' %}
+{% assign icon_image_position = block.settings.icon_image_position | default: 'center center' %}
+{% assign icon_image_fit_m = block.settings.icon_image_fit_mobile | default: 'contain' %}
+{% assign icon_image_position_m = block.settings.icon_image_position_mobile | default: 'center center' %}
+{% assign icon_image_radius = block.settings.icon_image_radius | default: 0 %}
+{% assign icon_image_radius_m = block.settings.icon_image_radius_mobile | default: 0 %}
+{% assign icon_image_w = block.settings.icon_image_max_width | default: 0 %}
+{% assign icon_image_h = block.settings.icon_image_max_height | default: 0 %}
+{% assign icon_image_w_m = block.settings.icon_image_max_width_mobile | default: 0 %}
+{% assign icon_image_h_m = block.settings.icon_image_max_height_mobile | default: 0 %}
+{% assign icon_image_ha = block.settings.icon_image_h_align | default: 'default' %}
+{% assign icon_image_va = block.settings.icon_image_v_align | default: 'default' %}
+{% assign icon_image_ha_m = block.settings.icon_image_h_align_mobile | default: 'default' %}
+{% assign icon_image_va_m = block.settings.icon_image_v_align_mobile | default: 'default' %}
+                <style>@media (min-width: 991px) {
+  #shopify-section-{{ section.id }} .pp-ccc-aff__card[data-pp-block-id="{{ block.id }}"] .pp-ccc-aff__icon img { object-fit: {{ icon_image_fit }}; object-position: {{ icon_image_position }}; }
+  #shopify-section-{{ section.id }} .pp-ccc-aff__card[data-pp-block-id="{{ block.id }}"] .pp-ccc-aff__icon {
+    {% if icon_image_radius > 0 %}border-radius: {{ icon_image_radius }}px; overflow: hidden;{% endif %}
+    {% if icon_image_w > 0 %}width: min({{ icon_image_w }}px, 100%); max-width: 100%;{% endif %}
+    {% if icon_image_h > 0 %}height: min({{ icon_image_h }}px, 100%); max-height: 100%;{% endif %}
+    {% if icon_image_ha == 'left' %}margin-left: 0; margin-right: auto;{% endif %}
+    {% if icon_image_ha == 'center' %}margin-left: auto; margin-right: auto;{% endif %}
+    {% if icon_image_ha == 'right' %}margin-left: auto; margin-right: 0;{% endif %}
+    {% if icon_image_va == 'top' %}align-self: flex-start;{% endif %}
+    {% if icon_image_va == 'center' %}align-self: center;{% endif %}
+    {% if icon_image_va == 'bottom' %}align-self: flex-end;{% endif %}
+  }
+}
+@media (max-width: 990px) {
+  #shopify-section-{{ section.id }} .pp-ccc-aff__card[data-pp-block-id="{{ block.id }}"] .pp-ccc-aff__icon img { object-fit: {{ icon_image_fit_m }}; object-position: {{ icon_image_position_m }}; }
+  #shopify-section-{{ section.id }} .pp-ccc-aff__card[data-pp-block-id="{{ block.id }}"] .pp-ccc-aff__icon {
+    {% if icon_image_radius_m > 0 %}border-radius: {{ icon_image_radius_m }}px; overflow: hidden;{% endif %}
+    {% if icon_image_w_m > 0 %}width: min({{ icon_image_w_m }}px, 100%); max-width: 100%;{% endif %}
+    {% if icon_image_h_m > 0 %}height: min({{ icon_image_h_m }}px, 100%); max-height: 100%;{% endif %}
+    {% if icon_image_ha_m == 'left' %}margin-left: 0; margin-right: auto;{% endif %}
+    {% if icon_image_ha_m == 'center' %}margin-left: auto; margin-right: auto;{% endif %}
+    {% if icon_image_ha_m == 'right' %}margin-left: auto; margin-right: 0;{% endif %}
+    {% if icon_image_va_m == 'top' %}align-self: flex-start;{% endif %}
+    {% if icon_image_va_m == 'center' %}align-self: center;{% endif %}
+    {% if icon_image_va_m == 'bottom' %}align-self: flex-end;{% endif %}
+  }
+}</style>
+                <div class="pp-ccc-aff__icon">
+                  {% if icon_image_display != blank %}
+  <picture>
+    {% if icon_image_img_mobile != blank and icon_image_img_mobile != icon_image_img %}
+      <source media="(max-width: 990px)" srcset="{{ icon_image_img_mobile | image_url: width: 400 }} 400w, {{ icon_image_img_mobile | image_url: width: 600 }} 600w, {{ icon_image_img_mobile | image_url: width: 800 }} 800w, {{ icon_image_img_mobile | image_url: width: 1000 }} 1000w" sizes="100vw">
+    {% endif %}
+    {{ icon_image_display | image_url: width: 96 | image_tag: loading: 'lazy', alt: '' }}
+  </picture>
+                  {% else %}
+                    {% case block.settings.icon %}
+                      {% when 'share' %}
+                        <svg viewBox="0 0 24 24" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="12" r="2.4"/><circle cx="18" cy="6" r="2.4"/><circle cx="18" cy="18" r="2.4"/><path d="M8.1 10.8 15.9 7.2M8.1 13.2l7.8 3.6"/></svg>
+                      {% when 'earn' %}
+                        <svg viewBox="0 0 24 24" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5v9M9.5 9.6c0-1.1 1.1-2 2.5-2s2.5.7 2.5 1.7-1 1.5-2.5 1.9c-1.5.4-2.5.9-2.5 1.9s1.1 1.7 2.5 1.7 2.5-.9 2.5-2"/></svg>
+                      {% else %}
+                        <svg viewBox="0 0 24 24" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12.6 3.5 20 10.9a2 2 0 0 1 0 2.8l-6.3 6.3a2 2 0 0 1-2.8 0L3.5 12.6V5.5a2 2 0 0 1 2-2h7.1Z"/><circle cx="8" cy="9" r="1.4"/></svg>
+                    {% endcase %}
+                  {% endif %}
+                </div>
+                <h3>{{ block.settings.heading }}</h3>
+                <p>{{ block.settings.text }}</p>
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+
+        {% if section.settings.info_note != blank %}
+          <div class="pp-ccc-aff__note">
+            <span aria-hidden="true">ℹ️</span>
+            <span>{{ section.settings.info_note }}</span>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+{% endif %}
+{% schema %}
+{"name":"CC — Affiliate Program","settings":[{"type":"checkbox","id":"enable","label":"Show this section","default":true},{"type":"header","content":"Content"},{"type":"text","id":"eyebrow","label":"Eyebrow","default":"AFFILIATE PROGRAM"},{"type":"text","id":"heading","label":"Heading","default":"Earn While You Share the Love"},{"type":"textarea","id":"benefit_line","label":"Benefit line","default":"Share your code. Treat your community. Earn on every approved order."},{"type":"header","content":"Buttons"},{"type":"text","id":"apply_button_label","label":"Apply button label","default":"Apply & Start Earning"},{"type":"url","id":"registration_url","label":"Affiliate registration URL (UpPromote)","info":"Paste your UpPromote creator registration link here once available. Left blank, this button shows disabled on the storefront instead of linking nowhere."},{"type":"text","id":"login_button_label","label":"Creator login button label","default":"Creator Login"},{"type":"url","id":"login_url","label":"Creator dashboard / login URL","info":"Paste your UpPromote creator login link here once available. Left blank, this button shows disabled on the storefront instead of linking nowhere."},{"type":"header","content":"Terms"},{"type":"text","id":"terms_link_label","label":"Terms link label","default":"View Creator Affiliate Terms"},{"type":"url","id":"terms_url","label":"Creator Affiliate Terms URL","info":"Link to your Creator Affiliate Terms page or document. Left blank, this link is hidden on the storefront."},{"type":"header","content":"Information note"},{"type":"textarea","id":"info_note","label":"Information note","default":"Commission is confirmed after the order's return and cancellation period is complete."},{"type":"header","content":"Colours"},{"type":"color","id":"background","label":"Section background","default":"#ffffff"},{"type":"color","id":"accent_color","label":"Accent colour (eyebrow, terms link)","default":"#ff5a0a"},{"type":"color","id":"icon_bg","label":"Icon tile background","default":"#f3e9f8"},{"type":"color","id":"icon_color","label":"Icon stroke colour","default":"#47105d"},{"type":"color","id":"heading_color","label":"Heading colour","default":"#351042"},{"type":"header","content":"Font sizes"},{"type":"range","id":"heading_size","min":24,"max":48,"step":2,"unit":"px","label":"Heading size — desktop","default":34},{"type":"range","id":"heading_size_mobile","min":20,"max":34,"step":1,"unit":"px","label":"Heading size — mobile","default":26},{"type":"range","id":"body_size","min":13,"max":18,"step":1,"unit":"px","label":"Benefit line text size","default":16},{"type":"header","content":"Section spacing"},{"type":"range","id":"padding_top","min":0,"max":160,"step":4,"unit":"px","label":"Top padding — desktop","default":64},{"type":"range","id":"padding_bottom","min":0,"max":160,"step":4,"unit":"px","label":"Bottom padding — desktop","default":64},{"type":"range","id":"padding_top_mobile","min":0,"max":120,"step":4,"unit":"px","label":"Top padding — mobile","default":40},{"type":"range","id":"padding_bottom_mobile","min":0,"max":120,"step":4,"unit":"px","label":"Bottom padding — mobile","default":40}],"blocks":[{"type":"earn_step","name":"How-earning-works step","settings":[{"type":"text","id":"heading","label":"Heading","default":"Get Your Code"},{"type":"textarea","id":"text","label":"Text","default":"Once approved, you'll receive your personal creator code and sharing link."},{"type":"select","id":"icon","label":"Outline icon (used if no image set)","default":"code","options":[{"value":"code","label":"Code / tag"},{"value":"share","label":"Share"},{"value":"earn","label":"Earn / coin"}]},{"type":"header","content":"Custom icon image — desktop"},{"type":"image_picker","id":"icon_image","label":"Custom icon image (desktop)","info":"A transparent PNG works best."},{"type":"header","content":"Custom icon image — mobile"},{"type":"image_picker","id":"icon_image_mobile","label":"Custom icon image — mobile (optional)","info":"Shown at 990px and narrower instead of the desktop image above. Leave empty to use the same image on mobile."},{"type":"header","content":"Image fit — desktop"},{"type":"select","id":"icon_image_fit","label":"How the photo fills its box","default":"contain","options":[{"value":"contain","label":"Show the whole photo (may leave empty space)"},{"value":"cover","label":"Fill the box completely (may crop)"}]},{"type":"select","id":"icon_image_position","label":"Photo alignment inside its box","info":"Only matters when the photo's shape doesn't exactly match the box.","default":"center center","options":[{"value":"left top","label":"Top left"},{"value":"center top","label":"Top center"},{"value":"right top","label":"Top right"},{"value":"left center","label":"Middle left"},{"value":"center center","label":"Middle center"},{"value":"right center","label":"Middle right"},{"value":"left bottom","label":"Bottom left"},{"value":"center bottom","label":"Bottom center"},{"value":"right bottom","label":"Bottom right"}]},{"type":"header","content":"Image fit — mobile"},{"type":"select","id":"icon_image_fit_mobile","label":"How the photo fills its box","default":"contain","options":[{"value":"contain","label":"Show the whole photo (may leave empty space)"},{"value":"cover","label":"Fill the box completely (may crop)"}]},{"type":"select","id":"icon_image_position_mobile","label":"Photo alignment inside its box","info":"Only matters when the photo's shape doesn't exactly match the box.","default":"center center","options":[{"value":"left top","label":"Top left"},{"value":"center top","label":"Top center"},{"value":"right top","label":"Top right"},{"value":"left center","label":"Middle left"},{"value":"center center","label":"Middle center"},{"value":"right center","label":"Middle right"},{"value":"left bottom","label":"Bottom left"},{"value":"center bottom","label":"Bottom center"},{"value":"right bottom","label":"Bottom right"}]},{"type":"header","content":"Corner rounding — desktop"},{"type":"range","id":"icon_image_radius","min":0,"max":60,"step":2,"unit":"px","label":"Corner rounding (0 = theme default)","default":0},{"type":"header","content":"Corner rounding — mobile"},{"type":"range","id":"icon_image_radius_mobile","min":0,"max":60,"step":2,"unit":"px","label":"Corner rounding (0 = theme default)","default":0},{"type":"header","content":"Image size — desktop"},{"type":"range","id":"icon_image_max_width","min":0,"max":1500,"step":50,"unit":"px","label":"Image width (0 = automatic)","info":"Applies at 991px and wider. Automatically shrinks to fit if the layout doesn't have room, so it never overlaps other content.","default":0},{"type":"range","id":"icon_image_max_height","min":0,"max":1000,"step":50,"unit":"px","label":"Image height (0 = automatic)","info":"Applies at 991px and wider. Automatically shrinks to fit if the layout doesn't have room, so it never overlaps other content.","default":0},{"type":"header","content":"Image size — mobile"},{"type":"range","id":"icon_image_max_width_mobile","min":0,"max":900,"step":25,"unit":"px","label":"Image width (0 = automatic)","info":"Applies at 990px and narrower (phones and tablets). Automatically shrinks to fit if the layout doesn't have room, so it never overlaps other content.","default":0},{"type":"range","id":"icon_image_max_height_mobile","min":0,"max":700,"step":25,"unit":"px","label":"Image height (0 = automatic)","info":"Applies at 990px and narrower (phones and tablets). Automatically shrinks to fit if the layout doesn't have room, so it never overlaps other content.","default":0},{"type":"header","content":"Box position — desktop"},{"type":"select","id":"icon_image_h_align","label":"Horizontal position","info":"Applies at 991px and wider. \"Default\" keeps the theme's original spacing.","default":"default","options":[{"value":"default","label":"Default (theme spacing)"},{"value":"left","label":"Left"},{"value":"center","label":"Center"},{"value":"right","label":"Right"}]},{"type":"select","id":"icon_image_v_align","label":"Vertical position","info":"Applies at 991px and wider. \"Default\" keeps the theme's original spacing.","default":"default","options":[{"value":"default","label":"Default (theme spacing)"},{"value":"top","label":"Top"},{"value":"center","label":"Center"},{"value":"bottom","label":"Bottom"}]},{"type":"header","content":"Box position — mobile"},{"type":"select","id":"icon_image_h_align_mobile","label":"Horizontal position","info":"Applies at 990px and narrower (phones and tablets). \"Default\" keeps the theme's original spacing.","default":"default","options":[{"value":"default","label":"Default (theme spacing)"},{"value":"left","label":"Left"},{"value":"center","label":"Center"},{"value":"right","label":"Right"}]},{"type":"select","id":"icon_image_v_align_mobile","label":"Vertical position","info":"Applies at 990px and narrower (phones and tablets). \"Default\" keeps the theme's original spacing.","default":"default","options":[{"value":"default","label":"Default (theme spacing)"},{"value":"top","label":"Top"},{"value":"center","label":"Center"},{"value":"bottom","label":"Bottom"}]}]}],"presets":[{"name":"CC — Affiliate Program","blocks":[{"type":"earn_step","settings":{"heading":"Get Your Code","text":"Once approved, you'll receive your personal creator code and sharing link.","icon":"code"}},{"type":"earn_step","settings":{"heading":"Share With Your Pack","text":"Share your code or link naturally with your pet-parent community.","icon":"share"}},{"type":"earn_step","settings":{"heading":"Earn Rewards","text":"When someone shops through you, you earn commission on every eligible approved order.","icon":"earn"}}]}]}
+{% endschema %}

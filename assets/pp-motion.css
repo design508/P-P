@@ -1,0 +1,353 @@
+/* pp-motion.css
+   Additive interactivity layer. Loaded after theme.css, so a rule here only
+   ever adds a new effect (hover/active states, transitions, new components)
+   and never overrides an existing theme.css declaration for the same
+   purpose. Nothing here is touched by editing theme.css or theme.js.
+   Every animation/transition is switched off by the theme's existing
+   body.pp-motion-off rule (layout/theme.liquid) and by
+   prefers-reduced-motion below. */
+
+/* ---------------------------------------------------------------------
+   Buttons — theme.css defines .pp-btn with no hover/active state at all.
+   Site-wide: a lift-off on hover, plus a diagonal shine sweep. The sweep
+   loops continuously (not hover-gated) so it is visible on touch devices
+   too, not only on mouse hover. It is a ::before pseudo-element so it
+   never disturbs the button's own content (icons, labels) or its existing
+   border-radius/background.
+--------------------------------------------------------------------- */
+.pp-btn {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
+}
+.pp-btn:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -60%;
+  width: 35%;
+  height: 100%;
+  background: linear-gradient(115deg, transparent 0%, rgba(255, 255, 255, .6) 50%, transparent 100%);
+  transform: skewX(-20deg);
+  pointer-events: none;
+  z-index: 1;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .pp-btn:before {
+    animation: pp-btn-shine 2.8s ease-in-out infinite;
+  }
+}
+@keyframes pp-btn-shine {
+  0% { left: -60%; }
+  35% { left: 130%; }
+  100% { left: 130%; }
+}
+.pp-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 22px rgba(53, 16, 66, .16);
+  filter: saturate(1.08);
+}
+.pp-btn:active {
+  transform: translateY(0) scale(.97);
+  box-shadow: 0 4px 10px rgba(53, 16, 66, .14);
+}
+
+/* ---------------------------------------------------------------------
+   Header logo + cart/menu icons — small tactile feedback on hover.
+--------------------------------------------------------------------- */
+.pp-logo__paw {
+  transition: transform .3s cubic-bezier(.34, 1.56, .64, 1);
+}
+.pp-logo:hover .pp-logo__paw {
+  transform: rotate(-12deg) scale(1.08);
+}
+[data-cart-open],
+[data-menu-toggle] {
+  transition: transform .18s ease;
+}
+[data-cart-open]:hover,
+[data-menu-toggle]:hover {
+  transform: translateY(-1px) scale(1.05);
+}
+
+/* ---------------------------------------------------------------------
+   Footer links — reveal an underline instead of a flat colour swap.
+--------------------------------------------------------------------- */
+.pp-footer__grid a {
+  position: relative;
+  transition: opacity .2s ease;
+}
+.pp-footer__grid a:after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 100%;
+  bottom: -2px;
+  height: 1px;
+  background: currentColor;
+  transition: right .22s ease;
+}
+.pp-footer__grid a:hover {
+  opacity: 1;
+}
+.pp-footer__grid a:hover:after {
+  right: 0;
+}
+
+/* ---------------------------------------------------------------------
+   Quantity stepper buttons.
+--------------------------------------------------------------------- */
+.pp-qty button {
+  transition: background-color .15s ease, transform .15s ease;
+}
+.pp-qty button:hover {
+  background: rgba(71, 16, 93, .06);
+}
+.pp-qty button:active {
+  transform: scale(.9);
+}
+
+/* ---------------------------------------------------------------------
+   Trust-point / feature icons — a light float on hover.
+--------------------------------------------------------------------- */
+.pp-why__card,
+[class*="trust"] {
+  transition: transform .25s ease;
+}
+
+/* ---------------------------------------------------------------------
+   Sticky add-to-cart bar (sections/main-product.liquid): the existing
+   markup/JS (assets/theme.js data-sticky-add) is reused as-is. This layer
+   adds the slide/fade reveal and an opt-in desktop appearance, driven by
+   the .is-visible class toggled from assets/pp-motion.js.
+--------------------------------------------------------------------- */
+.pp-sticky-atc {
+  transition: transform .4s cubic-bezier(.22, .8, .24, 1), opacity .3s ease;
+  transform: translateY(130%);
+  opacity: 0;
+  pointer-events: none;
+}
+.pp-sticky-atc.is-visible {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+@media (min-width: 761px) {
+  /* The base .pp-sticky-atc rule in theme.css is `display:none` outside the
+     existing mobile breakpoint, and none of that mobile-only bar styling
+     (background/padding/shadow/rounded corners/position) carries over here
+     — so the desktop variant needs its own complete, self-contained look
+     rather than assuming anything from theme.css. */
+  .pp-sticky-atc--desktop {
+    display: flex;
+    position: fixed;
+    z-index: 800;
+    left: auto;
+    right: 24px;
+    bottom: 24px;
+    max-width: 420px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 18px;
+    background: rgba(255, 255, 255, .96);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 16px 50px rgba(56, 17, 68, .22);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+  }
+  .pp-sticky-atc--desktop [data-sticky-price] {
+    font-size: 15px;
+    font-weight: 900;
+    color: var(--orange);
+    white-space: nowrap;
+  }
+  .pp-sticky-atc--desktop .pp-btn {
+    padding: 12px 20px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+}
+
+/* ---------------------------------------------------------------------
+   PDP tag pills, below the product title (sections/main-product.liquid).
+--------------------------------------------------------------------- */
+.pp-pdp__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 14px 0 4px;
+}
+.pp-pdp__tag {
+  /* Background/text/border colour come from each tag's own PDP Tag
+     metaobject entry, set inline per tag in sections/main-product.liquid —
+     this rule only supplies the shared pill shape and hover behaviour. */
+  display: inline-flex;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .02em;
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.pp-pdp__tag:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(53, 16, 66, .12);
+}
+
+/* ---------------------------------------------------------------------
+   Card height consistency (snippets/product-card.liquid) — the card and
+   its body are flex columns so the price/quick-add sit at the same
+   position across a row of cards even when one card's description is
+   longer than a neighbour's: the grid row's default stretch gives every
+   .pp-card the same outer height, and margin-top:auto on the price pins
+   it (and the button under it) to the bottom of that shared height.
+--------------------------------------------------------------------- */
+.pp-card {
+  display: flex;
+  flex-direction: column;
+  /* align-self (not an explicit height:100%) is the reliable way to force
+     a grid/flex item to match its row's height: a grid row sized "auto"
+     (content-based, which .pp-product-grid's rows are) isn't a definite
+     size for percentage-height resolution, so `height:100%` here can
+     silently collapse back to each card's own natural content height in
+     some browsers instead of actually stretching. align-self:stretch
+     doesn't go through percentage resolution at all — it forces the used
+     height directly — which is what actually equalizes the cards. */
+  align-self: stretch;
+}
+.pp-card__body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.pp-card__price {
+  margin-top: auto;
+}
+
+/* ---------------------------------------------------------------------
+   Card badges (snippets/product-card.liquid) — theme.css ALREADY has a
+   native badge look used elsewhere on this site (its own .pp-card__badge
+   rule, and the matching .pp-video-card__badge on video cards): a white
+   pill, a hairline purple-tinted border, a soft low shadow, and brand-
+   coloured TEXT (not a filled background) — e.g. the existing "Soft &
+   shiny" badge on product images uses exactly this. Earlier iterations
+   here replaced that with a filled brand-gradient chip, which is a
+   different visual language from the rest of the site — that's why it
+   read as a foreign sticker rather than part of the card, and why the
+   colours felt like they didn't match: gradients aren't how this theme
+   uses brand colour on badges/kickers anywhere else (compare
+   .pp-kicker--pink, which is coloured TEXT on a plain background, same
+   idea). This version goes back to the theme's own white/bordered/
+   soft-shadow pill and only adds what theme.css's single-badge rule
+   doesn't support: more than one badge in a row. Badges render inside a
+   .pp-card__badges wrapper, positioned once at top-left (theme.css's own
+   top:14px/left:14px, just moved to the wrapper so multiple badges don't
+   stack on the same spot); .pp-card__badge itself goes back to
+   position:static so it just lays out normally inside that row. Each
+   badge's TEXT cycles through the same brand variables the theme already
+   uses for coloured text accents, so multiple badges look distinct
+   without introducing a new colour treatment. Reads from the new
+   custom.card_badges list metafield, falling back to the older single
+   custom.card_badge field when a product only has that set.
+
+   UPDATE — animated border: the badge's hairline border is now a moving
+   brand-colour gradient instead of a flat rgba line, per explicit
+   request. Technique: a thin transparent border plus a two-layer
+   background (a solid white padding-box fill "under" the text, and a
+   gradient border-box fill that only shows through the border's width) —
+   this keeps the gradient confined to a crisp, thin ring around the white
+   pill instead of tinting the whole badge. Animating that gradient
+   layer's background-position makes the ring appear to travel around the
+   badge. (A pulsing glow was tried alongside this and then explicitly
+   removed per feedback — the badge shadow below is the same static soft
+   drop shadow every card badge always had, not an animated glow.) Motion
+   is gated behind prefers-reduced-motion, same as every other animation
+   in this file, with a static (non-animated) gradient ring as the
+   fallback so reduced-motion still gets a border, just not a moving one.
+--------------------------------------------------------------------- */
+.pp-card__badges {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 3;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 6px;
+  max-width: calc(100% - 28px);
+}
+.pp-card__badge {
+  position: static;
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  padding: 7px 12px;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--purple, #47105d);
+  background:
+    linear-gradient(#fff, #fff) padding-box,
+    linear-gradient(120deg, var(--pink, #ff2b78), var(--orange, #ff5a0a), #2fae3a, var(--purple, #47105d), var(--pink, #ff2b78)) border-box;
+  background-size: 100% 100%, 300% 300%;
+  background-position: 0 0, 0% 50%;
+  box-shadow: 0 6px 18px rgba(63, 14, 80, .07);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .pp-card__badge {
+    animation: pp-badge-border-move 4s ease infinite;
+  }
+}
+@keyframes pp-badge-border-move {
+  0% { background-position: 0 0, 0% 50%; }
+  50% { background-position: 0 0, 100% 50%; }
+  100% { background-position: 0 0, 0% 50%; }
+}
+.pp-card__badges .pp-card__badge:nth-child(2) {
+  color: var(--orange, #ff5a0a);
+}
+.pp-card__badges .pp-card__badge:nth-child(3) {
+  color: var(--pink, #ff2b78);
+}
+.pp-card__badges .pp-card__badge:nth-child(4) {
+  /* Not var(--green): the theme's --green (#61f46f) is a bright lime meant
+     for large decorative use (blobs, border-image stripes), not small
+     9px text on white — it would look washed out/low-contrast here. This
+     is a darker shade of the same hue instead, so it still reads as "the
+     brand's green" without the readability problem. */
+  color: #2fae3a;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pp-btn,
+  .pp-btn:before,
+  .pp-logo__paw,
+  [data-cart-open],
+  [data-menu-toggle],
+  .pp-footer__grid a:after,
+  .pp-qty button,
+  .pp-why__card,
+  [class*="trust"],
+  .pp-sticky-atc,
+  .pp-pdp__tag,
+  .pp-card__badge {
+    transition: none !important;
+    animation: none !important;
+  }
+  .pp-btn:hover,
+  .pp-logo:hover .pp-logo__paw,
+  .pp-pdp__tag:hover {
+    transform: none !important;
+  }
+}

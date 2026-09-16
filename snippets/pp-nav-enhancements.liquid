@@ -1,0 +1,242 @@
+{% comment %}
+  pp-nav-enhancements
+  Scoped CSS for the Cuddle Care nav highlight and the Grooming badge.
+  Rendered once inside sections/header.liquid so every rule is namespaced to
+  #shopify-section-{{ section.id }} and cannot leak into other sections.
+
+  Deliberately does NOT touch:
+    - .pp-header__inner height          (no header growth)
+    - .pp-nav gap / flex                (no reflow of other links)
+    - .pp-nav a padding or :after       (existing underline animation intact)
+  The badge is absolutely positioned against the LABEL, which shrink-wraps the
+  text, so it anchors to the word on both desktop and mobile and never widens
+  the document.
+{% endcomment %}
+
+<style>
+  /* The label shrink-wraps the text and becomes the badge's positioning context. */
+  #shopify-section-{{ section.id }} .pp-nav__label {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+  }
+
+  /* Mobile drawer links are plain blocks; give them a context too. */
+  #shopify-section-{{ section.id }} .pp-mobile-menu a {
+    position: relative;
+  }
+
+  {%- if section.settings.nav_highlight_enable -%}
+    /* ---- Change 1 — Cuddle Care Box highlight ---------------------------- */
+    #shopify-section-{{ section.id }} .nav-link--cuddle-care > .pp-nav__label {
+      color: {{ section.settings.nav_highlight_color }};
+      font-weight: {{ section.settings.nav_highlight_weight }};
+      {%- if section.settings.nav_highlight_bg_enable %}
+        background: {{ section.settings.nav_highlight_bg }};
+      {%- endif %}
+      padding: {{ section.settings.nav_highlight_pad_y }}px {{ section.settings.nav_highlight_pad_x }}px;
+      margin: -{{ section.settings.nav_highlight_pad_y }}px -{{ section.settings.nav_highlight_pad_x }}px;
+      border-radius: {{ section.settings.nav_highlight_radius }}px;
+      transition: color .22s ease, background-color .22s ease;
+    }
+
+    #shopify-section-{{ section.id }} .nav-link--cuddle-care,
+    #shopify-section-{{ section.id }} .nav-link--cuddle-care:hover {
+      color: inherit;
+    }
+
+    #shopify-section-{{ section.id }} .nav-link--cuddle-care:hover > .pp-nav__label,
+    #shopify-section-{{ section.id }} .nav-link--cuddle-care:focus-visible > .pp-nav__label {
+      color: {{ section.settings.nav_highlight_hover_color }};
+    }
+
+    {%- if section.settings.nav_highlight_bg_enable -%}
+      #shopify-section-{{ section.id }} .pp-nav a.nav-link--cuddle-care:after {
+        display: none;
+      }
+      #shopify-section-{{ section.id }} .pp-mobile-menu a.nav-link--cuddle-care {
+        align-self: flex-start;
+      }
+    {%- endif -%}
+
+    {%- if section.settings.nav_highlight_shine -%}
+      #shopify-section-{{ section.id }} .nav-link--cuddle-care > .pp-nav__label {
+        overflow: hidden;
+      }
+      #shopify-section-{{ section.id }} .nav-link--cuddle-care > .pp-nav__label > * {
+        position: relative;
+        z-index: 1;
+      }
+      #shopify-section-{{ section.id }} .nav-link--cuddle-care > .pp-nav__label:before {
+        content: "";
+        position: absolute;
+        top: -60%;
+        bottom: -60%;
+        left: -60%;
+        width: 32%;
+        background: linear-gradient(115deg, transparent 0%, rgba(255, 255, 255, .8) 50%, transparent 100%);
+        transform: skewX(-16deg);
+        pointer-events: none;
+        z-index: 0;
+        animation: pp-nav-shine 4.4s ease-in-out infinite;
+        animation-delay: 1.1s;
+      }
+      @keyframes pp-nav-shine {
+        0% { left: -60%; opacity: 0; }
+        6% { opacity: .95; }
+        30% { left: 130%; opacity: 0; }
+        100% { left: 130%; opacity: 0; }
+      }
+    {%- endif -%}
+  {%- endif -%}
+
+  {%- if section.settings.nav_highlight2_enable -%}
+    #shopify-section-{{ section.id }} .nav-link--creator-club > .pp-nav__label {
+      color: {{ section.settings.nav_highlight2_color }};
+      font-weight: {{ section.settings.nav_highlight2_weight }};
+      {%- if section.settings.nav_highlight2_bg_enable %}
+        background: {{ section.settings.nav_highlight2_bg }};
+      {%- endif %}
+      padding: {{ section.settings.nav_highlight2_pad_y }}px {{ section.settings.nav_highlight2_pad_x }}px;
+      margin: -{{ section.settings.nav_highlight2_pad_y }}px -{{ section.settings.nav_highlight2_pad_x }}px;
+      border-radius: {{ section.settings.nav_highlight2_radius }}px;
+      transition: color .22s ease, background-color .22s ease;
+    }
+
+    #shopify-section-{{ section.id }} .nav-link--creator-club,
+    #shopify-section-{{ section.id }} .nav-link--creator-club:hover {
+      color: inherit;
+    }
+
+    #shopify-section-{{ section.id }} .nav-link--creator-club:hover > .pp-nav__label,
+    #shopify-section-{{ section.id }} .nav-link--creator-club:focus-visible > .pp-nav__label {
+      color: {{ section.settings.nav_highlight2_hover_color }};
+    }
+
+    {%- if section.settings.nav_highlight2_bg_enable -%}
+      #shopify-section-{{ section.id }} .pp-nav a.nav-link--creator-club:after {
+        display: none;
+      }
+      #shopify-section-{{ section.id }} .pp-mobile-menu a.nav-link--creator-club {
+        align-self: flex-start;
+      }
+    {%- endif -%}
+
+    {%- if section.settings.nav_highlight2_shine -%}
+      #shopify-section-{{ section.id }} .nav-link--creator-club > .pp-nav__label {
+        overflow: hidden;
+      }
+      #shopify-section-{{ section.id }} .nav-link--creator-club > .pp-nav__label > * {
+        position: relative;
+        z-index: 1;
+      }
+      #shopify-section-{{ section.id }} .nav-link--creator-club > .pp-nav__label:before {
+        content: "";
+        position: absolute;
+        top: -60%;
+        bottom: -60%;
+        left: -60%;
+        width: 32%;
+        background: linear-gradient(115deg, transparent 0%, rgba(255, 255, 255, .8) 50%, transparent 100%);
+        transform: skewX(-16deg);
+        pointer-events: none;
+        z-index: 0;
+        animation: pp-nav-shine2 4.4s ease-in-out infinite;
+        animation-delay: 1.9s;
+      }
+      @keyframes pp-nav-shine2 {
+        0% { left: -60%; opacity: 0; }
+        6% { opacity: .95; }
+        30% { left: 130%; opacity: 0; }
+        100% { left: 130%; opacity: 0; }
+      }
+    {%- endif -%}
+
+    {%- if section.settings.nav_highlight2_blink -%}
+      #shopify-section-{{ section.id }} .nav-link--creator-club > .pp-nav__label {
+        animation: pp-nav-blink2 {{ section.settings.nav_highlight2_blink_speed }}s ease-in-out infinite;
+      }
+      @keyframes pp-nav-blink2 {
+        0%, 100% { opacity: 1; }
+        50% { opacity: .35; }
+      }
+    {%- endif -%}
+  {%- endif -%}
+
+  {%- if section.settings.nav_badge_enable -%}
+    /* ---- Change 2 — Grooming badge --------------------------------------- */
+    #shopify-section-{{ section.id }} .pp-nav-badge {
+      position: absolute;
+      top: {{ section.settings.badge_offset_y }}px;
+      right: {{ section.settings.badge_offset_x }}px;
+      transform: translate(50%, -50%);
+      z-index: 2;
+      pointer-events: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+      white-space: nowrap;
+      font-family: var(--body);
+      font-size: {{ section.settings.badge_font_size }}px;
+      font-weight: 900;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: {{ section.settings.badge_text_color }};
+      background: {{ section.settings.badge_bg_color }};
+      padding: .28em .5em;
+      border-radius: 999px;
+      box-shadow: 0 2px 6px rgba(53, 16, 66, .18);
+    }
+
+    #shopify-section-{{ section.id }} .pp-nav-badge--image {
+      background: none;
+      padding: 0;
+      box-shadow: none;
+    }
+
+    #shopify-section-{{ section.id }} .pp-nav-badge--image img {
+      display: block;
+      width: {{ section.settings.badge_image_size }}px;
+      height: auto;
+      object-fit: {{ section.settings.badge_image_fit | default: 'contain' }};
+      object-position: {{ section.settings.badge_image_position | default: 'center center' }};
+      {%- if section.settings.badge_image_radius > 0 %}
+      border-radius: {{ section.settings.badge_image_radius }}px;
+      overflow: hidden;
+      {%- endif %}
+    }
+
+    @media screen and (max-width: 989px) {
+      #shopify-section-{{ section.id }} .pp-nav-badge {
+        top: {{ section.settings.badge_offset_y_mobile }}px;
+        right: {{ section.settings.badge_offset_x_mobile }}px;
+      }
+
+      #shopify-section-{{ section.id }} .pp-nav-badge--image img {
+        object-fit: {{ section.settings.badge_image_fit_mobile | default: 'contain' }};
+        object-position: {{ section.settings.badge_image_position_mobile | default: 'center center' }};
+        {%- if section.settings.badge_image_size_mobile > 0 %}
+        width: {{ section.settings.badge_image_size_mobile }}px;
+        {%- endif %}
+        {%- if section.settings.badge_image_radius_mobile > 0 %}
+        border-radius: {{ section.settings.badge_image_radius_mobile }}px;
+        overflow: hidden;
+        {%- endif %}
+      }
+    }
+
+    /* Safety net: a badge pushed far right must never widen the page. */
+    #shopify-section-{{ section.id }} .pp-mobile-menu {
+      max-width: 100%;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      #shopify-section-{{ section.id }} .pp-nav-badge {
+        transition: none;
+      }
+    }
+  {%- endif -%}
+</style>

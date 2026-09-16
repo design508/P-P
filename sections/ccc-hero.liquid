@@ -1,0 +1,644 @@
+{% comment %}
+  Creator Club — Hero
+  Namespaced classes: pp-ccc-hero*
+{% endcomment %}
+{% render 'section-editor-styles', section: section %}
+<style>
+  #shopify-section-{{ section.id }} .pp-ccc-hero {
+    position: relative;
+    overflow: hidden;
+    background: {{ section.settings.background }};
+    padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;
+    isolation: isolate;
+  }
+  /* Playful soft colour blobs drifting behind the hero content. */
+  #shopify-section-{{ section.id }} .pp-ccc-hero:before,
+  #shopify-section-{{ section.id }} .pp-ccc-hero:after {
+    content: "";
+    position: absolute;
+    width: 280px;
+    height: 280px;
+    border-radius: 50%;
+    filter: blur(55px);
+    opacity: .32;
+    z-index: 0;
+    pointer-events: none;
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-hero:before {
+    background: {{ section.settings.accent_color }};
+    top: -90px;
+    left: -70px;
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-hero:after {
+    background: var(--orange, #ff5a0a);
+    width: 340px;
+    height: 340px;
+    bottom: -120px;
+    right: -90px;
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-hero__grid {
+    position: relative;
+    z-index: 1;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    #shopify-section-{{ section.id }} .pp-ccc-hero:before { animation: pp-ccc-blob-drift 9s ease-in-out infinite; }
+    #shopify-section-{{ section.id }} .pp-ccc-hero:after { animation: pp-ccc-blob-drift 11s ease-in-out infinite reverse; }
+  }
+  @keyframes pp-ccc-blob-drift {
+    0%, 100% { transform: translate(0,0) scale(1); }
+    50% { transform: translate(22px,-16px) scale(1.08); }
+  }
+  body.pp-motion-off #shopify-section-{{ section.id }} .pp-ccc-hero:before,
+  body.pp-motion-off #shopify-section-{{ section.id }} .pp-ccc-hero:after { animation: none !important; }
+  /* Confetti pieces spawned by pp-creator-club.js on scroll-cue click.
+     Unscoped (no #shopify-section-… prefix) so the same class also works
+     for the reward-tiers hover burst spawned elsewhere on this page. */
+  .pp-confetti-piece {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 1;
+    transform: translate(-50%, -50%);
+    animation: pp-confetti-pop .8s cubic-bezier(.2,.7,.3,1) forwards;
+  }
+  @keyframes pp-confetti-pop {
+    0% { transform: translate(-50%,-50%) translate(0,0) rotate(0deg) scale(1); opacity: 1; }
+    100% { transform: translate(-50%,-50%) translate(var(--pp-confetti-dx,40px),var(--pp-confetti-dy,-40px)) rotate(var(--pp-confetti-rot,90deg)) scale(.4); opacity: 0; }
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-hero__grid {
+    display: grid;
+    grid-template-columns: minmax(0,1.05fr) minmax(0,0.95fr);
+    gap: clamp(24px, 4vw, 64px);
+    align-items: center;
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-hero__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--body);
+    font-weight: 800;
+    font-size: 13px;
+    letter-spacing: .14em;
+    color: {{ section.settings.accent_color }};
+    background: {{ section.settings.eyebrow_bg }};
+    padding: 8px 16px;
+    border-radius: 999px;
+    margin-bottom: 18px;
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-hero h1 {
+    font-family: var(--display);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.02;
+    font-size: clamp(38px, 5.2vw, 68px);
+    color: {{ section.settings.heading_color }};
+    margin: 0 0 20px;
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-hero p.pp-ccc-hero__text {
+    font-family: var(--body);
+    font-size: clamp(16px, 1.6vw, 19px);
+    line-height: 1.6;
+    color: var(--muted, #6b5b73);
+    max-width: 46ch;
+    margin: 0 0 30px;
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-bottom: 22px;
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-hero__reassure {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--body);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink, #351042);
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-hero__reassure:before {
+    content: "🐾";
+    font-size: 16px;
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-hero__squiggle {
+    display: block;
+    width: clamp(140px, 18vw, 220px);
+    height: 18px;
+    margin: -8px 0 22px;
+    overflow: visible;
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-hero__squiggle path {
+    stroke: {{ section.settings.accent_color }};
+    stroke-width: 4;
+    stroke-linecap: round;
+    fill: none;
+    stroke-dasharray: 320;
+    stroke-dashoffset: 320;
+    transition: stroke-dashoffset 1.1s cubic-bezier(.2,.7,.2,1) .45s;
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-hero.is-visible .pp-ccc-hero__squiggle path,
+  body.pp-motion-off #shopify-section-{{ section.id }} .pp-ccc-hero__squiggle path {
+    stroke-dashoffset: 0;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #shopify-section-{{ section.id }} .pp-ccc-hero__squiggle path { stroke-dashoffset: 0; transition: none; }
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-hero__roadmap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 4px 0 26px;
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-hero__chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: #fff;
+    border: 1px solid color-mix(in srgb, {{ section.settings.accent_color }} 22%, white);
+    color: var(--ink, #351042);
+    font-family: var(--body);
+    font-weight: 700;
+    font-size: 12.5px;
+    padding: 9px 14px;
+    border-radius: 999px;
+    box-shadow: 0 8px 20px -14px rgba(53,16,66,.35);
+    transition: transform .22s ease, box-shadow .22s ease, background .22s ease;
+    cursor: pointer;
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-hero__chip span:first-child {
+    font-size: 15px;
+    display: inline-block;
+    transition: transform .3s ease;
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-hero__chip:hover {
+    transform: translateY(-3px);
+    background: {{ section.settings.eyebrow_bg }};
+    box-shadow: 0 14px 26px -14px rgba(53,16,66,.4);
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-hero__chip:hover span:first-child {
+    transform: rotate(-12deg) scale(1.15);
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-hero__scrollcue {
+    position: absolute;
+    left: 50%;
+    bottom: 18px;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    background: none;
+    border: 0;
+    cursor: pointer;
+    color: var(--muted, #6b5b73);
+    font-family: var(--body);
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    z-index: 3;
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-hero__scrollcue span.pp-ccc-hero__chevron {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    border: 1.5px solid color-mix(in srgb, {{ section.settings.accent_color }} 35%, white);
+    display: grid; place-items: center;
+    font-size: 15px;
+    color: {{ section.settings.accent_color }};
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    #shopify-section-{{ section.id }} .pp-ccc-hero__scrollcue span.pp-ccc-hero__chevron { animation: pp-ccc-cue-bounce 1.8s ease-in-out infinite; }
+    #shopify-section-{{ section.id }} .pp-ccc-hero__paw { animation: pp-ccc-paw-sway 6.5s ease-in-out infinite; }
+    #shopify-section-{{ section.id }} .pp-ccc-hero__paw--b { animation-duration: 7.4s; animation-delay: .5s; }
+    #shopify-section-{{ section.id }} .pp-ccc-hero__paw--c { animation-duration: 8.1s; animation-delay: 1s; }
+    @keyframes pp-ccc-cue-bounce { 0%,100%{ transform: translateY(0);} 50%{ transform: translateY(6px);} }
+    @keyframes pp-ccc-paw-sway { 0%,100%{ transform: rotate(var(--r,0deg)) translateY(0);} 50%{ transform: rotate(calc(var(--r,0deg) + 8deg)) translateY(-5px);} }
+  }
+  body.pp-motion-off #shopify-section-{{ section.id }} .pp-ccc-hero__scrollcue span.pp-ccc-hero__chevron,
+  body.pp-motion-off #shopify-section-{{ section.id }} .pp-ccc-hero__paw { animation: none !important; }
+  @media screen and (max-width: 989px) {
+    #shopify-section-{{ section.id }} .pp-ccc-hero__squiggle { margin-left: auto; margin-right: auto; }
+    #shopify-section-{{ section.id }} .pp-ccc-hero__roadmap { justify-content: center; }
+    #shopify-section-{{ section.id }} .pp-ccc-hero__scrollcue { display: none; }
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-hero__visual {
+    position: relative;
+    min-height: 340px;
+    display: grid;
+    place-items: center;
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-hero__stage {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-hero__main {
+    position: absolute;
+    inset: 6% 10%;
+    border-radius: 32px;
+    overflow: hidden;
+    background: {{ section.settings.visual_bg }};
+    box-shadow: 0 24px 60px -20px rgba(53,16,66,.25);
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-hero__main img,
+  #shopify-section-{{ section.id }} .pp-ccc-hero__main svg {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-hero__peek {
+    position: absolute;
+    width: 34%;
+    aspect-ratio: 1/1;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 5px solid #fff;
+    box-shadow: 0 14px 30px -10px rgba(53,16,66,.3);
+    background: #fff;
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-hero__peek img { width:100%; height:100%; object-fit:cover; display:block; }
+  #shopify-section-{{ section.id }} .pp-ccc-hero__peek--1 { top: -4%; right: -6%; }
+  #shopify-section-{{ section.id }} .pp-ccc-hero__peek--2 { bottom: -6%; left: -8%; width: 30%; }
+  #shopify-section-{{ section.id }} .pp-ccc-hero__paw {
+    position: absolute;
+    font-size: 22px;
+    opacity: .35;
+    transform: rotate(var(--r, 0deg));
+    pointer-events: none;
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-hero__paw--a { top: 6%; left: 2%; --r: -18deg; }
+  #shopify-section-{{ section.id }} .pp-ccc-hero__paw--b { bottom: 12%; right: 4%; --r: 14deg; font-size: 28px; }
+  #shopify-section-{{ section.id }} .pp-ccc-hero__paw--c { top: 45%; left: -2%; --r: 8deg; font-size: 18px; }
+  @media (prefers-reduced-motion: no-preference) {
+    #shopify-section-{{ section.id }} .pp-ccc-hero__peek { animation: pp-ccc-bob 5.5s ease-in-out infinite; }
+    #shopify-section-{{ section.id }} .pp-ccc-hero__peek--2 { animation-delay: .6s; }
+    @keyframes pp-ccc-bob { 0%,100%{ transform: translateY(0);} 50%{ transform: translateY(-8px);} }
+  }
+  body.pp-motion-off #shopify-section-{{ section.id }} .pp-ccc-hero__peek { animation: none !important; }
+  @media screen and (max-width: 989px) {
+    #shopify-section-{{ section.id }} .pp-ccc-hero__grid { grid-template-columns: 1fr; text-align: center; }
+    #shopify-section-{{ section.id }} .pp-ccc-hero p.pp-ccc-hero__text { max-width: 100%; margin-left:auto; margin-right:auto; }
+    #shopify-section-{{ section.id }} .pp-ccc-hero__actions, #shopify-section-{{ section.id }} .pp-ccc-hero__reassure { justify-content: center; }
+    #shopify-section-{{ section.id }} .pp-ccc-hero__visual { min-height: 280px; margin-top: 12px; }
+    #shopify-section-{{ section.id }} .pp-ccc-hero__stage { max-width: 320px; }
+  }
+</style>
+
+<section class="pp-ccc-hero pp-reveal" id="ccc-hero">
+  <div class="page-width">
+    <div class="pp-ccc-hero__grid">
+      <div class="pp-ccc-hero__content">
+        {% if section.settings.eyebrow != blank %}
+          <span class="pp-ccc-hero__eyebrow">{{ section.settings.eyebrow }}</span>
+        {% endif %}
+        <h1>{{ section.settings.heading }}</h1>
+        {% if section.settings.squiggle_enable %}
+          <svg class="pp-ccc-hero__squiggle" viewBox="0 0 220 18" aria-hidden="true">
+            <path d="M2,12 Q20,2 38,12 T74,12 T110,12 T146,12 T182,12 T218,12" />
+          </svg>
+        {% endif %}
+        {% if section.settings.text != blank %}<p class="pp-ccc-hero__text">{{ section.settings.text }}</p>{% endif %}
+        <div class="pp-ccc-hero__actions">
+          {% if section.settings.primary_label != blank %}
+            <a href="#{{ section.settings.primary_target | default: 'creator-club-form' }}" class="pp-btn pp-btn--orange" data-ccc-smooth-scroll>{{ section.settings.primary_label }}</a>
+          {% endif %}
+          {% if section.settings.secondary_label != blank %}
+            <a href="#{{ section.settings.secondary_target | default: 'ccc-how-it-works' }}" class="pp-btn pp-btn--outline" data-ccc-smooth-scroll>{{ section.settings.secondary_label }}</a>
+          {% endif %}
+        </div>
+        {% if section.settings.reassurance != blank %}
+          <p class="pp-ccc-hero__reassure">{{ section.settings.reassurance }}</p>
+        {% endif %}
+        {% if section.settings.roadmap_enable %}
+          <div class="pp-ccc-hero__roadmap" aria-label="Jump to a section">
+            {% if section.settings.roadmap_1_label != blank %}
+              <a href="#{{ section.settings.roadmap_1_target | default: 'ccc-how-it-works' }}" class="pp-ccc-hero__chip" data-ccc-smooth-scroll><span>{{ section.settings.roadmap_1_icon }}</span>{{ section.settings.roadmap_1_label }}</a>
+            {% endif %}
+            {% if section.settings.roadmap_2_label != blank %}
+              <a href="#{{ section.settings.roadmap_2_target | default: 'ccc-rewards' }}" class="pp-ccc-hero__chip" data-ccc-smooth-scroll><span>{{ section.settings.roadmap_2_icon }}</span>{{ section.settings.roadmap_2_label }}</a>
+            {% endif %}
+            {% if section.settings.roadmap_3_label != blank %}
+              <a href="#{{ section.settings.roadmap_3_target | default: 'ccc-ideas' }}" class="pp-ccc-hero__chip" data-ccc-smooth-scroll><span>{{ section.settings.roadmap_3_icon }}</span>{{ section.settings.roadmap_3_label }}</a>
+            {% endif %}
+            {% if section.settings.roadmap_4_label != blank %}
+              <a href="#{{ section.settings.roadmap_4_target | default: 'ccc-faq' }}" class="pp-ccc-hero__chip" data-ccc-smooth-scroll><span>{{ section.settings.roadmap_4_icon }}</span>{{ section.settings.roadmap_4_label }}</a>
+            {% endif %}
+          </div>
+        {% endif %}
+      </div>
+      {% assign image_main_img = section.settings.image_main %}
+{% assign image_main_img_mobile = section.settings.image_main_mobile %}
+{% assign image_main_display = image_main_img | default: image_main_img_mobile %}
+{% assign image_main_fit = section.settings.image_main_fit | default: 'contain' %}
+{% assign image_main_position = section.settings.image_main_position | default: 'center center' %}
+{% assign image_main_fit_m = section.settings.image_main_fit_mobile | default: 'contain' %}
+{% assign image_main_position_m = section.settings.image_main_position_mobile | default: 'center center' %}
+{% assign image_main_radius = section.settings.image_main_radius | default: 0 %}
+{% assign image_main_radius_m = section.settings.image_main_radius_mobile | default: 0 %}
+{% assign image_main_w = section.settings.image_main_max_width | default: 0 %}
+{% assign image_main_h = section.settings.image_main_max_height | default: 0 %}
+{% assign image_main_w_m = section.settings.image_main_max_width_mobile | default: 0 %}
+{% assign image_main_h_m = section.settings.image_main_max_height_mobile | default: 0 %}
+{% assign image_main_ha = section.settings.image_main_h_align | default: 'default' %}
+{% assign image_main_va = section.settings.image_main_v_align | default: 'default' %}
+{% assign image_main_ha_m = section.settings.image_main_h_align_mobile | default: 'default' %}
+{% assign image_main_va_m = section.settings.image_main_v_align_mobile | default: 'default' %}
+{% assign image_peek_1_img = section.settings.image_peek_1 %}
+{% assign image_peek_1_img_mobile = section.settings.image_peek_1_mobile %}
+{% assign image_peek_1_display = image_peek_1_img | default: image_peek_1_img_mobile %}
+{% assign image_peek_1_fit = section.settings.image_peek_1_fit | default: 'contain' %}
+{% assign image_peek_1_position = section.settings.image_peek_1_position | default: 'center center' %}
+{% assign image_peek_1_fit_m = section.settings.image_peek_1_fit_mobile | default: 'contain' %}
+{% assign image_peek_1_position_m = section.settings.image_peek_1_position_mobile | default: 'center center' %}
+{% assign image_peek_1_radius = section.settings.image_peek_1_radius | default: 0 %}
+{% assign image_peek_1_radius_m = section.settings.image_peek_1_radius_mobile | default: 0 %}
+{% assign image_peek_1_w = section.settings.image_peek_1_max_width | default: 0 %}
+{% assign image_peek_1_h = section.settings.image_peek_1_max_height | default: 0 %}
+{% assign image_peek_1_w_m = section.settings.image_peek_1_max_width_mobile | default: 0 %}
+{% assign image_peek_1_h_m = section.settings.image_peek_1_max_height_mobile | default: 0 %}
+{% assign image_peek_1_ha = section.settings.image_peek_1_h_align | default: 'default' %}
+{% assign image_peek_1_va = section.settings.image_peek_1_v_align | default: 'default' %}
+{% assign image_peek_1_ha_m = section.settings.image_peek_1_h_align_mobile | default: 'default' %}
+{% assign image_peek_1_va_m = section.settings.image_peek_1_v_align_mobile | default: 'default' %}
+{% assign image_peek_2_img = section.settings.image_peek_2 %}
+{% assign image_peek_2_img_mobile = section.settings.image_peek_2_mobile %}
+{% assign image_peek_2_display = image_peek_2_img | default: image_peek_2_img_mobile %}
+{% assign image_peek_2_fit = section.settings.image_peek_2_fit | default: 'contain' %}
+{% assign image_peek_2_position = section.settings.image_peek_2_position | default: 'center center' %}
+{% assign image_peek_2_fit_m = section.settings.image_peek_2_fit_mobile | default: 'contain' %}
+{% assign image_peek_2_position_m = section.settings.image_peek_2_position_mobile | default: 'center center' %}
+{% assign image_peek_2_radius = section.settings.image_peek_2_radius | default: 0 %}
+{% assign image_peek_2_radius_m = section.settings.image_peek_2_radius_mobile | default: 0 %}
+{% assign image_peek_2_w = section.settings.image_peek_2_max_width | default: 0 %}
+{% assign image_peek_2_h = section.settings.image_peek_2_max_height | default: 0 %}
+{% assign image_peek_2_w_m = section.settings.image_peek_2_max_width_mobile | default: 0 %}
+{% assign image_peek_2_h_m = section.settings.image_peek_2_max_height_mobile | default: 0 %}
+{% assign image_peek_2_ha = section.settings.image_peek_2_h_align | default: 'default' %}
+{% assign image_peek_2_va = section.settings.image_peek_2_v_align | default: 'default' %}
+{% assign image_peek_2_ha_m = section.settings.image_peek_2_h_align_mobile | default: 'default' %}
+{% assign image_peek_2_va_m = section.settings.image_peek_2_v_align_mobile | default: 'default' %}
+      <style>@media (min-width: 991px) {
+  #shopify-section-{{ section.id }} .pp-ccc-hero__main img { object-fit: {{ image_main_fit }}; object-position: {{ image_main_position }}; }
+  #shopify-section-{{ section.id }} .pp-ccc-hero__main {
+    {% if image_main_radius > 0 %}border-radius: {{ image_main_radius }}px; overflow: hidden;{% endif %}
+    {% if image_main_w > 0 %}width: min({{ image_main_w }}px, 100%); max-width: 100%;{% endif %}
+    {% if image_main_h > 0 %}height: min({{ image_main_h }}px, 100%); max-height: 100%;{% endif %}
+    {% if image_main_ha == 'left' %}left: 0; right: auto; margin-left: 0; margin-right: 0;{% endif %}
+    {% if image_main_ha == 'center' %}left: 0; right: 0; margin-left: auto; margin-right: auto;{% endif %}
+    {% if image_main_ha == 'right' %}left: auto; right: 0; margin-left: 0; margin-right: 0;{% endif %}
+    {% if image_main_va == 'top' %}top: 0; bottom: auto; margin-top: 0; margin-bottom: 0;{% endif %}
+    {% if image_main_va == 'center' %}top: 0; bottom: 0; margin-top: auto; margin-bottom: auto;{% endif %}
+    {% if image_main_va == 'bottom' %}bottom: 0; top: auto; margin-top: 0; margin-bottom: 0;{% endif %}
+  }
+}
+@media (max-width: 990px) {
+  #shopify-section-{{ section.id }} .pp-ccc-hero__main img { object-fit: {{ image_main_fit_m }}; object-position: {{ image_main_position_m }}; }
+  #shopify-section-{{ section.id }} .pp-ccc-hero__main {
+    {% if image_main_radius_m > 0 %}border-radius: {{ image_main_radius_m }}px; overflow: hidden;{% endif %}
+    {% if image_main_w_m > 0 %}width: min({{ image_main_w_m }}px, 100%); max-width: 100%;{% endif %}
+    {% if image_main_h_m > 0 %}height: min({{ image_main_h_m }}px, 100%); max-height: 100%;{% endif %}
+    {% if image_main_ha_m == 'left' %}left: 0; right: auto; margin-left: 0; margin-right: 0;{% endif %}
+    {% if image_main_ha_m == 'center' %}left: 0; right: 0; margin-left: auto; margin-right: auto;{% endif %}
+    {% if image_main_ha_m == 'right' %}left: auto; right: 0; margin-left: 0; margin-right: 0;{% endif %}
+    {% if image_main_va_m == 'top' %}top: 0; bottom: auto; margin-top: 0; margin-bottom: 0;{% endif %}
+    {% if image_main_va_m == 'center' %}top: 0; bottom: 0; margin-top: auto; margin-bottom: auto;{% endif %}
+    {% if image_main_va_m == 'bottom' %}bottom: 0; top: auto; margin-top: 0; margin-bottom: 0;{% endif %}
+  }
+}
+@media (min-width: 991px) {
+  #shopify-section-{{ section.id }} .pp-ccc-hero__peek--1 img { object-fit: {{ image_peek_1_fit }}; object-position: {{ image_peek_1_position }}; }
+  #shopify-section-{{ section.id }} .pp-ccc-hero__peek--1 {
+    {% if image_peek_1_radius > 0 %}border-radius: {{ image_peek_1_radius }}px; overflow: hidden;{% endif %}
+    {% if image_peek_1_w > 0 %}width: min({{ image_peek_1_w }}px, 100%); max-width: 100%;{% endif %}
+    {% if image_peek_1_h > 0 %}height: min({{ image_peek_1_h }}px, 100%); max-height: 100%;{% endif %}
+    {% if image_peek_1_ha == 'left' %}left: 0; right: auto; margin-left: 0; margin-right: 0;{% endif %}
+    {% if image_peek_1_ha == 'center' %}left: 0; right: 0; margin-left: auto; margin-right: auto;{% endif %}
+    {% if image_peek_1_ha == 'right' %}left: auto; right: 0; margin-left: 0; margin-right: 0;{% endif %}
+    {% if image_peek_1_va == 'top' %}top: 0; bottom: auto; margin-top: 0; margin-bottom: 0;{% endif %}
+    {% if image_peek_1_va == 'center' %}top: 0; bottom: 0; margin-top: auto; margin-bottom: auto;{% endif %}
+    {% if image_peek_1_va == 'bottom' %}bottom: 0; top: auto; margin-top: 0; margin-bottom: 0;{% endif %}
+  }
+}
+@media (max-width: 990px) {
+  #shopify-section-{{ section.id }} .pp-ccc-hero__peek--1 img { object-fit: {{ image_peek_1_fit_m }}; object-position: {{ image_peek_1_position_m }}; }
+  #shopify-section-{{ section.id }} .pp-ccc-hero__peek--1 {
+    {% if image_peek_1_radius_m > 0 %}border-radius: {{ image_peek_1_radius_m }}px; overflow: hidden;{% endif %}
+    {% if image_peek_1_w_m > 0 %}width: min({{ image_peek_1_w_m }}px, 100%); max-width: 100%;{% endif %}
+    {% if image_peek_1_h_m > 0 %}height: min({{ image_peek_1_h_m }}px, 100%); max-height: 100%;{% endif %}
+    {% if image_peek_1_ha_m == 'left' %}left: 0; right: auto; margin-left: 0; margin-right: 0;{% endif %}
+    {% if image_peek_1_ha_m == 'center' %}left: 0; right: 0; margin-left: auto; margin-right: auto;{% endif %}
+    {% if image_peek_1_ha_m == 'right' %}left: auto; right: 0; margin-left: 0; margin-right: 0;{% endif %}
+    {% if image_peek_1_va_m == 'top' %}top: 0; bottom: auto; margin-top: 0; margin-bottom: 0;{% endif %}
+    {% if image_peek_1_va_m == 'center' %}top: 0; bottom: 0; margin-top: auto; margin-bottom: auto;{% endif %}
+    {% if image_peek_1_va_m == 'bottom' %}bottom: 0; top: auto; margin-top: 0; margin-bottom: 0;{% endif %}
+  }
+}
+@media (min-width: 991px) {
+  #shopify-section-{{ section.id }} .pp-ccc-hero__peek--2 img { object-fit: {{ image_peek_2_fit }}; object-position: {{ image_peek_2_position }}; }
+  #shopify-section-{{ section.id }} .pp-ccc-hero__peek--2 {
+    {% if image_peek_2_radius > 0 %}border-radius: {{ image_peek_2_radius }}px; overflow: hidden;{% endif %}
+    {% if image_peek_2_w > 0 %}width: min({{ image_peek_2_w }}px, 100%); max-width: 100%;{% endif %}
+    {% if image_peek_2_h > 0 %}height: min({{ image_peek_2_h }}px, 100%); max-height: 100%;{% endif %}
+    {% if image_peek_2_ha == 'left' %}left: 0; right: auto; margin-left: 0; margin-right: 0;{% endif %}
+    {% if image_peek_2_ha == 'center' %}left: 0; right: 0; margin-left: auto; margin-right: auto;{% endif %}
+    {% if image_peek_2_ha == 'right' %}left: auto; right: 0; margin-left: 0; margin-right: 0;{% endif %}
+    {% if image_peek_2_va == 'top' %}top: 0; bottom: auto; margin-top: 0; margin-bottom: 0;{% endif %}
+    {% if image_peek_2_va == 'center' %}top: 0; bottom: 0; margin-top: auto; margin-bottom: auto;{% endif %}
+    {% if image_peek_2_va == 'bottom' %}bottom: 0; top: auto; margin-top: 0; margin-bottom: 0;{% endif %}
+  }
+}
+@media (max-width: 990px) {
+  #shopify-section-{{ section.id }} .pp-ccc-hero__peek--2 img { object-fit: {{ image_peek_2_fit_m }}; object-position: {{ image_peek_2_position_m }}; }
+  #shopify-section-{{ section.id }} .pp-ccc-hero__peek--2 {
+    {% if image_peek_2_radius_m > 0 %}border-radius: {{ image_peek_2_radius_m }}px; overflow: hidden;{% endif %}
+    {% if image_peek_2_w_m > 0 %}width: min({{ image_peek_2_w_m }}px, 100%); max-width: 100%;{% endif %}
+    {% if image_peek_2_h_m > 0 %}height: min({{ image_peek_2_h_m }}px, 100%); max-height: 100%;{% endif %}
+    {% if image_peek_2_ha_m == 'left' %}left: 0; right: auto; margin-left: 0; margin-right: 0;{% endif %}
+    {% if image_peek_2_ha_m == 'center' %}left: 0; right: 0; margin-left: auto; margin-right: auto;{% endif %}
+    {% if image_peek_2_ha_m == 'right' %}left: auto; right: 0; margin-left: 0; margin-right: 0;{% endif %}
+    {% if image_peek_2_va_m == 'top' %}top: 0; bottom: auto; margin-top: 0; margin-bottom: 0;{% endif %}
+    {% if image_peek_2_va_m == 'center' %}top: 0; bottom: 0; margin-top: auto; margin-bottom: auto;{% endif %}
+    {% if image_peek_2_va_m == 'bottom' %}bottom: 0; top: auto; margin-top: 0; margin-bottom: 0;{% endif %}
+  }
+}</style>
+      <div class="pp-ccc-hero__visual" aria-hidden="{% if image_main_display == blank %}true{% else %}false{% endif %}">
+        <div class="pp-ccc-hero__stage">
+          <span class="pp-ccc-hero__paw pp-ccc-hero__paw--a">🐾</span>
+          <span class="pp-ccc-hero__paw pp-ccc-hero__paw--b">🐾</span>
+          <span class="pp-ccc-hero__paw pp-ccc-hero__paw--c">🐾</span>
+          <div class="pp-ccc-hero__main">
+            {% if image_main_display != blank %}
+  <picture>
+    {% if image_main_img_mobile != blank and image_main_img_mobile != image_main_img %}
+      <source media="(max-width: 990px)" srcset="{{ image_main_img_mobile | image_url: width: 400 }} 400w, {{ image_main_img_mobile | image_url: width: 600 }} 600w, {{ image_main_img_mobile | image_url: width: 800 }} 800w, {{ image_main_img_mobile | image_url: width: 1000 }} 1000w" sizes="100vw">
+    {% endif %}
+    {{ image_main_display | image_url: width: 900 | image_tag: loading: 'eager', widths: '400,600,900', alt: image_main_display.alt | default: 'A Pups & Paws pet parent moment' }}
+  </picture>
+            {% else %}
+              {{ 'lifestyle-1' | placeholder_svg_tag: 'pp-ccc-placeholder' }}
+            {% endif %}
+          </div>
+          {% if image_peek_1_display != blank %}
+            <div class="pp-ccc-hero__peek pp-ccc-hero__peek--1">
+  <picture>
+    {% if image_peek_1_img_mobile != blank and image_peek_1_img_mobile != image_peek_1_img %}
+      <source media="(max-width: 990px)" srcset="{{ image_peek_1_img_mobile | image_url: width: 400 }} 400w, {{ image_peek_1_img_mobile | image_url: width: 600 }} 600w, {{ image_peek_1_img_mobile | image_url: width: 800 }} 800w, {{ image_peek_1_img_mobile | image_url: width: 1000 }} 1000w" sizes="100vw">
+    {% endif %}
+    {{ image_peek_1_display | image_url: width: 300 | image_tag: loading: 'lazy', widths: '150,220,300', alt: image_peek_1_display.alt | default: 'Pet peeking' }}
+  </picture>
+            </div>
+          {% endif %}
+          {% if image_peek_2_display != blank %}
+            <div class="pp-ccc-hero__peek pp-ccc-hero__peek--2">
+  <picture>
+    {% if image_peek_2_img_mobile != blank and image_peek_2_img_mobile != image_peek_2_img %}
+      <source media="(max-width: 990px)" srcset="{{ image_peek_2_img_mobile | image_url: width: 400 }} 400w, {{ image_peek_2_img_mobile | image_url: width: 600 }} 600w, {{ image_peek_2_img_mobile | image_url: width: 800 }} 800w, {{ image_peek_2_img_mobile | image_url: width: 1000 }} 1000w" sizes="100vw">
+    {% endif %}
+    {{ image_peek_2_display | image_url: width: 260 | image_tag: loading: 'lazy', widths: '130,190,260', alt: image_peek_2_display.alt | default: 'Pet playing' }}
+  </picture>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  {% if section.settings.scroll_cue_enable %}
+    <button type="button" class="pp-ccc-hero__scrollcue" data-ccc-scroll-cue aria-label="{{ section.settings.scroll_cue_label | default: 'See what is inside' }}">
+      <span>{{ section.settings.scroll_cue_label | default: "See what's inside" }}</span>
+      <span class="pp-ccc-hero__chevron" aria-hidden="true">⌄</span>
+    </button>
+  {% endif %}
+</section>
+
+<script src="{{ 'pp-creator-club.js' | asset_url }}" defer="defer"></script>
+
+{% schema %}
+{
+  "name": "Creator Club — Hero",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "PUPS & PAWS CREATOR CLUB" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Your Pet Has Main-Character Energy" },
+    { "type": "textarea", "id": "text", "label": "Supporting copy", "default": "Share the everyday moments that make life with your pet special. Post a reel featuring your Pups & Paws favourites and unlock rewards for being part of our pet-parent community." },
+    { "type": "text", "id": "primary_label", "label": "Primary button label", "default": "Join the Pack" },
+    { "type": "text", "id": "primary_target", "label": "Primary button scroll target (section ID)", "default": "creator-club-form", "info": "Scrolls smoothly to the section with this ID. Leave default to target the submission form." },
+    { "type": "text", "id": "secondary_label", "label": "Secondary button label", "default": "See How It Works" },
+    { "type": "text", "id": "secondary_target", "label": "Secondary button scroll target (section ID)", "default": "ccc-how-it-works" },
+    { "type": "text", "id": "reassurance", "label": "Reassurance line", "default": "No huge following needed. Just real pets, real moments and lots of love." },
+    { "type": "header", "content": "Curiosity details" },
+    { "type": "paragraph", "content": "Small playful touches that encourage visitors to keep scrolling instead of stopping at the hero." },
+    { "type": "checkbox", "id": "squiggle_enable", "label": "Show hand-drawn underline below heading", "default": true },
+    { "type": "checkbox", "id": "scroll_cue_enable", "label": "Show bouncing 'scroll for more' cue (desktop only)", "default": true },
+    { "type": "text", "id": "scroll_cue_label", "label": "Scroll cue label", "default": "See what's inside" },
+    { "type": "header", "content": "Jump-to-section chips" },
+    { "type": "paragraph", "content": "A quick preview of what's further down the page, so visitors know there's more worth scrolling for. Leave a label blank to hide that chip. Targets are section IDs — leave defaults unless you know the ID has changed." },
+    { "type": "checkbox", "id": "roadmap_enable", "label": "Show jump-to-section chips", "default": true },
+    { "type": "text", "id": "roadmap_1_icon", "label": "Chip 1 — icon", "default": "🐾" },
+    { "type": "text", "id": "roadmap_1_label", "label": "Chip 1 — label", "default": "How it works" },
+    { "type": "text", "id": "roadmap_1_target", "label": "Chip 1 — section ID", "default": "ccc-how-it-works" },
+    { "type": "text", "id": "roadmap_2_icon", "label": "Chip 2 — icon", "default": "🎁" },
+    { "type": "text", "id": "roadmap_2_label", "label": "Chip 2 — label", "default": "Rewards" },
+    { "type": "text", "id": "roadmap_2_target", "label": "Chip 2 — section ID", "default": "ccc-rewards" },
+    { "type": "text", "id": "roadmap_3_icon", "label": "Chip 3 — icon", "default": "💡" },
+    { "type": "text", "id": "roadmap_3_label", "label": "Chip 3 — label", "default": "Content ideas" },
+    { "type": "text", "id": "roadmap_3_target", "label": "Chip 3 — section ID", "default": "ccc-ideas" },
+    { "type": "text", "id": "roadmap_4_icon", "label": "Chip 4 — icon", "default": "❓" },
+    { "type": "text", "id": "roadmap_4_label", "label": "Chip 4 — label", "default": "FAQ" },
+    { "type": "text", "id": "roadmap_4_target", "label": "Chip 4 — section ID", "default": "ccc-faq" },
+    { "type": "header", "content": "Images (all replaceable)" },
+        {"type": "header", "content": "Main hero image — desktop"},
+    {"type": "image_picker", "id": "image_main", "label": "Main hero image (desktop)", "info": "A transparent PNG works best."},
+    {"type": "header", "content": "Main hero image — mobile"},
+    {"type": "image_picker", "id": "image_main_mobile", "label": "Main hero image — mobile (optional)", "info": "Shown at 990px and narrower instead of the desktop image above. Leave empty to use the same image on mobile."},
+    {"type": "header", "content": "Image fit — desktop"},
+    {"type": "select", "id": "image_main_fit", "label": "How the photo fills its box", "default": "contain", "options": [{"value": "contain", "label": "Show the whole photo (may leave empty space)"}, {"value": "cover", "label": "Fill the box completely (may crop)"}]},
+    {"type": "select", "id": "image_main_position", "label": "Photo alignment inside its box", "info": "Only matters when the photo's shape doesn't exactly match the box.", "default": "center center", "options": [{"value": "left top", "label": "Top left"}, {"value": "center top", "label": "Top center"}, {"value": "right top", "label": "Top right"}, {"value": "left center", "label": "Middle left"}, {"value": "center center", "label": "Middle center"}, {"value": "right center", "label": "Middle right"}, {"value": "left bottom", "label": "Bottom left"}, {"value": "center bottom", "label": "Bottom center"}, {"value": "right bottom", "label": "Bottom right"}]},
+    {"type": "header", "content": "Image fit — mobile"},
+    {"type": "select", "id": "image_main_fit_mobile", "label": "How the photo fills its box", "default": "contain", "options": [{"value": "contain", "label": "Show the whole photo (may leave empty space)"}, {"value": "cover", "label": "Fill the box completely (may crop)"}]},
+    {"type": "select", "id": "image_main_position_mobile", "label": "Photo alignment inside its box", "info": "Only matters when the photo's shape doesn't exactly match the box.", "default": "center center", "options": [{"value": "left top", "label": "Top left"}, {"value": "center top", "label": "Top center"}, {"value": "right top", "label": "Top right"}, {"value": "left center", "label": "Middle left"}, {"value": "center center", "label": "Middle center"}, {"value": "right center", "label": "Middle right"}, {"value": "left bottom", "label": "Bottom left"}, {"value": "center bottom", "label": "Bottom center"}, {"value": "right bottom", "label": "Bottom right"}]},
+    {"type": "header", "content": "Corner rounding — desktop"},
+    {"type": "range", "id": "image_main_radius", "min": 0, "max": 60, "step": 2, "unit": "px", "label": "Corner rounding (0 = theme default)", "default": 0},
+    {"type": "header", "content": "Corner rounding — mobile"},
+    {"type": "range", "id": "image_main_radius_mobile", "min": 0, "max": 60, "step": 2, "unit": "px", "label": "Corner rounding (0 = theme default)", "default": 0},
+    {"type": "header", "content": "Image size — desktop"},
+    {"type": "range", "id": "image_main_max_width", "min": 0, "max": 900, "step": 50, "unit": "px", "label": "Image width (0 = automatic)", "info": "Applies at 991px and wider. Automatically shrinks to fit if the layout doesn't have room, so it never overlaps other content.", "default": 0},
+    {"type": "range", "id": "image_main_max_height", "min": 0, "max": 900, "step": 50, "unit": "px", "label": "Image height (0 = automatic)", "info": "Applies at 991px and wider. Automatically shrinks to fit if the layout doesn't have room, so it never overlaps other content.", "default": 0},
+    {"type": "header", "content": "Image size — mobile"},
+    {"type": "range", "id": "image_main_max_width_mobile", "min": 0, "max": 600, "step": 25, "unit": "px", "label": "Image width (0 = automatic)", "info": "Applies at 990px and narrower (phones and tablets). Automatically shrinks to fit if the layout doesn't have room, so it never overlaps other content.", "default": 0},
+    {"type": "range", "id": "image_main_max_height_mobile", "min": 0, "max": 600, "step": 25, "unit": "px", "label": "Image height (0 = automatic)", "info": "Applies at 990px and narrower (phones and tablets). Automatically shrinks to fit if the layout doesn't have room, so it never overlaps other content.", "default": 0},
+    {"type": "header", "content": "Box position — desktop"},
+    {"type": "select", "id": "image_main_h_align", "label": "Horizontal position", "info": "Applies at 991px and wider. \"Default\" keeps the theme's original spacing.", "default": "default", "options": [{"value": "default", "label": "Default (theme spacing)"}, {"value": "left", "label": "Left"}, {"value": "center", "label": "Center"}, {"value": "right", "label": "Right"}]},
+    {"type": "select", "id": "image_main_v_align", "label": "Vertical position", "info": "Applies at 991px and wider. \"Default\" keeps the theme's original spacing.", "default": "default", "options": [{"value": "default", "label": "Default (theme spacing)"}, {"value": "top", "label": "Top"}, {"value": "center", "label": "Center"}, {"value": "bottom", "label": "Bottom"}]},
+    {"type": "header", "content": "Box position — mobile"},
+    {"type": "select", "id": "image_main_h_align_mobile", "label": "Horizontal position", "info": "Applies at 990px and narrower (phones and tablets). \"Default\" keeps the theme's original spacing.", "default": "default", "options": [{"value": "default", "label": "Default (theme spacing)"}, {"value": "left", "label": "Left"}, {"value": "center", "label": "Center"}, {"value": "right", "label": "Right"}]},
+    {"type": "select", "id": "image_main_v_align_mobile", "label": "Vertical position", "info": "Applies at 990px and narrower (phones and tablets). \"Default\" keeps the theme's original spacing.", "default": "default", "options": [{"value": "default", "label": "Default (theme spacing)"}, {"value": "top", "label": "Top"}, {"value": "center", "label": "Center"}, {"value": "bottom", "label": "Bottom"}]},
+        {"type": "header", "content": "Peeking pet image 1 — desktop"},
+    {"type": "image_picker", "id": "image_peek_1", "label": "Peeking pet image 1 (desktop)", "info": "A transparent PNG works best."},
+    {"type": "header", "content": "Peeking pet image 1 — mobile"},
+    {"type": "image_picker", "id": "image_peek_1_mobile", "label": "Peeking pet image 1 — mobile (optional)", "info": "Shown at 990px and narrower instead of the desktop image above. Leave empty to use the same image on mobile."},
+    {"type": "header", "content": "Image fit — desktop"},
+    {"type": "select", "id": "image_peek_1_fit", "label": "How the photo fills its box", "default": "contain", "options": [{"value": "contain", "label": "Show the whole photo (may leave empty space)"}, {"value": "cover", "label": "Fill the box completely (may crop)"}]},
+    {"type": "select", "id": "image_peek_1_position", "label": "Photo alignment inside its box", "info": "Only matters when the photo's shape doesn't exactly match the box.", "default": "center center", "options": [{"value": "left top", "label": "Top left"}, {"value": "center top", "label": "Top center"}, {"value": "right top", "label": "Top right"}, {"value": "left center", "label": "Middle left"}, {"value": "center center", "label": "Middle center"}, {"value": "right center", "label": "Middle right"}, {"value": "left bottom", "label": "Bottom left"}, {"value": "center bottom", "label": "Bottom center"}, {"value": "right bottom", "label": "Bottom right"}]},
+    {"type": "header", "content": "Image fit — mobile"},
+    {"type": "select", "id": "image_peek_1_fit_mobile", "label": "How the photo fills its box", "default": "contain", "options": [{"value": "contain", "label": "Show the whole photo (may leave empty space)"}, {"value": "cover", "label": "Fill the box completely (may crop)"}]},
+    {"type": "select", "id": "image_peek_1_position_mobile", "label": "Photo alignment inside its box", "info": "Only matters when the photo's shape doesn't exactly match the box.", "default": "center center", "options": [{"value": "left top", "label": "Top left"}, {"value": "center top", "label": "Top center"}, {"value": "right top", "label": "Top right"}, {"value": "left center", "label": "Middle left"}, {"value": "center center", "label": "Middle center"}, {"value": "right center", "label": "Middle right"}, {"value": "left bottom", "label": "Bottom left"}, {"value": "center bottom", "label": "Bottom center"}, {"value": "right bottom", "label": "Bottom right"}]},
+    {"type": "header", "content": "Corner rounding — desktop"},
+    {"type": "range", "id": "image_peek_1_radius", "min": 0, "max": 60, "step": 2, "unit": "px", "label": "Corner rounding (0 = theme default)", "default": 0},
+    {"type": "header", "content": "Corner rounding — mobile"},
+    {"type": "range", "id": "image_peek_1_radius_mobile", "min": 0, "max": 60, "step": 2, "unit": "px", "label": "Corner rounding (0 = theme default)", "default": 0},
+    {"type": "header", "content": "Image size — desktop"},
+    {"type": "range", "id": "image_peek_1_max_width", "min": 0, "max": 300, "step": 50, "unit": "px", "label": "Image width (0 = automatic)", "info": "Applies at 991px and wider. Automatically shrinks to fit if the layout doesn't have room, so it never overlaps other content.", "default": 0},
+    {"type": "range", "id": "image_peek_1_max_height", "min": 0, "max": 300, "step": 50, "unit": "px", "label": "Image height (0 = automatic)", "info": "Applies at 991px and wider. Automatically shrinks to fit if the layout doesn't have room, so it never overlaps other content.", "default": 0},
+    {"type": "header", "content": "Image size — mobile"},
+    {"type": "range", "id": "image_peek_1_max_width_mobile", "min": 0, "max": 200, "step": 25, "unit": "px", "label": "Image width (0 = automatic)", "info": "Applies at 990px and narrower (phones and tablets). Automatically shrinks to fit if the layout doesn't have room, so it never overlaps other content.", "default": 0},
+    {"type": "range", "id": "image_peek_1_max_height_mobile", "min": 0, "max": 200, "step": 25, "unit": "px", "label": "Image height (0 = automatic)", "info": "Applies at 990px and narrower (phones and tablets). Automatically shrinks to fit if the layout doesn't have room, so it never overlaps other content.", "default": 0},
+    {"type": "header", "content": "Box position — desktop"},
+    {"type": "select", "id": "image_peek_1_h_align", "label": "Horizontal position", "info": "Applies at 991px and wider. \"Default\" keeps the theme's original spacing.", "default": "default", "options": [{"value": "default", "label": "Default (theme spacing)"}, {"value": "left", "label": "Left"}, {"value": "center", "label": "Center"}, {"value": "right", "label": "Right"}]},
+    {"type": "select", "id": "image_peek_1_v_align", "label": "Vertical position", "info": "Applies at 991px and wider. \"Default\" keeps the theme's original spacing.", "default": "default", "options": [{"value": "default", "label": "Default (theme spacing)"}, {"value": "top", "label": "Top"}, {"value": "center", "label": "Center"}, {"value": "bottom", "label": "Bottom"}]},
+    {"type": "header", "content": "Box position — mobile"},
+    {"type": "select", "id": "image_peek_1_h_align_mobile", "label": "Horizontal position", "info": "Applies at 990px and narrower (phones and tablets). \"Default\" keeps the theme's original spacing.", "default": "default", "options": [{"value": "default", "label": "Default (theme spacing)"}, {"value": "left", "label": "Left"}, {"value": "center", "label": "Center"}, {"value": "right", "label": "Right"}]},
+    {"type": "select", "id": "image_peek_1_v_align_mobile", "label": "Vertical position", "info": "Applies at 990px and narrower (phones and tablets). \"Default\" keeps the theme's original spacing.", "default": "default", "options": [{"value": "default", "label": "Default (theme spacing)"}, {"value": "top", "label": "Top"}, {"value": "center", "label": "Center"}, {"value": "bottom", "label": "Bottom"}]},
+        {"type": "header", "content": "Peeking pet image 2 — desktop"},
+    {"type": "image_picker", "id": "image_peek_2", "label": "Peeking pet image 2 (desktop)", "info": "A transparent PNG works best."},
+    {"type": "header", "content": "Peeking pet image 2 — mobile"},
+    {"type": "image_picker", "id": "image_peek_2_mobile", "label": "Peeking pet image 2 — mobile (optional)", "info": "Shown at 990px and narrower instead of the desktop image above. Leave empty to use the same image on mobile."},
+    {"type": "header", "content": "Image fit — desktop"},
+    {"type": "select", "id": "image_peek_2_fit", "label": "How the photo fills its box", "default": "contain", "options": [{"value": "contain", "label": "Show the whole photo (may leave empty space)"}, {"value": "cover", "label": "Fill the box completely (may crop)"}]},
+    {"type": "select", "id": "image_peek_2_position", "label": "Photo alignment inside its box", "info": "Only matters when the photo's shape doesn't exactly match the box.", "default": "center center", "options": [{"value": "left top", "label": "Top left"}, {"value": "center top", "label": "Top center"}, {"value": "right top", "label": "Top right"}, {"value": "left center", "label": "Middle left"}, {"value": "center center", "label": "Middle center"}, {"value": "right center", "label": "Middle right"}, {"value": "left bottom", "label": "Bottom left"}, {"value": "center bottom", "label": "Bottom center"}, {"value": "right bottom", "label": "Bottom right"}]},
+    {"type": "header", "content": "Image fit — mobile"},
+    {"type": "select", "id": "image_peek_2_fit_mobile", "label": "How the photo fills its box", "default": "contain", "options": [{"value": "contain", "label": "Show the whole photo (may leave empty space)"}, {"value": "cover", "label": "Fill the box completely (may crop)"}]},
+    {"type": "select", "id": "image_peek_2_position_mobile", "label": "Photo alignment inside its box", "info": "Only matters when the photo's shape doesn't exactly match the box.", "default": "center center", "options": [{"value": "left top", "label": "Top left"}, {"value": "center top", "label": "Top center"}, {"value": "right top", "label": "Top right"}, {"value": "left center", "label": "Middle left"}, {"value": "center center", "label": "Middle center"}, {"value": "right center", "label": "Middle right"}, {"value": "left bottom", "label": "Bottom left"}, {"value": "center bottom", "label": "Bottom center"}, {"value": "right bottom", "label": "Bottom right"}]},
+    {"type": "header", "content": "Corner rounding — desktop"},
+    {"type": "range", "id": "image_peek_2_radius", "min": 0, "max": 60, "step": 2, "unit": "px", "label": "Corner rounding (0 = theme default)", "default": 0},
+    {"type": "header", "content": "Corner rounding — mobile"},
+    {"type": "range", "id": "image_peek_2_radius_mobile", "min": 0, "max": 60, "step": 2, "unit": "px", "label": "Corner rounding (0 = theme default)", "default": 0},
+    {"type": "header", "content": "Image size — desktop"},
+    {"type": "range", "id": "image_peek_2_max_width", "min": 0, "max": 250, "step": 50, "unit": "px", "label": "Image width (0 = automatic)", "info": "Applies at 991px and wider. Automatically shrinks to fit if the layout doesn't have room, so it never overlaps other content.", "default": 0},
+    {"type": "range", "id": "image_peek_2_max_height", "min": 0, "max": 250, "step": 50, "unit": "px", "label": "Image height (0 = automatic)", "info": "Applies at 991px and wider. Automatically shrinks to fit if the layout doesn't have room, so it never overlaps other content.", "default": 0},
+    {"type": "header", "content": "Image size — mobile"},
+    {"type": "range", "id": "image_peek_2_max_width_mobile", "min": 0, "max": 175, "step": 25, "unit": "px", "label": "Image width (0 = automatic)", "info": "Applies at 990px and narrower (phones and tablets). Automatically shrinks to fit if the layout doesn't have room, so it never overlaps other content.", "default": 0},
+    {"type": "range", "id": "image_peek_2_max_height_mobile", "min": 0, "max": 175, "step": 25, "unit": "px", "label": "Image height (0 = automatic)", "info": "Applies at 990px and narrower (phones and tablets). Automatically shrinks to fit if the layout doesn't have room, so it never overlaps other content.", "default": 0},
+    {"type": "header", "content": "Box position — desktop"},
+    {"type": "select", "id": "image_peek_2_h_align", "label": "Horizontal position", "info": "Applies at 991px and wider. \"Default\" keeps the theme's original spacing.", "default": "default", "options": [{"value": "default", "label": "Default (theme spacing)"}, {"value": "left", "label": "Left"}, {"value": "center", "label": "Center"}, {"value": "right", "label": "Right"}]},
+    {"type": "select", "id": "image_peek_2_v_align", "label": "Vertical position", "info": "Applies at 991px and wider. \"Default\" keeps the theme's original spacing.", "default": "default", "options": [{"value": "default", "label": "Default (theme spacing)"}, {"value": "top", "label": "Top"}, {"value": "center", "label": "Center"}, {"value": "bottom", "label": "Bottom"}]},
+    {"type": "header", "content": "Box position — mobile"},
+    {"type": "select", "id": "image_peek_2_h_align_mobile", "label": "Horizontal position", "info": "Applies at 990px and narrower (phones and tablets). \"Default\" keeps the theme's original spacing.", "default": "default", "options": [{"value": "default", "label": "Default (theme spacing)"}, {"value": "left", "label": "Left"}, {"value": "center", "label": "Center"}, {"value": "right", "label": "Right"}]},
+    {"type": "select", "id": "image_peek_2_v_align_mobile", "label": "Vertical position", "info": "Applies at 990px and narrower (phones and tablets). \"Default\" keeps the theme's original spacing.", "default": "default", "options": [{"value": "default", "label": "Default (theme spacing)"}, {"value": "top", "label": "Top"}, {"value": "center", "label": "Center"}, {"value": "bottom", "label": "Bottom"}]},
+    { "type": "header", "content": "Colours" },
+    { "type": "color", "id": "background", "label": "Section background", "default": "#fffaf7" },
+    { "type": "color", "id": "heading_color", "label": "Heading colour", "default": "#351042" },
+    { "type": "color", "id": "accent_color", "label": "Accent colour", "default": "#47105d" },
+    { "type": "color", "id": "eyebrow_bg", "label": "Eyebrow background", "default": "#f3e9f8" },
+    { "type": "color", "id": "visual_bg", "label": "Visual panel background", "default": "#ffe9dc" },
+    { "type": "header", "content": "Section spacing" },
+    { "type": "range", "id": "padding_top", "min": 0, "max": 160, "step": 4, "unit": "px", "label": "Top padding — desktop", "default": 72 },
+    { "type": "range", "id": "padding_bottom", "min": 0, "max": 160, "step": 4, "unit": "px", "label": "Bottom padding — desktop", "default": 64 }
+  ],
+  "presets": [{ "name": "Creator Club — Hero" }]
+}
+{% endschema %}

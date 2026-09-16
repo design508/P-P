@@ -1,0 +1,521 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "Pups & Paws Brand Studio",
+    "theme_version": "10.0.0",
+    "theme_author": "Custom theme",
+    "theme_documentation_url": "https://help.shopify.com/en/manual/online-store/themes",
+    "theme_support_url": "https://help.shopify.com/"
+  },
+  {
+    "name": "Brand and layout",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "favicon",
+        "label": "Favicon"
+      },
+      {
+        "type": "header",
+        "content": "Brand colours"
+      },
+      {
+        "type": "color",
+        "id": "color_primary",
+        "label": "Primary purple",
+        "default": "#47105d"
+      },
+      {
+        "type": "color",
+        "id": "color_secondary",
+        "label": "Secondary purple",
+        "default": "#5b1a74"
+      },
+      {
+        "type": "color",
+        "id": "color_orange",
+        "label": "Orange accent",
+        "default": "#ff5a0a"
+      },
+      {
+        "type": "color",
+        "id": "color_pink",
+        "label": "Pink accent",
+        "default": "#ff2b78"
+      },
+      {
+        "type": "color",
+        "id": "color_green",
+        "label": "Green accent",
+        "default": "#61f46f"
+      },
+      {
+        "type": "color",
+        "id": "color_ink",
+        "label": "Main text",
+        "default": "#351042"
+      },
+      {
+        "type": "color",
+        "id": "color_muted",
+        "label": "Secondary text",
+        "default": "#6a5872"
+      },
+      {
+        "type": "color",
+        "id": "color_line",
+        "label": "Borders and dividers",
+        "default": "#eee7f0"
+      },
+      {
+        "type": "color",
+        "id": "color_background",
+        "label": "Page background",
+        "default": "#ffffff"
+      },
+      {
+        "type": "header",
+        "content": "Layout"
+      },
+      {
+        "type": "range",
+        "id": "page_width",
+        "min": 1100,
+        "max": 1800,
+        "step": 50,
+        "unit": "px",
+        "label": "Maximum page width",
+        "default": 1500
+      },
+      {
+        "type": "range",
+        "id": "section_spacing",
+        "min": 40,
+        "max": 140,
+        "step": 5,
+        "unit": "px",
+        "label": "Section spacing - desktop",
+        "default": 90
+      },
+      {
+        "type": "range",
+        "id": "section_spacing_mobile",
+        "min": 32,
+        "max": 92,
+        "step": 5,
+        "unit": "px",
+        "label": "Section spacing - mobile",
+        "default": 62
+      },
+      {
+        "type": "range",
+        "id": "button_radius",
+        "min": 0,
+        "max": 40,
+        "step": 2,
+        "unit": "px",
+        "label": "Button corner radius",
+        "default": 40
+      },
+      {
+        "type": "range",
+        "id": "card_radius",
+        "min": 0,
+        "max": 40,
+        "step": 2,
+        "unit": "px",
+        "label": "Card corner radius",
+        "default": 24
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_animations",
+        "label": "Enable motion and reveal effects",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_ambient_motion",
+        "label": "Enable ambient floating background shapes",
+        "default": true,
+        "info": "Slow-drifting decorative shapes in the page margins on wide screens, so pages feel alive even without their own hero art. Automatically turned off when 'Enable motion and reveal effects' above is off, or for visitors who prefer reduced motion."
+      }
+    ]
+  },
+  {
+    "name": "Typography",
+    "settings": [
+      {
+        "type": "select",
+        "id": "heading_font_source",
+        "label": "Heading font source",
+        "default": "aquatail",
+        "options": [
+          {
+            "value": "aquatail",
+            "label": "Aquatail — included"
+          },
+          {
+            "value": "futura",
+            "label": "Futura — included"
+          },
+          {
+            "value": "shopify",
+            "label": "Shopify font picker"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "body_font_source",
+        "label": "Body font source",
+        "default": "futura",
+        "options": [
+          {
+            "value": "futura",
+            "label": "Futura — included"
+          },
+          {
+            "value": "aquatail",
+            "label": "Aquatail — included"
+          },
+          {
+            "value": "shopify",
+            "label": "Shopify font picker"
+          }
+        ]
+      },
+      {
+        "type": "font_picker",
+        "id": "heading_font",
+        "label": "Heading font",
+        "default": "playfair_display_n7"
+      },
+      {
+        "type": "font_picker",
+        "id": "body_font",
+        "label": "Body font",
+        "default": "assistant_n4"
+      },
+      {
+        "type": "range",
+        "id": "base_font_size",
+        "min": 14,
+        "max": 20,
+        "step": 1,
+        "unit": "px",
+        "label": "Body text size",
+        "default": 16
+      },
+      {
+  "type": "range",
+  "id": "heading_letter_spacing",
+  "min": 0,
+  "max": 12,
+  "step": 1,
+  "label": "Heading letter spacing",
+  "default": 5
+},
+{
+  "type": "range",
+  "id": "body_letter_spacing",
+  "min": -5,
+  "max": 10,
+  "step": 1,
+  "label": "Body letter spacing",
+  "default": 0
+},
+      {
+        "type": "select",
+        "id": "button_font_weight",
+        "label": "Button font weight",
+        "default": "700",
+        "options": [
+          {
+            "value": "400",
+            "label": "Regular"
+          },
+          {
+            "value": "500",
+            "label": "Medium"
+          },
+          {
+            "value": "600",
+            "label": "Semibold"
+          },
+          {
+            "value": "700",
+            "label": "Bold"
+          }
+        ]
+      },
+      {
+        "type": "range",
+        "id": "button_font_size",
+        "min": 11,
+        "max": 18,
+        "step": 1,
+        "unit": "px",
+        "label": "Button text size",
+        "default": 13
+      },
+      {
+        "type": "checkbox",
+        "id": "override_global_heading_sizes",
+        "label": "Override global heading sizes",
+        "default": false
+      },
+      {
+        "type": "range",
+        "id": "global_h1_size",
+        "min": 36,
+        "max": 104,
+        "step": 2,
+        "unit": "px",
+        "label": "H1 size — desktop",
+        "default": 72
+      },
+      {
+        "type": "range",
+        "id": "global_h2_size",
+        "min": 28,
+        "max": 88,
+        "step": 2,
+        "unit": "px",
+        "label": "H2 size — desktop",
+        "default": 56
+      },
+      {
+        "type": "range",
+        "id": "global_h1_size_mobile",
+        "min": 30,
+        "max": 72,
+        "step": 2,
+        "unit": "px",
+        "label": "H1 size — mobile",
+        "default": 52
+      },
+      {
+        "type": "range",
+        "id": "global_h2_size_mobile",
+        "min": 24,
+        "max": 60,
+        "step": 2,
+        "unit": "px",
+        "label": "H2 size — mobile",
+        "default": 42
+      }
+    ]
+  },
+  {
+    "name": "Product cards",
+    "settings": [
+      {
+        "type": "product",
+        "id": "fallback_product",
+        "label": "Fallback product"
+      },
+      {
+        "type": "checkbox",
+        "id": "card_show_description",
+        "label": "Show product description",
+        "default": true
+      },
+      {
+        "type": "range",
+        "id": "card_description_length",
+        "min": 38,
+        "max": 158,
+        "step": 10,
+        "unit": "ch",
+        "label": "Description length",
+        "default": 78
+      },
+      {
+        "type": "checkbox",
+        "id": "card_show_weight",
+        "label": "Show product weight",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "card_show_type",
+        "label": "Show product type",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "card_show_quick_add",
+        "label": "Show Add to care bag button",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "card_show_compare_price",
+        "label": "Show crossed-out compare price",
+        "default": false
+      },
+      {
+        "type": "select",
+        "id": "card_image_ratio",
+        "label": "Product image shape",
+        "default": "1 / 1.05",
+        "options": [
+          {
+            "value": "1 / 1",
+            "label": "Square"
+          },
+          {
+            "value": "1 / 1.05",
+            "label": "Current portrait"
+          },
+          {
+            "value": "4 / 5",
+            "label": "Tall portrait"
+          }
+        ]
+      },
+      {
+        "type": "text",
+        "id": "card_fallback_type",
+        "label": "Fallback product type",
+        "default": "Pet care"
+      },
+      {
+        "type": "text",
+        "id": "card_add_label",
+        "label": "Add button label",
+        "default": "Add to care bag"
+      },
+      {
+        "type": "text",
+        "id": "card_sold_out_label",
+        "label": "Sold out label",
+        "default": "Sold out"
+      },
+      {
+        "type": "text",
+        "id": "card_from_label",
+        "label": "Price prefix",
+        "default": "From"
+      },
+      {
+        "type": "header",
+        "content": "Card colours"
+      },
+      {
+        "type": "color",
+        "id": "card_background_1",
+        "label": "Card colour 1",
+        "default": "#f6effd"
+      },
+      {
+        "type": "color",
+        "id": "card_background_2",
+        "label": "Card colour 2",
+        "default": "#fff0e8"
+      },
+      {
+        "type": "color",
+        "id": "card_background_3",
+        "label": "Card colour 3",
+        "default": "#fff0f2"
+      },
+      {
+        "type": "color",
+        "id": "card_background_4",
+        "label": "Card colour 4",
+        "default": "#fff4df"
+      }
+    ]
+  },
+  {
+    "name": "Popups and cart",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Welcome / offer popup"
+      },
+      {
+        "type": "checkbox",
+        "id": "popup_enable",
+        "label": "Enable popup",
+        "default": true
+      },
+      {
+        "type": "range",
+        "id": "popup_delay",
+        "min": 1,
+        "max": 20,
+        "step": 1,
+        "unit": "s",
+        "label": "Popup delay",
+        "default": 4
+      },
+      {
+        "type": "select",
+        "id": "popup_frequency",
+        "label": "Show again",
+        "default": "session",
+        "options": [
+          {
+            "value": "always",
+            "label": "Every visit"
+          },
+          {
+            "value": "session",
+            "label": "Once per browser session"
+          },
+          {
+            "value": "7days",
+            "label": "After 7 days"
+          }
+        ]
+      },
+      {
+        "type": "image_picker",
+        "id": "popup_image",
+        "label": "Popup image"
+      },
+      {
+        "type": "text",
+        "id": "popup_eyebrow",
+        "label": "Eyebrow",
+        "default": "WELCOME TO THE PACK"
+      },
+      {
+        "type": "text",
+        "id": "popup_heading",
+        "label": "Heading",
+        "default": "Care made for their kind of chaos."
+      },
+      {
+        "type": "textarea",
+        "id": "popup_text",
+        "label": "Text",
+        "default": "Explore grooming, wellness and treat-time favourites made for real pet-parent routines."
+      },
+      {
+        "type": "text",
+        "id": "popup_button_label",
+        "label": "Button label",
+        "default": "Shop the range"
+      },
+      {
+        "type": "url",
+        "id": "popup_button_link",
+        "label": "Button link"
+      },
+      {
+        "type": "header",
+        "content": "Cart drawer"
+      },
+      {
+        "type": "checkbox",
+        "id": "cart_drawer_enable",
+        "label": "Open cart drawer after add to cart",
+        "default": true
+      }
+    ]
+  }
+]

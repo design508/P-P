@@ -1,0 +1,42 @@
+/* ===========================================================================
+   Creator Club — announcement ticker "bouncing paw divider".
+   The ticker's divider glyphs are plain <i>✦</i> elements between messages
+   (assets/theme.css .pp-ticker i). This section type is only used on the
+   Creator Club page (templates/page.pet-parent-creator-club.json), so this
+   file is safely scoped to .pp-ticker without touching theme.css. The
+   sparkle glyph is swapped for a paw purely in CSS (content on ::before,
+   original character hidden via font-size:0) so no markup change is needed,
+   and each paw gets a small idle bounce, staggered per divider.
+   =========================================================================== */
+
+.pp-ticker__track i {
+  font-size: 0;
+  display: inline-block;
+}
+
+.pp-ticker__track i:before {
+  content: "🐾";
+  font-size: 13px;
+  display: inline-block;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .pp-ticker__track i:before {
+    animation: pp-ccc-ticker-paw-bounce 1.6s ease-in-out infinite;
+  }
+  .pp-ticker__track i:nth-of-type(2n):before { animation-delay: .3s; }
+  .pp-ticker__track i:nth-of-type(3n):before { animation-delay: .6s; }
+}
+
+@keyframes pp-ccc-ticker-paw-bounce {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-3px) rotate(-8deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pp-ticker__track i:before { animation: none !important; }
+}
+
+body.pp-motion-off .pp-ticker__track i:before {
+  animation: none !important;
+}

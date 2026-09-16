@@ -1,0 +1,59 @@
+/* ===========================================================================
+   "Specific care. Simple routines." — round-robin chip glow + marquee pulse.
+   Loaded only by sections/live-real-life.liquid. The point chips (Heat &
+   humidity, Muddy walks, Real homes, ...) take turns glowing softly in
+   their own dot colour — read from --chip-glow, set inline per block from
+   its own "Dot colour" setting, so this always matches whatever colours
+   the merchant picks with no extra configuration. The scrolling marquee
+   line gets a matching brightness pulse timed to the same cadence, so the
+   moving text feels tied to the points above it rather than running on
+   its own separate clock.
+   =========================================================================== */
+
+@media (prefers-reduced-motion: no-preference) {
+  .live-real-life__chips i { animation: pp-chip-glow 6.4s ease-in-out infinite; }
+  .live-real-life__chips span:nth-child(1) i { animation-delay: 0s; }
+  .live-real-life__chips span:nth-child(2) i { animation-delay: 1.6s; }
+  .live-real-life__chips span:nth-child(3) i { animation-delay: 3.2s; }
+  .live-real-life__chips span:nth-child(4) i { animation-delay: 4.8s; }
+
+  .live-real-life__marquee { animation: pp-marquee-pulse 6.4s ease-in-out infinite; }
+}
+
+@keyframes pp-chip-glow {
+  0%, 78%, 100% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--chip-glow, #61f46f) 0%, transparent);
+    transform: scale(1);
+  }
+  8% {
+    box-shadow: 0 0 0 6px color-mix(in srgb, var(--chip-glow, #61f46f) 45%, transparent);
+    transform: scale(1.2);
+  }
+  18% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--chip-glow, #61f46f) 0%, transparent);
+    transform: scale(1);
+  }
+}
+
+@keyframes pp-marquee-pulse {
+  0%, 78%, 100% { filter: brightness(1); }
+  8% { filter: brightness(1.9); }
+  18% { filter: brightness(1); }
+}
+
+@media screen and (max-width: 749px) {
+  .live-real-life__chips i { animation-duration: 5s; }
+  .live-real-life__marquee { animation: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .live-real-life__chips i,
+  .live-real-life__marquee {
+    animation: none !important;
+  }
+}
+
+body.pp-motion-off .live-real-life__chips i,
+body.pp-motion-off .live-real-life__marquee {
+  animation: none !important;
+}

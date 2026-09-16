@@ -1,0 +1,2074 @@
+{% render 'section-editor-styles', section: section %}
+
+{% liquid
+  assign box_product = section.settings.box_product
+  assign box_variant = box_product.selected_or_first_available_variant
+  assign eligible_collection = section.settings.eligible_collection
+%}
+
+<style>
+
+  /* =========================================================
+     EXISTING SECTION SPACING
+  ========================================================= */
+
+  #shopify-section-{{ section.id }} .pp-byob {
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+  }
+
+
+  @media screen and (max-width: 680px) {
+
+    #shopify-section-{{ section.id }} .pp-byob {
+      padding-top: {{ section.settings.padding_top_mobile }}px;
+
+      {% if box_product != blank and eligible_collection != blank %}
+        /*
+          Extra bottom space prevents the sticky mobile builder
+          bar from covering the last products / main add button.
+        */
+        padding-bottom: calc(
+          {{ section.settings.padding_bottom_mobile }}px + 132px
+        );
+      {% else %}
+        padding-bottom: {{ section.settings.padding_bottom_mobile }}px;
+      {% endif %}
+    }
+
+  }
+
+
+  /* =========================================================
+     EXISTING PRESELECTION NOTICE
+  ========================================================= */
+
+  #shopify-section-{{ section.id }} .pp-byob__notice {
+    margin: 14px 0 0;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    background: #fff;
+
+    border: 1px solid var(--line);
+
+    border-left:
+      3px solid
+      {{ section.settings.accent }};
+
+    border-radius: 12px;
+
+    padding: 11px 15px;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    color: var(--ink);
+
+    max-width: min(560px, 100%);
+
+    line-height: 1.45;
+
+    text-align: left;
+  }
+
+
+  #shopify-section-{{ section.id }} .pp-byob__notice[hidden] {
+    display: none;
+  }
+
+
+  @media screen and (max-width: 620px) {
+
+    #shopify-section-{{ section.id }} .pp-byob__notice {
+      font-size: 12px;
+
+      padding: 10px 13px;
+    }
+
+  }
+
+
+
+  /* =========================================================
+     MOBILE STICKY BOX PROGRESS
+     Hidden completely on desktop.
+  ========================================================= */
+
+  #shopify-section-{{ section.id }} .pp-byob__mobile-bar {
+    display: none;
+  }
+
+
+  @media screen and (max-width: 680px) {
+
+    #shopify-section-{{ section.id }} .pp-byob__mobile-bar {
+      position: fixed;
+
+      left: 12px;
+      right: 12px;
+
+      bottom:
+        calc(
+          10px + env(safe-area-inset-bottom, 0px)
+        );
+
+      z-index: 80;
+
+      display: block;
+
+      width: auto;
+
+      max-width: 520px;
+
+      margin-inline: auto;
+
+      padding: 11px 12px 12px;
+
+      background: rgba(255, 255, 255, 0.97);
+
+      border:
+        1px solid
+        rgba(71, 16, 93, 0.14);
+
+      border-radius: 18px;
+
+      box-shadow:
+        0 14px 40px rgba(53, 16, 66, 0.18),
+        0 3px 10px rgba(53, 16, 66, 0.08);
+
+      backdrop-filter: blur(12px);
+
+      -webkit-backdrop-filter: blur(12px);
+
+      opacity: 0;
+
+      visibility: hidden;
+
+      pointer-events: none;
+
+      transform:
+        translateY(calc(100% + 30px));
+
+      transition:
+        opacity .25s ease,
+        transform .3s ease,
+        visibility .25s ease;
+    }
+
+
+    #shopify-section-{{ section.id }} .pp-byob__mobile-bar.is-visible {
+      opacity: 1;
+
+      visibility: visible;
+
+      pointer-events: auto;
+
+      transform: translateY(0);
+    }
+
+
+    /* =========================================================
+       TOP ROW
+    ========================================================= */
+
+    #shopify-section-{{ section.id }} .pp-byob__mobile-top {
+      display: flex;
+
+      align-items: center;
+
+      justify-content: space-between;
+
+      gap: 12px;
+
+      min-width: 0;
+
+      margin-bottom: 8px;
+    }
+
+
+    #shopify-section-{{ section.id }} .pp-byob__mobile-copy {
+      min-width: 0;
+
+      flex: 1;
+    }
+
+
+    #shopify-section-{{ section.id }} .pp-byob__mobile-count {
+      display: flex;
+
+      align-items: baseline;
+
+      gap: 4px;
+
+      margin: 0 0 2px;
+
+      color:
+        {{ section.settings.purple }};
+
+      font-size: 13px;
+
+      line-height: 1.2;
+
+      font-weight: 800;
+    }
+
+
+    #shopify-section-{{ section.id }} .pp-byob__mobile-count strong {
+      color:
+        {{ section.settings.accent }};
+
+      font-size: 17px;
+
+      line-height: 1;
+    }
+
+
+    #shopify-section-{{ section.id }} .pp-byob__mobile-message {
+      display: block;
+
+      margin: 0;
+
+      overflow: hidden;
+
+      color: rgba(53, 16, 66, 0.72);
+
+      font-size: 10.5px;
+
+      line-height: 1.25;
+
+      font-weight: 600;
+
+      white-space: nowrap;
+
+      text-overflow: ellipsis;
+    }
+
+
+    /* =========================================================
+       BOX STATUS PILL
+    ========================================================= */
+
+    #shopify-section-{{ section.id }} .pp-byob__mobile-state {
+      flex-shrink: 0;
+
+      display: inline-flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      gap: 5px;
+
+      min-height: 27px;
+
+      padding:
+        5px 9px;
+
+      background:
+        color-mix(
+          in srgb,
+          {{ section.settings.accent }} 9%,
+          white
+        );
+
+      border:
+        1px solid
+        color-mix(
+          in srgb,
+          {{ section.settings.accent }} 20%,
+          white
+        );
+
+      border-radius: 999px;
+
+      color:
+        {{ section.settings.accent }};
+
+      font-size: 9.5px;
+
+      line-height: 1;
+
+      font-weight: 800;
+
+      white-space: nowrap;
+    }
+
+
+    #shopify-section-{{ section.id }} .pp-byob__mobile-state-dot {
+      width: 6px;
+
+      height: 6px;
+
+      background:
+        {{ section.settings.accent }};
+
+      border-radius: 50%;
+    }
+
+
+    #shopify-section-{{ section.id }} .pp-byob__mobile-bar.is-complete
+    .pp-byob__mobile-state {
+      background:
+        color-mix(
+          in srgb,
+          #27a45d 10%,
+          white
+        );
+
+      border-color:
+        color-mix(
+          in srgb,
+          #27a45d 24%,
+          white
+        );
+
+      color: #21884e;
+    }
+
+
+    #shopify-section-{{ section.id }} .pp-byob__mobile-bar.is-complete
+    .pp-byob__mobile-state-dot {
+      background: #27a45d;
+    }
+
+
+
+    /* =========================================================
+       PROGRESS TRACK
+    ========================================================= */
+
+    #shopify-section-{{ section.id }} .pp-byob__mobile-progress {
+      position: relative;
+
+      width: 100%;
+
+      height: 5px;
+
+      overflow: hidden;
+
+      margin-bottom: 7px;
+
+      background:
+        rgba(71, 16, 93, 0.10);
+
+      border-radius: 999px;
+    }
+
+
+    #shopify-section-{{ section.id }} .pp-byob__mobile-progress-fill {
+      position: absolute;
+
+      left: 0;
+      top: 0;
+      bottom: 0;
+
+      width: 0%;
+
+      background:
+        {{ section.settings.accent }};
+
+      border-radius: inherit;
+
+      transition:
+        width .3s ease;
+    }
+
+
+    #shopify-section-{{ section.id }} .pp-byob__mobile-bar.is-complete
+    .pp-byob__mobile-progress-fill {
+      background: #27a45d;
+    }
+
+
+
+    /* =========================================================
+       SMALL SLOT INDICATORS
+
+       Each small segment represents one product needed
+       to complete the box.
+    ========================================================= */
+
+    #shopify-section-{{ section.id }} .pp-byob__mobile-slots {
+      display: flex;
+
+      align-items: center;
+
+      width: 100%;
+
+      gap: 5px;
+
+      margin-bottom: 9px;
+    }
+
+
+    #shopify-section-{{ section.id }} .pp-byob__mobile-slot {
+      position: relative;
+
+      flex: 1;
+
+      height: 3px;
+
+      overflow: hidden;
+
+      background:
+        rgba(71, 16, 93, 0.10);
+
+      border-radius: 999px;
+
+      transition:
+        background .2s ease;
+    }
+
+
+    #shopify-section-{{ section.id }} .pp-byob__mobile-slot.is-filled {
+      background:
+        {{ section.settings.accent }};
+    }
+
+
+    #shopify-section-{{ section.id }} .pp-byob__mobile-bar.is-complete
+    .pp-byob__mobile-slot.is-filled {
+      background: #27a45d;
+    }
+
+
+
+    /* =========================================================
+       BOTTOM ROW
+    ========================================================= */
+
+    #shopify-section-{{ section.id }} .pp-byob__mobile-bottom {
+      display: grid;
+
+      grid-template-columns:
+        minmax(72px, auto)
+        minmax(0, 1fr);
+
+      align-items: center;
+
+      gap: 10px;
+    }
+
+
+    #shopify-section-{{ section.id }} .pp-byob__mobile-remaining {
+      min-width: 0;
+
+      color:
+        {{ section.settings.purple }};
+
+      font-size: 10.5px;
+
+      line-height: 1.2;
+
+      font-weight: 700;
+    }
+
+
+    #shopify-section-{{ section.id }} .pp-byob__mobile-remaining strong {
+      display: block;
+
+      margin-bottom: 1px;
+
+      color:
+        {{ section.settings.accent }};
+
+      font-size: 13px;
+
+      line-height: 1.1;
+    }
+
+
+    #shopify-section-{{ section.id }} .pp-byob__mobile-bar.is-complete
+    .pp-byob__mobile-remaining strong {
+      color: #21884e;
+    }
+
+
+
+    /* =========================================================
+       STICKY ADD TO CART BUTTON
+    ========================================================= */
+
+    #shopify-section-{{ section.id }} .pp-byob__mobile-submit {
+      width: 100%;
+
+      min-width: 0;
+
+      min-height: 42px;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      gap: 6px;
+
+      padding:
+        10px 14px;
+
+      background:
+        {{ section.settings.accent }};
+
+      color: #ffffff;
+
+      border: 0;
+
+      border-radius: 999px;
+
+      font-family: inherit;
+
+      font-size: 11.5px;
+
+      line-height: 1;
+
+      font-weight: 800;
+
+      text-align: center;
+
+      cursor: pointer;
+
+      box-shadow:
+        0 6px 14px
+        color-mix(
+          in srgb,
+          {{ section.settings.accent }} 22%,
+          transparent
+        );
+
+      transition:
+        opacity .2s ease,
+        transform .2s ease,
+        background .2s ease;
+    }
+
+
+    #shopify-section-{{ section.id }} .pp-byob__mobile-submit:not(:disabled):active {
+      transform: scale(.98);
+    }
+
+
+    #shopify-section-{{ section.id }} .pp-byob__mobile-submit:disabled {
+      cursor: not-allowed;
+
+      opacity: .45;
+
+      box-shadow: none;
+    }
+
+
+    #shopify-section-{{ section.id }} .pp-byob__mobile-bar.is-complete
+    .pp-byob__mobile-submit:not(:disabled) {
+      background: #27a45d;
+
+      box-shadow:
+        0 6px 14px
+        rgba(39, 164, 93, 0.20);
+    }
+
+  }
+
+
+
+  /* =========================================================
+     EXTRA-SMALL PHONES
+  ========================================================= */
+
+  @media screen and (max-width: 380px) {
+
+    #shopify-section-{{ section.id }} .pp-byob__mobile-bar {
+      left: 8px;
+      right: 8px;
+
+      padding:
+        10px 10px 11px;
+
+      border-radius: 16px;
+    }
+
+
+    #shopify-section-{{ section.id }} .pp-byob__mobile-bottom {
+      grid-template-columns:
+        64px
+        minmax(0, 1fr);
+
+      gap: 8px;
+    }
+
+
+    #shopify-section-{{ section.id }} .pp-byob__mobile-submit {
+      padding-inline: 10px;
+
+      font-size: 10.5px;
+    }
+
+
+    #shopify-section-{{ section.id }} .pp-byob__mobile-state {
+      font-size: 9px;
+
+      padding-inline: 7px;
+    }
+
+  }
+
+</style>
+
+
+
+<section
+  class="pp-byob pp-reveal"
+  data-build-box
+  data-required="{{ section.settings.item_count }}"
+  data-preselect-enabled="{{ section.settings.enable_preselect }}"
+  data-preselect-message="{{ section.settings.preselect_message | escape }}"
+  data-ineligible-message="{{ section.settings.ineligible_message | escape }}"
+  style="
+    --byob-bg:{{ section.settings.background }};
+    --byob-card:{{ section.settings.card_background }};
+    --byob-accent:{{ section.settings.accent }};
+    --byob-purple:{{ section.settings.purple }};
+  "
+>
+
+  <div class="page-width">
+
+
+    <!-- =======================================================
+         HEADER
+    ======================================================== -->
+
+    <header class="pp-byob__head">
+
+      {% if section.settings.eyebrow != blank %}
+
+        <div class="pp-kicker">
+          {{ section.settings.eyebrow }}
+        </div>
+
+      {% endif %}
+
+
+      <h1>
+        {{ section.settings.heading }}
+      </h1>
+
+
+      {% if section.settings.text != blank %}
+
+        <p>
+          {{ section.settings.text }}
+        </p>
+
+      {% endif %}
+
+
+      {% if box_product != blank %}
+
+        <strong class="pp-byob__price">
+          {{ section.settings.price_prefix }}
+          {{ box_variant.price | money }}
+        </strong>
+
+      {% endif %}
+
+
+      <p
+        class="pp-byob__notice"
+        data-box-notice
+        role="status"
+        aria-live="polite"
+        hidden
+      ></p>
+
+    </header>
+
+
+
+    <!-- =======================================================
+         SETUP MESSAGE
+    ======================================================== -->
+
+    {% if box_product == blank or eligible_collection == blank %}
+
+      {% if request.design_mode %}
+
+        <div class="pp-byob__setup">
+
+          <strong>
+            Complete the box setup
+          </strong>
+
+          <p>
+            Select a “Box product” and an “Eligible products collection”
+            in this section’s settings.
+          </p>
+
+        </div>
+
+      {% endif %}
+
+
+
+    {% else %}
+
+
+      <!-- =====================================================
+           BUILDER LAYOUT
+      ====================================================== -->
+
+      <div class="pp-byob__layout">
+
+
+        <!-- ===================================================
+             PRODUCTS
+        ==================================================== -->
+
+        <div
+          class="pp-byob__products"
+          aria-label="{{ section.settings.products_label }}"
+        >
+
+          {% for item in eligible_collection.products limit: section.settings.product_limit %}
+
+            <button
+              class="pp-byob__product"
+              type="button"
+              data-box-choice
+              data-variant-id="{{ item.selected_or_first_available_variant.id }}"
+              data-all-variant-ids="{% for v in item.variants %}{{ v.id }}{% unless forloop.last %},{% endunless %}{% endfor %}"
+              data-product-id="{{ item.id }}"
+              data-product-handle="{{ item.handle }}"
+              data-product-title="{{ item.title | escape }}"
+              aria-pressed="false"
+              {% unless item.available %}disabled{% endunless %}
+            >
+
+              <span
+                class="pp-byob__check"
+                aria-hidden="true"
+              >
+                ✓
+              </span>
+
+
+              <span class="pp-byob__media">
+
+                {% if item.featured_image %}
+
+                  {{
+                    item.featured_image
+                    | image_url: width: 700
+                    | image_tag:
+                      loading: 'lazy',
+                      widths: '240,360,520,700',
+                      alt: item.title
+                  }}
+
+                {% else %}
+
+                  {{ 'product-1' | placeholder_svg_tag }}
+
+                {% endif %}
+
+              </span>
+
+
+              <strong>
+                {{ item.title }}
+              </strong>
+
+
+              {% if section.settings.show_individual_prices %}
+
+                <small>
+                  {{ item.price | money }}
+                </small>
+
+              {% endif %}
+
+            </button>
+
+          {% endfor %}
+
+        </div>
+
+
+
+        <!-- ===================================================
+             DESKTOP / STANDARD BOX SUMMARY
+        ==================================================== -->
+
+        <aside class="pp-byob__box">
+
+          <div class="pp-byob__box-head">
+
+            <div>
+
+              <span>
+                {{ section.settings.box_label }}
+              </span>
+
+              <h2>
+                {{ section.settings.box_heading }}
+              </h2>
+
+            </div>
+
+
+            <b>
+
+              <span data-box-count>
+                0
+              </span>
+
+              /
+              {{ section.settings.item_count }}
+
+            </b>
+
+          </div>
+
+
+
+          <div
+            class="pp-byob__slots"
+            data-box-slots
+          >
+
+            {% for index in (1..section.settings.item_count) %}
+
+              <div
+                class="pp-byob__slot"
+                data-box-slot
+              >
+
+                <span>
+                  {{ index }}
+                </span>
+
+                <small>
+                  {{ section.settings.empty_slot_label }}
+                </small>
+
+              </div>
+
+            {% endfor %}
+
+          </div>
+
+
+
+          <p
+            class="pp-byob__status"
+            data-box-status
+            aria-live="polite"
+          >
+            {{
+              section.settings.choose_message
+              | replace: '[count]', section.settings.item_count
+            }}
+          </p>
+
+
+
+          <form
+            method="post"
+            action="{{ routes.cart_add_url }}"
+            data-box-form
+          >
+
+            <input
+              type="hidden"
+              name="id"
+              value="{{ box_variant.id }}"
+            >
+
+
+            <input
+              type="hidden"
+              name="quantity"
+              value="1"
+            >
+
+
+            <input
+              type="hidden"
+              name="properties[Box contents]"
+              value=""
+              data-box-contents
+            >
+
+
+            <input
+              type="hidden"
+              name="properties[Selected variant IDs]"
+              value=""
+              data-box-variant-ids
+            >
+
+
+            <button
+              class="pp-btn pp-btn--orange pp-btn--wide"
+              type="submit"
+              disabled
+              data-box-submit
+            >
+              {{ section.settings.add_label }}
+              ·
+              {{ box_variant.price | money }}
+            </button>
+
+          </form>
+
+
+
+          {% if section.settings.note != blank %}
+
+            <small class="pp-byob__note">
+              {{ section.settings.note }}
+            </small>
+
+          {% endif %}
+
+        </aside>
+
+      </div>
+
+
+    {% endif %}
+
+  </div>
+
+
+
+  <!-- =========================================================
+       MOBILE STICKY PROGRESS + ADD TO CART
+  ========================================================== -->
+
+  {% if box_product != blank and eligible_collection != blank %}
+
+    <div
+      class="pp-byob__mobile-bar"
+      data-box-mobile-bar
+      aria-label="Cuddle Care Box progress"
+    >
+
+
+      <!-- TOP -->
+
+      <div class="pp-byob__mobile-top">
+
+
+        <div class="pp-byob__mobile-copy">
+
+          <p class="pp-byob__mobile-count">
+
+            <strong data-box-mobile-count>
+              0
+            </strong>
+
+            <span>
+              / {{ section.settings.item_count }} selected
+            </span>
+
+          </p>
+
+
+          <small
+            class="pp-byob__mobile-message"
+            data-box-mobile-message
+          >
+            Start picking your favourites
+          </small>
+
+        </div>
+
+
+
+        <span
+          class="pp-byob__mobile-state"
+          data-box-mobile-state
+        >
+
+          <i
+            class="pp-byob__mobile-state-dot"
+            aria-hidden="true"
+          ></i>
+
+          <span data-box-mobile-state-text>
+            Building box
+          </span>
+
+        </span>
+
+
+      </div>
+
+
+
+      <!-- MAIN PROGRESS BAR -->
+
+      <div
+        class="pp-byob__mobile-progress"
+        data-box-mobile-progress
+        role="progressbar"
+        aria-label="Box completion"
+        aria-valuemin="0"
+        aria-valuemax="{{ section.settings.item_count }}"
+        aria-valuenow="0"
+      >
+
+        <span
+          class="pp-byob__mobile-progress-fill"
+          data-box-mobile-progress-fill
+        ></span>
+
+      </div>
+
+
+
+      <!-- EACH REQUIRED ITEM IS REPRESENTED HERE -->
+
+      <div
+        class="pp-byob__mobile-slots"
+        aria-hidden="true"
+      >
+
+        {% for index in (1..section.settings.item_count) %}
+
+          <span
+            class="pp-byob__mobile-slot"
+            data-box-mobile-slot
+          ></span>
+
+        {% endfor %}
+
+      </div>
+
+
+
+      <!-- BOTTOM -->
+
+      <div class="pp-byob__mobile-bottom">
+
+
+        <div class="pp-byob__mobile-remaining">
+
+          <strong data-box-mobile-remaining>
+            {{ section.settings.item_count }} to go
+          </strong>
+
+          <span data-box-mobile-helper>
+            Complete your box
+          </span>
+
+        </div>
+
+
+
+        <button
+          type="button"
+          class="pp-byob__mobile-submit"
+          data-box-mobile-submit
+          disabled
+        >
+          {{ section.settings.add_label }}
+          ·
+          {{ box_variant.price | money }}
+        </button>
+
+
+      </div>
+
+
+    </div>
+
+  {% endif %}
+
+</section>
+
+
+
+<!-- ===========================================================
+     MOBILE STICKY BAR SYNC
+
+     IMPORTANT:
+     This does NOT replace the existing Build Your Box logic.
+
+     It watches the existing aria-pressed states and existing
+     submit button, then mirrors their state into the mobile bar.
+============================================================ -->
+
+{% if box_product != blank and eligible_collection != blank %}
+
+  <script>
+
+    (function () {
+
+      function initMobileBoxProgress() {
+
+        var section =
+          document.getElementById(
+            'shopify-section-{{ section.id }}'
+          );
+
+
+        if (!section) {
+          return;
+        }
+
+
+        var builder =
+          section.querySelector(
+            '[data-build-box]'
+          );
+
+
+        if (!builder) {
+          return;
+        }
+
+
+        var mobileBar =
+          builder.querySelector(
+            '[data-box-mobile-bar]'
+          );
+
+
+        if (!mobileBar) {
+          return;
+        }
+
+
+        /*
+          Prevent duplicate listeners when Shopify
+          reloads the section inside the theme editor.
+        */
+
+        if (
+          mobileBar.getAttribute(
+            'data-mobile-progress-ready'
+          ) === 'true'
+        ) {
+          return;
+        }
+
+
+        mobileBar.setAttribute(
+          'data-mobile-progress-ready',
+          'true'
+        );
+
+
+        var required =
+          parseInt(
+            builder.getAttribute(
+              'data-required'
+            ),
+            10
+          ) || {{ section.settings.item_count }};
+
+
+
+        var productsContainer =
+          builder.querySelector(
+            '.pp-byob__products'
+          );
+
+
+        var choices =
+          builder.querySelectorAll(
+            '[data-box-choice]'
+          );
+
+
+        var originalSubmit =
+          builder.querySelector(
+            '[data-box-submit]'
+          );
+
+
+        var originalStatus =
+          builder.querySelector(
+            '[data-box-status]'
+          );
+
+
+        var mobileCount =
+          mobileBar.querySelector(
+            '[data-box-mobile-count]'
+          );
+
+
+        var mobileMessage =
+          mobileBar.querySelector(
+            '[data-box-mobile-message]'
+          );
+
+
+        var mobileProgress =
+          mobileBar.querySelector(
+            '[data-box-mobile-progress]'
+          );
+
+
+        var mobileProgressFill =
+          mobileBar.querySelector(
+            '[data-box-mobile-progress-fill]'
+          );
+
+
+        var mobileSlots =
+          mobileBar.querySelectorAll(
+            '[data-box-mobile-slot]'
+          );
+
+
+        var mobileRemaining =
+          mobileBar.querySelector(
+            '[data-box-mobile-remaining]'
+          );
+
+
+        var mobileHelper =
+          mobileBar.querySelector(
+            '[data-box-mobile-helper]'
+          );
+
+
+        var mobileStateText =
+          mobileBar.querySelector(
+            '[data-box-mobile-state-text]'
+          );
+
+
+        var mobileSubmit =
+          mobileBar.querySelector(
+            '[data-box-mobile-submit]'
+          );
+
+
+
+        /* =====================================================
+           GET CURRENT NUMBER OF SELECTED PRODUCTS
+        ====================================================== */
+
+        function getSelectedChoices() {
+
+          return Array.prototype.filter.call(
+            choices,
+            function (choice) {
+
+              return (
+                choice.getAttribute(
+                  'aria-pressed'
+                ) === 'true'
+              );
+
+            }
+          );
+
+        }
+
+
+
+        /* =====================================================
+           UPDATE MOBILE UI
+        ====================================================== */
+
+        function syncMobileProgress() {
+
+          var selected =
+            getSelectedChoices();
+
+
+          var count =
+            selected.length;
+
+
+          /*
+            Clamp progress visually so the bar never
+            exceeds 100%.
+          */
+
+          var visualCount =
+            Math.min(
+              count,
+              required
+            );
+
+
+          var remaining =
+            Math.max(
+              required - count,
+              0
+            );
+
+
+          var percentage =
+            required > 0
+              ? Math.min(
+                  100,
+                  Math.round(
+                    (visualCount / required) * 100
+                  )
+                )
+              : 0;
+
+
+
+          /* COUNT */
+
+          if (mobileCount) {
+            mobileCount.textContent =
+              String(count);
+          }
+
+
+
+          /* ACCESSIBLE PROGRESS */
+
+          if (mobileProgress) {
+
+            mobileProgress.setAttribute(
+              'aria-valuenow',
+              String(visualCount)
+            );
+
+          }
+
+
+
+          /* PROGRESS WIDTH */
+
+          if (mobileProgressFill) {
+
+            mobileProgressFill.style.width =
+              percentage + '%';
+
+          }
+
+
+
+          /* MINI SLOT SEGMENTS */
+
+          Array.prototype.forEach.call(
+            mobileSlots,
+            function (slot, index) {
+
+              if (index < visualCount) {
+
+                slot.classList.add(
+                  'is-filled'
+                );
+
+              } else {
+
+                slot.classList.remove(
+                  'is-filled'
+                );
+
+              }
+
+            }
+          );
+
+
+
+          /* ===================================================
+             EMPTY
+          ==================================================== */
+
+          if (count === 0) {
+
+            mobileBar.classList.remove(
+              'is-complete'
+            );
+
+
+            if (mobileMessage) {
+
+              mobileMessage.textContent =
+                'Start picking your favourites';
+
+            }
+
+
+            if (mobileRemaining) {
+
+              mobileRemaining.textContent =
+                required + ' to go';
+
+            }
+
+
+            if (mobileHelper) {
+
+              mobileHelper.textContent =
+                'Complete your box';
+
+            }
+
+
+            if (mobileStateText) {
+
+              mobileStateText.textContent =
+                'Building box';
+
+            }
+
+          }
+
+
+
+          /* ===================================================
+             PARTIALLY FILLED
+          ==================================================== */
+
+          else if (count < required) {
+
+            mobileBar.classList.remove(
+              'is-complete'
+            );
+
+
+            if (mobileMessage) {
+
+              if (count === 1) {
+
+                mobileMessage.textContent =
+                  '1 favourite is already in your box';
+
+              } else {
+
+                mobileMessage.textContent =
+                  count +
+                  ' favourites are already in your box';
+
+              }
+
+            }
+
+
+            if (mobileRemaining) {
+
+              mobileRemaining.textContent =
+                remaining +
+                (
+                  remaining === 1
+                    ? ' more'
+                    : ' more'
+                );
+
+            }
+
+
+            if (mobileHelper) {
+
+              mobileHelper.textContent =
+                'to complete box';
+
+            }
+
+
+            if (mobileStateText) {
+
+              mobileStateText.textContent =
+                percentage + '% filled';
+
+            }
+
+          }
+
+
+
+          /* ===================================================
+             COMPLETE
+          ==================================================== */
+
+          else {
+
+            mobileBar.classList.add(
+              'is-complete'
+            );
+
+
+            if (mobileMessage) {
+
+              mobileMessage.textContent =
+                'Your Cuddle Care Box is complete';
+
+            }
+
+
+            if (mobileRemaining) {
+
+              mobileRemaining.textContent =
+                'Ready!';
+
+            }
+
+
+            if (mobileHelper) {
+
+              mobileHelper.textContent =
+                'Box complete';
+
+            }
+
+
+            if (mobileStateText) {
+
+              mobileStateText.textContent =
+                'Complete ✓';
+
+            }
+
+          }
+
+
+
+          /* ===================================================
+             BUTTON STATE
+
+             Mirror the ACTUAL existing submit button.
+             This means all your existing validation stays
+             authoritative.
+          ==================================================== */
+
+          if (
+            mobileSubmit &&
+            originalSubmit
+          ) {
+
+            var originalDisabled =
+              originalSubmit.disabled;
+
+
+            mobileSubmit.disabled =
+              originalDisabled;
+
+          }
+
+        }
+
+
+
+        /* =====================================================
+           STICKY BUTTON -> EXISTING FORM BUTTON
+
+           No separate cart logic is created.
+           We simply click the existing submit button.
+        ====================================================== */
+
+        if (
+          mobileSubmit &&
+          originalSubmit
+        ) {
+
+          mobileSubmit.addEventListener(
+            'click',
+            function () {
+
+              if (
+                mobileSubmit.disabled ||
+                originalSubmit.disabled
+              ) {
+                return;
+              }
+
+
+              originalSubmit.click();
+
+            }
+          );
+
+        }
+
+
+
+        /* =====================================================
+           WATCH PRODUCT SELECTION CHANGES
+
+           Existing theme JS changes aria-pressed on the
+           selected product cards. We simply watch it.
+        ====================================================== */
+
+        if (productsContainer) {
+
+          var productObserver =
+            new MutationObserver(
+              function () {
+
+                syncMobileProgress();
+
+              }
+            );
+
+
+          productObserver.observe(
+            productsContainer,
+            {
+              subtree: true,
+              attributes: true,
+              attributeFilter: [
+                'aria-pressed',
+                'disabled'
+              ]
+            }
+          );
+
+        }
+
+
+
+        /* =====================================================
+           WATCH EXISTING ADD BUTTON ENABLE / DISABLE
+        ====================================================== */
+
+        if (originalSubmit) {
+
+          var submitObserver =
+            new MutationObserver(
+              function () {
+
+                syncMobileProgress();
+
+              }
+            );
+
+
+          submitObserver.observe(
+            originalSubmit,
+            {
+              attributes: true,
+              attributeFilter: [
+                'disabled'
+              ]
+            }
+          );
+
+        }
+
+
+
+        /* =====================================================
+           ALSO SYNC AFTER CLICK
+
+           Gives immediate visual feedback even if the main
+           builder logic updates on the next frame.
+        ====================================================== */
+
+        builder.addEventListener(
+          'click',
+          function (event) {
+
+            var choice =
+              event.target.closest(
+                '[data-box-choice]'
+              );
+
+
+            if (!choice) {
+              return;
+            }
+
+
+            window.requestAnimationFrame(
+              function () {
+
+                window.requestAnimationFrame(
+                  syncMobileProgress
+                );
+
+              }
+            );
+
+          }
+        );
+
+
+
+        /* =====================================================
+           SHOW BAR ONLY WHILE BUILDER SECTION IS IN VIEW
+
+           Prevents it hanging over unrelated footer/content.
+        ====================================================== */
+
+        if (
+          'IntersectionObserver' in window
+        ) {
+
+          var visibilityObserver =
+            new IntersectionObserver(
+              function (entries) {
+
+                entries.forEach(
+                  function (entry) {
+
+                    if (entry.isIntersecting) {
+
+                      mobileBar.classList.add(
+                        'is-visible'
+                      );
+
+                    } else {
+
+                      mobileBar.classList.remove(
+                        'is-visible'
+                      );
+
+                    }
+
+                  }
+                );
+
+              },
+              {
+                threshold: 0.01
+              }
+            );
+
+
+          visibilityObserver.observe(
+            builder
+          );
+
+        } else {
+
+          mobileBar.classList.add(
+            'is-visible'
+          );
+
+        }
+
+
+
+        /* =====================================================
+           INITIAL STATE
+
+           Multiple delayed checks also catch URL-based
+           PDP preselection after the existing builder JS runs.
+        ====================================================== */
+
+        syncMobileProgress();
+
+
+        window.requestAnimationFrame(
+          syncMobileProgress
+        );
+
+
+        window.setTimeout(
+          syncMobileProgress,
+          100
+        );
+
+
+        window.setTimeout(
+          syncMobileProgress,
+          400
+        );
+
+      }
+
+
+
+      if (
+        document.readyState === 'loading'
+      ) {
+
+        document.addEventListener(
+          'DOMContentLoaded',
+          initMobileBoxProgress
+        );
+
+      } else {
+
+        initMobileBoxProgress();
+
+      }
+
+
+      /*
+        Shopify theme editor support.
+      */
+
+      document.addEventListener(
+        'shopify:section:load',
+        function (event) {
+
+          if (
+            event.target &&
+            event.target.id ===
+              'shopify-section-{{ section.id }}'
+          ) {
+
+            initMobileBoxProgress();
+
+          }
+
+        }
+      );
+
+    })();
+
+  </script>
+
+{% endif %}
+
+
+
+{% schema %}
+{
+  "name": "Build your own box",
+  "settings": [
+
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "BUILD YOUR OWN BOX"
+    },
+
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Their favourites. One happy box."
+    },
+
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Description",
+      "default": "Choose the care your pet needs and make the box completely theirs."
+    },
+
+    {
+      "type": "product",
+      "id": "box_product",
+      "label": "Fixed-price box product",
+      "info": "Create a Shopify product at the final box price, then select it here."
+    },
+
+    {
+      "type": "collection",
+      "id": "eligible_collection",
+      "label": "Eligible products collection"
+    },
+
+    {
+      "type": "range",
+      "id": "item_count",
+      "min": 2,
+      "max": 10,
+      "step": 1,
+      "label": "Products required per box",
+      "default": 5
+    },
+
+    {
+      "type": "range",
+      "id": "product_limit",
+      "min": 4,
+      "max": 24,
+      "step": 1,
+      "label": "Maximum products shown",
+      "default": 12
+    },
+
+    {
+      "type": "checkbox",
+      "id": "show_individual_prices",
+      "label": "Show individual product prices",
+      "default": false
+    },
+
+    {
+      "type": "text",
+      "id": "price_prefix",
+      "label": "Box price prefix",
+      "default": "Your box for"
+    },
+
+    {
+      "type": "text",
+      "id": "products_label",
+      "label": "Product list accessibility label",
+      "default": "Products available for this box"
+    },
+
+    {
+      "type": "text",
+      "id": "box_label",
+      "label": "Box label",
+      "default": "YOUR BOX"
+    },
+
+    {
+      "type": "text",
+      "id": "box_heading",
+      "label": "Box heading",
+      "default": "Five picks. One perfect routine."
+    },
+
+    {
+      "type": "text",
+      "id": "empty_slot_label",
+      "label": "Empty slot text",
+      "default": "Pick a product"
+    },
+
+    {
+      "type": "text",
+      "id": "choose_message",
+      "label": "Incomplete box message",
+      "default": "Choose [count] products to complete your box."
+    },
+
+    {
+      "type": "text",
+      "id": "add_label",
+      "label": "Add button label",
+      "default": "Add complete box"
+    },
+
+    {
+      "type": "textarea",
+      "id": "note",
+      "label": "Note below button",
+      "default": "Your selected products will be recorded with the box in your order."
+    },
+
+
+    {
+      "type": "header",
+      "content": "Preselection from product pages"
+    },
+
+    {
+      "type": "paragraph",
+      "content": "Lets a product page open this builder with that product already ticked, via ?variant=… or ?product=… in the URL. Nothing is added to the cart until the box is complete and submitted."
+    },
+
+    {
+      "type": "checkbox",
+      "id": "enable_preselect",
+      "label": "Allow preselection from product pages",
+      "default": true
+    },
+
+    {
+      "type": "text",
+      "id": "preselect_message",
+      "label": "Preselected confirmation message",
+      "default": "[product] is already in your box — pick the rest below."
+    },
+
+    {
+      "type": "textarea",
+      "id": "ineligible_message",
+      "label": "Unavailable product message",
+      "default": "This product isn't available for the Cuddle Care Box, but you can choose another favourite below."
+    },
+
+
+    {
+      "type": "header",
+      "content": "Colours"
+    },
+
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Section background",
+      "default": "#fffaf7"
+    },
+
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "Product card background",
+      "default": "#ffffff"
+    },
+
+    {
+      "type": "color",
+      "id": "accent",
+      "label": "Accent colour",
+      "default": "#ff5a0a"
+    },
+
+    {
+      "type": "color",
+      "id": "purple",
+      "label": "Box panel colour",
+      "default": "#47105d"
+    },
+
+
+    {
+      "type": "header",
+      "content": "Section spacing"
+    },
+
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding — desktop",
+      "default": 72
+    },
+
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding — desktop",
+      "default": 72
+    },
+
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding — mobile",
+      "default": 48
+    },
+
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding — mobile",
+      "default": 48
+    }
+
+  ],
+
+  "presets": [
+    {
+      "name": "Build your own box"
+    }
+  ]
+}
+{% endschema %}

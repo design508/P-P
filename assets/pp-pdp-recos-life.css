@@ -1,0 +1,59 @@
+/* ===========================================================================
+   PDP — Product recommendations ("They may also need") look-wise upgrade:
+   the existing per-product eyebrow label (e.g. "BATH-DAY PICK", rendered as
+   a plain .pp-kicker line under the title) becomes a colourful corner
+   ribbon over the product image instead, and the cards reveal one after
+   another as the section scrolls into view. .pp-recos/.pp-product-grid/
+   .pp-card/.pp-kicker all live in the shared assets/theme.css, so this file
+   scopes everything under .pp-recos and wins by extra specificity rather
+   than editing that shared file. Loaded only by sections/product-
+   recommendations.liquid. The section root already carries .pp-section, so
+   theme.js's site-wide scroll-reveal observer adds .is-visible to it on
+   scroll with zero new JS needed here.
+   =========================================================================== */
+
+.pp-recos .pp-card { position: relative; }
+
+.pp-recos .pp-card__body .pp-kicker {
+  position: absolute;
+  top: 14px;
+  left: 0;
+  z-index: 3;
+  background: linear-gradient(135deg, var(--orange, #ff5a0a), var(--pink, #ff2b78));
+  color: #fff;
+  padding: 6px 14px 6px 12px;
+  border-radius: 0 999px 999px 0;
+  font-size: 10px;
+  letter-spacing: .05em;
+  box-shadow: 0 6px 14px -6px rgba(53, 16, 66, .35);
+}
+
+.pp-recos .pp-product-grid > .pp-card {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity .55s ease, transform .55s ease;
+}
+
+.pp-recos.is-visible .pp-product-grid > .pp-card {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.pp-recos .pp-product-grid > .pp-card:nth-child(1) { transition-delay: .05s; }
+.pp-recos .pp-product-grid > .pp-card:nth-child(2) { transition-delay: .2s; }
+.pp-recos .pp-product-grid > .pp-card:nth-child(3) { transition-delay: .35s; }
+.pp-recos .pp-product-grid > .pp-card:nth-child(4) { transition-delay: .5s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .pp-recos .pp-product-grid > .pp-card {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
+body.pp-motion-off .pp-recos .pp-product-grid > .pp-card {
+  opacity: 1 !important;
+  transform: none !important;
+  transition: none !important;
+}

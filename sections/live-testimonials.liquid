@@ -1,0 +1,1820 @@
+{% render 'section-editor-styles', section: section %}
+{% assign testimonials = shop.metaobjects.testimonial.values %}
+
+<style>
+
+  /* =========================================================
+     PET-PARENT NOTES
+     STATIC RANDOM STICKY-NOTE BOARD
+  ========================================================= */
+
+  #shopify-section-{{ section.id }} .live-notes {
+    position: relative;
+    overflow: hidden;
+    background: {{ section.settings.background }};
+  }
+
+
+  #shopify-section-{{ section.id }} .live-notes > .page-width {
+    position: relative;
+    z-index: 1;
+  }
+
+
+  /* =========================================================
+     HEADER
+  ========================================================= */
+
+  #shopify-section-{{ section.id }} .live-section-head {
+    margin-bottom: clamp(22px, 2.8vw, 34px);
+  }
+
+
+  #shopify-section-{{ section.id }} .live-section-head > div {
+    max-width: 780px;
+  }
+
+
+  /* =========================================================
+     BOARD
+  ========================================================= */
+
+  #shopify-section-{{ section.id }} .live-notes__board {
+    position: relative;
+
+    width: 100%;
+
+    padding:
+      clamp(20px, 2.5vw, 34px)
+      clamp(16px, 2vw, 26px)
+      clamp(24px, 3vw, 38px);
+
+    border:
+      1px solid
+      rgba(93, 61, 43, 0.07);
+
+    border-radius: 24px;
+
+    background:
+      linear-gradient(
+        180deg,
+        rgba(255,255,255,.30),
+        rgba(255,255,255,.08)
+      ),
+      repeating-linear-gradient(
+        90deg,
+        rgba(255,255,255,.025) 0,
+        rgba(255,255,255,.025) 2px,
+        rgba(91,54,34,.012) 2px,
+        rgba(91,54,34,.012) 4px
+      ),
+      #f5ede6;
+
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.65),
+      0 8px 24px rgba(53,16,66,.045);
+
+    overflow: hidden;
+  }
+
+
+  /* Subtle board texture */
+
+  #shopify-section-{{ section.id }} .live-notes__board::before {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    pointer-events: none;
+
+    opacity: .17;
+
+    background-image:
+      radial-gradient(
+        circle,
+        rgba(78,50,32,.11) .75px,
+        transparent 1px
+      );
+
+    background-size:
+      22px 22px;
+  }
+
+
+  /* =========================================================
+     ALL REVIEWS AT ONCE
+     NO CAROUSEL
+  ========================================================= */
+
+  #shopify-section-{{ section.id }} .live-notes__grid {
+    position: relative;
+    z-index: 2;
+
+    width: 100%;
+
+    display: grid;
+
+    /*
+      10 reviews =
+      5 across x 2 rows on desktop.
+    */
+    grid-template-columns:
+      repeat(5, minmax(0, 1fr));
+
+    align-items: start;
+
+    column-gap:
+      clamp(12px, 1.4vw, 22px);
+
+    row-gap:
+      clamp(20px, 2.4vw, 34px);
+
+    padding:
+      4px 5px 8px;
+  }
+
+
+  /* =========================================================
+     BASE STICKY NOTE
+  ========================================================= */
+
+  #shopify-section-{{ section.id }} .live-note {
+    --note-bg: #f5efbd;
+    --note-pin: #e58c57;
+    --note-rotate: -0.7deg;
+    --note-x: 0px;
+    --note-y: 0px;
+
+    position: relative;
+
+    width: 100%;
+
+    min-width: 0;
+
+    min-height: 150px;
+
+    box-sizing: border-box;
+
+    padding: 15px;
+
+    color: #351042;
+
+    background:
+      linear-gradient(
+        180deg,
+        rgba(255,255,255,.18),
+        rgba(255,255,255,.015)
+      ),
+      var(--note-bg);
+
+    border:
+      1px solid
+      rgba(53,16,66,.045);
+
+    border-radius: 8px;
+
+    box-shadow:
+      0 5px 11px rgba(53,16,66,.04),
+      0 10px 18px rgba(53,16,66,.045);
+
+    transform:
+      translate(
+        var(--note-x),
+        var(--note-y)
+      )
+      rotate(var(--note-rotate));
+
+    transform-origin:
+      50% 5%;
+
+    overflow: visible;
+
+    transition:
+      transform .22s ease,
+      box-shadow .22s ease;
+  }
+
+
+  #shopify-section-{{ section.id }} .live-note:hover {
+    transform:
+      translate(
+        var(--note-x),
+        calc(var(--note-y) - 3px)
+      )
+      rotate(0deg);
+
+    box-shadow:
+      0 8px 15px rgba(53,16,66,.055),
+      0 14px 23px rgba(53,16,66,.065);
+  }
+
+
+  /* =========================================================
+     CURATED RANDOM POSITIONS
+
+     Random-looking but deterministic so the layout
+     stays professional and never overlaps unpredictably.
+  ========================================================= */
+
+  #shopify-section-{{ section.id }} .live-note:nth-child(1) {
+    --note-bg: #f5efbd;
+    --note-pin: #e68d57;
+    --note-rotate: -1.2deg;
+    --note-x: 3px;
+    --note-y: 7px;
+  }
+
+
+  #shopify-section-{{ section.id }} .live-note:nth-child(2) {
+    --note-bg: #f1dfe5;
+    --note-pin: #df7896;
+    --note-rotate: .75deg;
+    --note-x: -2px;
+    --note-y: -2px;
+  }
+
+
+  #shopify-section-{{ section.id }} .live-note:nth-child(3) {
+    --note-bg: #dfeff0;
+    --note-pin: #47aa92;
+    --note-rotate: -.45deg;
+    --note-x: 4px;
+    --note-y: 10px;
+  }
+
+
+  #shopify-section-{{ section.id }} .live-note:nth-child(4) {
+    --note-bg: #e0ebf6;
+    --note-pin: #659fe4;
+    --note-rotate: .95deg;
+    --note-x: -3px;
+    --note-y: 2px;
+  }
+
+
+  #shopify-section-{{ section.id }} .live-note:nth-child(5) {
+    --note-bg: #e9e3f5;
+    --note-pin: #9276df;
+    --note-rotate: -.8deg;
+    --note-x: 1px;
+    --note-y: 8px;
+  }
+
+
+  #shopify-section-{{ section.id }} .live-note:nth-child(6) {
+    --note-bg: #f4e6cf;
+    --note-pin: #e99b63;
+    --note-rotate: .55deg;
+    --note-x: -3px;
+    --note-y: -1px;
+  }
+
+
+  #shopify-section-{{ section.id }} .live-note:nth-child(7) {
+    --note-bg: #e4eef7;
+    --note-pin: #6498d9;
+    --note-rotate: -1deg;
+    --note-x: 3px;
+    --note-y: 9px;
+  }
+
+
+  #shopify-section-{{ section.id }} .live-note:nth-child(8) {
+    --note-bg: #ece3f4;
+    --note-pin: #9472df;
+    --note-rotate: .8deg;
+    --note-x: -2px;
+    --note-y: 2px;
+  }
+
+
+  #shopify-section-{{ section.id }} .live-note:nth-child(9) {
+    --note-bg: #e2efe2;
+    --note-pin: #5ba06b;
+    --note-rotate: -.55deg;
+    --note-x: 4px;
+    --note-y: 11px;
+  }
+
+
+  #shopify-section-{{ section.id }} .live-note:nth-child(10) {
+    --note-bg: #f4dddd;
+    --note-pin: #df7c7c;
+    --note-rotate: .65deg;
+    --note-x: -2px;
+    --note-y: 1px;
+  }
+
+
+  /* =========================================================
+     PIN
+  ========================================================= */
+
+  #shopify-section-{{ section.id }} .live-note::before {
+    content: "";
+
+    position: absolute;
+
+    top: 7px;
+    left: 50%;
+
+    width: 9px;
+    height: 9px;
+
+    transform:
+      translateX(-50%);
+
+    border-radius: 50%;
+
+    background:
+      var(--note-pin);
+
+    border:
+      1.5px solid
+      rgba(255,255,255,.94);
+
+    box-shadow:
+      0 2px 5px
+      rgba(53,16,66,.14);
+
+    z-index: 5;
+  }
+
+
+  /* =========================================================
+     PAPER CORNER
+  ========================================================= */
+
+  #shopify-section-{{ section.id }} .live-note::after {
+    content: "";
+
+    position: absolute;
+
+    right: 0;
+    bottom: 0;
+
+    width: 14px;
+    height: 14px;
+
+    background:
+      linear-gradient(
+        135deg,
+        rgba(53,16,66,.05) 0 50%,
+        rgba(255,255,255,.38) 50% 100%
+      );
+
+    border-radius:
+      0 0 7px 0;
+
+    pointer-events: none;
+  }
+
+
+  /* =========================================================
+     IMAGE REVIEW
+     IMAGE LEFT + REVIEW RIGHT
+  ========================================================= */
+
+  #shopify-section-{{ section.id }} .live-note--with-image {
+    display: grid;
+
+    grid-template-columns:
+      minmax(72px, 35%)
+      minmax(0, 1fr);
+
+    align-items: center;
+
+    column-gap:
+      clamp(9px, 1vw, 14px);
+
+    min-height: 150px;
+
+    padding:
+      17px 13px
+      13px;
+  }
+
+
+  /* =========================================================
+     IMAGE
+  ========================================================= */
+
+  #shopify-section-{{ section.id }}
+  .live-note--with-image
+  .live-note__image {
+
+    width: 100%;
+    height: 96px;
+
+    margin: 0;
+
+    padding: 4px;
+
+    background: #fff;
+
+    border-radius: 5px;
+
+    box-shadow:
+      0 4px 9px
+      rgba(53,16,66,.05);
+
+    overflow: hidden;
+
+    transform:
+      rotate(-.35deg);
+  }
+
+
+  #shopify-section-{{ section.id }}
+  .live-note:nth-child(even).live-note--with-image
+  .live-note__image {
+
+    transform:
+      rotate(.4deg);
+  }
+
+
+  #shopify-section-{{ section.id }}
+  .live-note__image img {
+
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    object-position: center;
+
+    border-radius: 3px;
+  }
+
+
+  /* =========================================================
+     REVIEW CONTENT
+  ========================================================= */
+
+  #shopify-section-{{ section.id }} .live-note__content {
+    min-width: 0;
+
+    height: 100%;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+  }
+
+
+  /* =========================================================
+     QUOTE SYMBOL
+  ========================================================= */
+
+  #shopify-section-{{ section.id }} .live-note__quote {
+    display: block;
+
+    margin:
+      0 0 3px;
+
+    color: #f24d82;
+
+    font-family:
+      Georgia, serif;
+
+    font-size: 24px;
+
+    font-weight: 700;
+
+    line-height: .75;
+  }
+
+
+  /* =========================================================
+     REVIEW
+  ========================================================= */
+
+  #shopify-section-{{ section.id }} .live-note blockquote {
+    margin:
+      0 0 9px;
+
+    padding: 0;
+
+    border: 0;
+
+    color: #351042;
+
+    font-size:
+      clamp(12px, .88vw, 15px);
+
+    font-weight: 500;
+
+    line-height: 1.38;
+
+    letter-spacing: -.01em;
+  }
+
+
+  /* =========================================================
+     BYLINE
+  ========================================================= */
+
+  #shopify-section-{{ section.id }} .live-note__by {
+    margin-top: auto;
+
+    padding-top: 6px;
+
+    color:
+      rgba(53,16,66,.68);
+
+    border-top:
+      1px dashed
+      rgba(53,16,66,.12);
+
+    font-size: 9.5px;
+
+    font-weight: 700;
+
+    line-height: 1.3;
+  }
+
+
+  /* =========================================================
+     STARS
+  ========================================================= */
+
+  #shopify-section-{{ section.id }} .live-note__stars {
+    margin-top: 4px;
+
+    color: #ff5a0a;
+
+    font-size: 8px;
+
+    line-height: 1;
+
+    letter-spacing: 1.4px;
+  }
+
+
+  /* =========================================================
+     TEXT-ONLY REVIEW
+  ========================================================= */
+
+  #shopify-section-{{ section.id }} .live-note--text-only {
+    display: flex;
+
+    flex-direction: column;
+
+    min-height: 150px;
+
+    padding:
+      23px 14px
+      13px;
+  }
+
+
+  #shopify-section-{{ section.id }}
+  .live-note--text-only
+  .live-note__content {
+
+    flex: 1;
+  }
+
+
+  #shopify-section-{{ section.id }}
+  .live-note--text-only
+  .live-note__quote {
+
+    margin-top: 2px;
+  }
+
+
+  /* =========================================================
+     LARGE DESKTOP
+     Slightly wider 5-card layout
+  ========================================================= */
+
+  @media screen and (min-width: 1400px) {
+
+    #shopify-section-{{ section.id }} .live-notes__grid {
+      column-gap: 24px;
+      row-gap: 34px;
+    }
+
+
+    #shopify-section-{{ section.id }} .live-note {
+      min-height: 158px;
+    }
+
+
+    #shopify-section-{{ section.id }}
+    .live-note--with-image {
+
+      min-height: 158px;
+
+      grid-template-columns:
+        minmax(82px, 34%)
+        minmax(0, 1fr);
+    }
+
+
+    #shopify-section-{{ section.id }}
+    .live-note--with-image
+    .live-note__image {
+
+      height: 104px;
+    }
+
+  }
+
+
+  /* =========================================================
+     TABLET
+     ALL REVIEWS REMAIN VISIBLE
+  ========================================================= */
+
+  @media screen and (max-width: 1100px) {
+
+    #shopify-section-{{ section.id }} .live-notes__grid {
+      grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+      column-gap: 16px;
+
+      row-gap: 25px;
+    }
+
+
+    #shopify-section-{{ section.id }} .live-note {
+      --note-x: 0px;
+
+      min-height: 145px;
+    }
+
+
+    #shopify-section-{{ section.id }}
+    .live-note--with-image {
+
+      min-height: 145px;
+
+      grid-template-columns:
+        82px
+        minmax(0, 1fr);
+
+      column-gap: 11px;
+
+      padding:
+        16px 12px
+        12px;
+    }
+
+
+    #shopify-section-{{ section.id }}
+    .live-note--with-image
+    .live-note__image {
+
+      height: 88px;
+    }
+
+
+    /*
+      Maintain random vertical movement,
+      but reduce it on narrower screens.
+    */
+
+    #shopify-section-{{ section.id }} .live-note:nth-child(1),
+    #shopify-section-{{ section.id }} .live-note:nth-child(4),
+    #shopify-section-{{ section.id }} .live-note:nth-child(7),
+    #shopify-section-{{ section.id }} .live-note:nth-child(10) {
+      --note-y: 4px;
+    }
+
+
+    #shopify-section-{{ section.id }} .live-note:nth-child(2),
+    #shopify-section-{{ section.id }} .live-note:nth-child(5),
+    #shopify-section-{{ section.id }} .live-note:nth-child(8) {
+      --note-y: -1px;
+    }
+
+
+    #shopify-section-{{ section.id }} .live-note:nth-child(3),
+    #shopify-section-{{ section.id }} .live-note:nth-child(6),
+    #shopify-section-{{ section.id }} .live-note:nth-child(9) {
+      --note-y: 7px;
+    }
+
+  }
+
+
+  /* =========================================================
+     MOBILE
+     NO HORIZONTAL SCROLL
+     TWO NOTES ACROSS
+  ========================================================= */
+
+  @media screen and (max-width: 680px) {
+
+    #shopify-section-{{ section.id }} .live-section-head {
+      margin-bottom: 18px;
+    }
+
+
+    #shopify-section-{{ section.id }} .live-notes__board {
+      padding:
+        12px 9px
+        18px;
+
+      border-radius: 16px;
+    }
+
+
+    #shopify-section-{{ section.id }} .live-notes__grid {
+      grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+      column-gap: 9px;
+
+      row-gap: 16px;
+
+      padding:
+        3px 2px
+        8px;
+    }
+
+
+    #shopify-section-{{ section.id }} .live-note {
+      --note-x: 0px;
+      --note-y: 0px;
+
+      min-height: 126px;
+
+      border-radius: 7px;
+    }
+
+
+    /*
+      Subtle random positioning on mobile.
+      No large movement that could cause overflow.
+    */
+
+    #shopify-section-{{ section.id }} .live-note:nth-child(odd) {
+      --note-rotate: -.45deg;
+      --note-y: 3px;
+    }
+
+
+    #shopify-section-{{ section.id }} .live-note:nth-child(even) {
+      --note-rotate: .45deg;
+      --note-y: -1px;
+    }
+
+
+    #shopify-section-{{ section.id }}
+    .live-note--with-image {
+
+      grid-template-columns:
+        minmax(58px, 38%)
+        minmax(0, 1fr);
+
+      column-gap: 7px;
+
+      min-height: 126px;
+
+      padding:
+        14px 8px
+        9px;
+    }
+
+
+    #shopify-section-{{ section.id }}
+    .live-note--with-image
+    .live-note__image {
+
+      height: 72px;
+
+      padding: 3px;
+    }
+
+
+    #shopify-section-{{ section.id }} .live-note__quote {
+      margin-bottom: 2px;
+
+      font-size: 19px;
+    }
+
+
+    #shopify-section-{{ section.id }} .live-note blockquote {
+      margin-bottom: 6px;
+
+      font-size: 10.5px;
+
+      line-height: 1.32;
+    }
+
+
+    #shopify-section-{{ section.id }} .live-note__by {
+      padding-top: 4px;
+
+      font-size: 8.5px;
+    }
+
+
+    #shopify-section-{{ section.id }} .live-note__stars {
+      margin-top: 3px;
+
+      font-size: 7px;
+
+      letter-spacing: 1px;
+    }
+
+
+    #shopify-section-{{ section.id }}
+    .live-note--text-only {
+
+      min-height: 126px;
+
+      padding:
+        19px 10px
+        9px;
+    }
+
+
+    #shopify-section-{{ section.id }} .live-note::before {
+      top: 5px;
+
+      width: 8px;
+      height: 8px;
+    }
+
+  }
+
+
+  /* =========================================================
+     VERY SMALL MOBILE
+     Still no horizontal scrolling
+  ========================================================= */
+
+  @media screen and (max-width: 390px) {
+
+    #shopify-section-{{ section.id }}
+    .live-note--with-image {
+
+      grid-template-columns:
+        52px
+        minmax(0, 1fr);
+
+      column-gap: 6px;
+
+      padding-inline: 7px;
+    }
+
+
+    #shopify-section-{{ section.id }}
+    .live-note--with-image
+    .live-note__image {
+
+      height: 64px;
+    }
+
+
+    #shopify-section-{{ section.id }} .live-note blockquote {
+      font-size: 10px;
+    }
+
+  }
+
+
+  /* =========================================================
+     REDUCED MOTION
+  ========================================================= */
+
+  @media (prefers-reduced-motion: reduce) {
+
+    #shopify-section-{{ section.id }} .live-note {
+      transition: none;
+    }
+
+
+    #shopify-section-{{ section.id }} .live-note:hover {
+      transform:
+        translate(
+          var(--note-x),
+          var(--note-y)
+        )
+        rotate(var(--note-rotate));
+    }
+
+  }
+
+</style>
+
+
+<section
+  class="live-notes pp-section"
+  style="background:{{ section.settings.background }}"
+>
+
+  <div class="page-width">
+
+
+    <!-- =======================================================
+         HEADING
+    ======================================================== -->
+
+    <header class="live-section-head pp-reveal">
+
+      <div>
+
+        {% if section.settings.eyebrow != blank %}
+
+          <div class="live-eyebrow">
+            {{ section.settings.eyebrow }}
+          </div>
+
+        {% endif %}
+
+
+        {% if section.settings.heading != blank %}
+
+          <h2>
+            {{ section.settings.heading }}
+          </h2>
+
+        {% endif %}
+
+
+        {% if section.settings.text != blank %}
+
+          <p>
+            {{ section.settings.text }}
+          </p>
+
+        {% endif %}
+
+      </div>
+
+    </header>
+
+
+
+    <!-- =======================================================
+         STATIC BOARD
+         NO CAROUSEL / NO SCROLLING
+    ======================================================== -->
+
+    <div class="live-notes__board">
+
+
+      <div class="live-notes__grid">
+
+
+        {% if section.settings.use_metaobjects and testimonials != blank %}
+
+
+          <!-- =================================================
+               METAOBJECT TESTIMONIALS
+               HARD LIMIT: MAXIMUM 10
+          ================================================== -->
+
+          {% for t in testimonials limit: section.settings.max_reviews %}
+
+            {% assign t_image = t.image.value %}
+
+
+            <article
+              class="live-note pp-reveal{% if t_image != blank %} live-note--with-image{% else %} live-note--text-only{% endif %}"
+            >
+
+
+              {% if t_image != blank %}
+
+                <div class="live-note__image">
+
+                  {{
+                    t_image
+                    | image_url: width: 700
+                    | image_tag:
+                      loading: 'lazy',
+                      widths: '120,180,240,360,520,700',
+                      alt: ''
+                  }}
+
+                </div>
+
+              {% endif %}
+
+
+              <div class="live-note__content">
+
+
+                <span
+                  class="live-note__quote"
+                  aria-hidden="true"
+                >
+                  “
+                </span>
+
+
+                <blockquote>
+                  {{ t.quote.value | default: t.quote }}
+                </blockquote>
+
+
+                <div class="live-note__by">
+
+                  — {{ t.pet_parent.value | default: t.pet_parent }}
+
+                  {% if t.pet_name.value != blank %}
+
+                    + {{ t.pet_name.value }}
+
+                  {% endif %}
+
+                </div>
+
+
+                {% if t.rating.value != blank %}
+
+                  <div
+                    class="live-note__stars"
+                    aria-label="{{ t.rating.value }} out of 5 stars"
+                  >
+                    ★★★★★
+                  </div>
+
+                {% endif %}
+
+
+              </div>
+
+
+            </article>
+
+
+          {% endfor %}
+
+
+
+        {% else %}
+
+
+          <!-- =================================================
+               THEME EDITOR BLOCKS
+               MAXIMUM 10
+          ================================================== -->
+
+          {% for block in section.blocks limit: 10 %}
+
+
+            {% if block.settings.quote != blank %}
+
+
+              <article
+                class="live-note pp-reveal{% if block.settings.image != blank %} live-note--with-image{% else %} live-note--text-only{% endif %}"
+                data-pp-block-id="{{ block.id }}"
+                {{ block.shopify_attributes }}
+              >
+
+
+                {% if block.settings.image != blank %}
+
+                  <div class="live-note__image">
+
+                    {{
+                      block.settings.image
+                      | image_url: width: 700
+                      | image_tag:
+                        loading: 'lazy',
+                        widths: '120,180,240,360,520,700',
+                        alt: ''
+                    }}
+
+                  </div>
+
+                {% endif %}
+
+
+                <div class="live-note__content">
+
+
+                  <span
+                    class="live-note__quote"
+                    aria-hidden="true"
+                  >
+                    “
+                  </span>
+
+
+                  <blockquote>
+                    {{ block.settings.quote }}
+                  </blockquote>
+
+
+                  <div class="live-note__by">
+                    — {{ block.settings.byline }}
+                  </div>
+
+
+                </div>
+
+
+              </article>
+
+
+            {% endif %}
+
+
+          {% endfor %}
+
+
+
+          {% if request.design_mode and section.blocks.size == 0 %}
+
+            <div class="live-notes__editor-note">
+
+              Add genuine Testimonial metaobject entries
+              or verified testimonial blocks to populate
+              this section.
+
+            </div>
+
+          {% endif %}
+
+
+        {% endif %}
+
+
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+</section>
+
+
+{% schema %}
+{
+  "name": "Pet-parent notes",
+
+  "settings": [
+
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "PET-PARENT NOTES"
+    },
+
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Messy, loyal, familiar."
+    },
+
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Text",
+      "default": "Real routines from homes where pets are family and perfect behaviour is suspicious."
+    },
+
+    {
+      "type": "checkbox",
+      "id": "use_metaobjects",
+      "label": "Use Testimonial metaobjects (images edited in Content → Metaobjects)",
+      "default": true
+    },
+
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background",
+      "default": "#fffaf6"
+    },
+
+
+    {
+      "type": "header",
+      "content": "Reviews"
+    },
+
+    {
+      "type": "range",
+      "id": "max_reviews",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "label": "Maximum reviews to show",
+      "default": 10,
+      "info": "All reviews are displayed together on the board. There is no carousel."
+    },
+
+
+    {
+      "type": "header",
+      "content": "Professional section controls"
+    },
+
+    {
+      "type": "paragraph",
+      "content": "Optional overrides. Leave disabled to preserve the original V7 design."
+    },
+
+    {
+      "type": "checkbox",
+      "id": "pp_custom_colors",
+      "label": "Override section colours",
+      "default": false
+    },
+
+    {
+      "type": "color",
+      "id": "pp_background",
+      "label": "Background colour",
+      "default": "#ffffff"
+    },
+
+    {
+      "type": "color",
+      "id": "pp_text_color",
+      "label": "Text colour",
+      "default": "#351042"
+    },
+
+    {
+      "type": "color",
+      "id": "pp_accent_color",
+      "label": "Accent colour",
+      "default": "#ff5a0a"
+    },
+
+    {
+      "type": "checkbox",
+      "id": "pp_custom_type",
+      "label": "Override section typography",
+      "default": false
+    },
+
+    {
+      "type": "select",
+      "id": "pp_heading_font",
+      "label": "Heading font",
+      "default": "theme",
+      "options": [
+        {
+          "value": "theme",
+          "label": "Use theme default"
+        },
+        {
+          "value": "aquatail",
+          "label": "Aquatail — included"
+        },
+        {
+          "value": "futura",
+          "label": "Futura — included"
+        }
+      ]
+    },
+
+    {
+      "type": "select",
+      "id": "pp_heading_weight",
+      "label": "Heading weight",
+      "default": "700",
+      "options": [
+        {
+          "value": "400",
+          "label": "Regular"
+        },
+        {
+          "value": "600",
+          "label": "Semibold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        },
+        {
+          "value": "900",
+          "label": "Black"
+        }
+      ]
+    },
+
+    {
+      "type": "range",
+      "id": "pp_heading_size",
+      "min": 24,
+      "max": 104,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading size — desktop",
+      "default": 64
+    },
+
+    {
+      "type": "range",
+      "id": "pp_heading_size_mobile",
+      "min": 22,
+      "max": 70,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading size — mobile",
+      "default": 44
+    },
+
+    {
+      "type": "range",
+      "id": "pp_heading_tracking",
+      "min": -8,
+      "max": 10,
+      "step": 1,
+      "unit": "%",
+      "label": "Heading letter spacing",
+      "default": -3
+    },
+
+    {
+      "type": "select",
+      "id": "pp_body_font",
+      "label": "Body font",
+      "default": "theme",
+      "options": [
+        {
+          "value": "theme",
+          "label": "Use theme default"
+        },
+        {
+          "value": "aquatail",
+          "label": "Aquatail — included"
+        },
+        {
+          "value": "futura",
+          "label": "Futura — included"
+        }
+      ]
+    },
+
+    {
+      "type": "select",
+      "id": "pp_body_weight",
+      "label": "Body weight",
+      "default": "400",
+      "options": [
+        {
+          "value": "400",
+          "label": "Regular"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semibold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        }
+      ]
+    },
+
+    {
+      "type": "range",
+      "id": "pp_body_size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Body size — desktop",
+      "default": 16
+    },
+
+    {
+      "type": "range",
+      "id": "pp_body_size_mobile",
+      "min": 12,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "label": "Body size — mobile",
+      "default": 15
+    },
+
+    {
+      "type": "range",
+      "id": "pp_line_height",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "label": "Body line height",
+      "default": 16
+    },
+
+    {
+      "type": "checkbox",
+      "id": "pp_custom_spacing",
+      "label": "Override section spacing",
+      "default": false
+    },
+
+    {
+      "type": "range",
+      "id": "pp_padding_top",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding — desktop",
+      "default": 80
+    },
+
+    {
+      "type": "range",
+      "id": "pp_padding_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding — desktop",
+      "default": 80
+    },
+
+    {
+      "type": "range",
+      "id": "pp_padding_top_mobile",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding — mobile",
+      "default": 56
+    },
+
+    {
+      "type": "range",
+      "id": "pp_padding_bottom_mobile",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding — mobile",
+      "default": 56
+    },
+
+    {
+      "type": "range",
+      "id": "pp_content_width",
+      "min": 0,
+      "max": 1800,
+      "step": 100,
+      "unit": "px",
+      "label": "Content width (0 = theme default)",
+      "default": 0
+    },
+
+    {
+      "type": "checkbox",
+      "id": "pp_disable_motion",
+      "label": "Disable motion in this section",
+      "default": false
+    },
+
+
+    {
+      "type": "header",
+      "content": "Card layout controls"
+    },
+
+    {
+      "type": "checkbox",
+      "id": "pp_custom_cards",
+      "label": "Customize cards in this section",
+      "default": false
+    },
+
+    {
+      "type": "color",
+      "id": "pp_card_background",
+      "label": "Card background",
+      "default": "#ffffff"
+    },
+
+    {
+      "type": "color",
+      "id": "pp_card_text",
+      "label": "Card text colour",
+      "default": "#351042"
+    },
+
+    {
+      "type": "color",
+      "id": "pp_card_border",
+      "label": "Card border colour",
+      "default": "#eee7f0"
+    },
+
+    {
+      "type": "range",
+      "id": "pp_card_gap",
+      "min": 0,
+      "max": 48,
+      "step": 4,
+      "unit": "px",
+      "label": "Space between cards",
+      "default": 16
+    },
+
+    {
+      "type": "range",
+      "id": "pp_card_padding",
+      "min": 0,
+      "max": 64,
+      "step": 4,
+      "unit": "px",
+      "label": "Card inner padding",
+      "default": 24
+    },
+
+    {
+      "type": "range",
+      "id": "pp_card_radius",
+      "min": 0,
+      "max": 48,
+      "step": 4,
+      "unit": "px",
+      "label": "Card corner radius",
+      "default": 24
+    },
+
+    {
+      "type": "range",
+      "id": "pp_card_height",
+      "min": 0,
+      "max": 800,
+      "step": 40,
+      "unit": "px",
+      "label": "Card minimum height (0 = automatic)",
+      "default": 0
+    },
+
+    {
+      "type": "range",
+      "id": "pp_card_image_height",
+      "min": 0,
+      "max": 600,
+      "step": 30,
+      "unit": "px",
+      "label": "Card image height (0 = automatic)",
+      "default": 0
+    },
+
+    {
+      "type": "range",
+      "id": "pp_min_height",
+      "min": 0,
+      "max": 1000,
+      "step": 50,
+      "unit": "px",
+      "label": "Section minimum height (0 = automatic)",
+      "default": 0
+    }
+
+  ],
+
+
+  "blocks": [
+
+    {
+      "type": "testimonial",
+      "name": "Verified testimonial",
+
+      "settings": [
+
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Testimonial image (Theme Editor)"
+        },
+
+        {
+          "type": "textarea",
+          "id": "quote",
+          "label": "Genuine quote"
+        },
+
+        {
+          "type": "text",
+          "id": "byline",
+          "label": "Pet parent / pet name"
+        },
+
+        {
+          "type": "header",
+          "content": "Individual block design"
+        },
+
+        {
+          "type": "checkbox",
+          "id": "pp_block_custom",
+          "label": "Customize this block",
+          "default": false
+        },
+
+        {
+          "type": "color",
+          "id": "pp_block_background",
+          "label": "Card / block background",
+          "default": "#ffffff"
+        },
+
+        {
+          "type": "color",
+          "id": "pp_block_text",
+          "label": "Text colour",
+          "default": "#351042"
+        },
+
+        {
+          "type": "color",
+          "id": "pp_block_accent",
+          "label": "Accent / border colour",
+          "default": "#ff5a0a"
+        },
+
+        {
+          "type": "select",
+          "id": "pp_block_heading_font",
+          "label": "Heading font",
+          "default": "theme",
+          "options": [
+            {
+              "value": "theme",
+              "label": "Use theme default"
+            },
+            {
+              "value": "aquatail",
+              "label": "Aquatail — included"
+            },
+            {
+              "value": "futura",
+              "label": "Futura — included"
+            }
+          ]
+        },
+
+        {
+          "type": "select",
+          "id": "pp_block_body_font",
+          "label": "Body font",
+          "default": "theme",
+          "options": [
+            {
+              "value": "theme",
+              "label": "Use theme default"
+            },
+            {
+              "value": "aquatail",
+              "label": "Aquatail — included"
+            },
+            {
+              "value": "futura",
+              "label": "Futura — included"
+            }
+          ]
+        },
+
+        {
+          "type": "range",
+          "id": "pp_block_heading_size",
+          "min": 16,
+          "max": 64,
+          "step": 2,
+          "unit": "px",
+          "label": "Heading size",
+          "default": 28
+        },
+
+        {
+          "type": "range",
+          "id": "pp_block_body_size",
+          "min": 10,
+          "max": 24,
+          "step": 1,
+          "unit": "px",
+          "label": "Body size",
+          "default": 14
+        },
+
+        {
+          "type": "range",
+          "id": "pp_block_padding",
+          "min": 0,
+          "max": 64,
+          "step": 4,
+          "unit": "px",
+          "label": "Inner padding",
+          "default": 24
+        },
+
+        {
+          "type": "range",
+          "id": "pp_block_height",
+          "min": 0,
+          "max": 800,
+          "step": 40,
+          "unit": "px",
+          "label": "Minimum height (0 = automatic)",
+          "default": 0
+        },
+
+        {
+          "type": "range",
+          "id": "pp_block_image_height",
+          "min": 0,
+          "max": 600,
+          "step": 30,
+          "unit": "px",
+          "label": "Image height (0 = automatic)",
+          "default": 0
+        },
+
+        {
+          "type": "range",
+          "id": "pp_block_radius",
+          "min": 0,
+          "max": 48,
+          "step": 4,
+          "unit": "px",
+          "label": "Corner radius",
+          "default": 24
+        },
+
+        {
+          "type": "select",
+          "id": "pp_block_animation",
+          "label": "Entrance animation",
+          "default": "inherit",
+          "options": [
+            {
+              "value": "inherit",
+              "label": "Section default"
+            },
+            {
+              "value": "fade",
+              "label": "Fade"
+            },
+            {
+              "value": "rise",
+              "label": "Rise up"
+            },
+            {
+              "value": "pop",
+              "label": "Soft pop"
+            },
+            {
+              "value": "wave",
+              "label": "Gentle wave"
+            },
+            {
+              "value": "none",
+              "label": "None"
+            }
+          ]
+        },
+
+        {
+          "type": "range",
+          "id": "pp_block_animation_delay",
+          "min": 0,
+          "max": 1000,
+          "step": 100,
+          "unit": "ms",
+          "label": "Animation delay",
+          "default": 0
+        }
+
+      ]
+
+    }
+
+  ],
+
+
+  "max_blocks": 10,
+
+
+  "presets": [
+    {
+      "name": "Pet-parent notes"
+    }
+  ]
+
+}
+{% endschema %}

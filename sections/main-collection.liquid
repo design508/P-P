@@ -1,0 +1,930 @@
+{% render 'section-editor-styles', section: section %}
+{% liquid
+  assign h = collection.handle
+  assign eyebrow = collection.title | upcase
+  assign hero_heading = collection.title
+  assign hero_text = collection.description | strip_html
+  assign range_eyebrow = collection.title | append: ' range' | upcase
+  assign range_heading = collection.products_count | append: ' clear solutions.'
+  assign mf_eyebrow = collection.metafields.custom.eyebrow.value | default: collection.metafields.custom.eyebrow
+  assign mf_description = collection.metafields.custom.short_description.value | default: collection.metafields.custom.short_description
+  assign mf_hero_image = collection.metafields.custom.hero_image.value
+  assign mf_accent = collection.metafields.custom.accent_color.value | default: collection.metafields.custom.accent_color
+
+  if h == 'grooming'
+    assign hero_heading = 'Care for every coat story.'
+    assign hero_text = 'Shampoos, conditioner, dry baths and paw care arranged around the concern—not the clutter.'
+    assign range_heading = '8 clear solutions.'
+  elsif h == 'nutrition'
+    assign hero_heading = 'Daily support, made clear.'
+    assign hero_text = 'Straightforward formulas for skin, coat, bones, activity and everyday wellness.'
+    assign range_heading = '3 clear solutions.'
+  elsif h == 'treats'
+    assign hero_heading = 'Rewards with a thoughtful twist.'
+    assign hero_text = 'Pet-friendly favourites for lick mats, training moments and post-bath peace treaties.'
+    assign range_heading = '1 clear solution.'
+  elsif h == 'all'
+    assign eyebrow = 'SHOP ALL'
+    assign hero_heading = 'Find their next favourite.'
+    assign hero_text = 'Search the complete range or narrow it down by the kind of care they need.'
+    assign range_eyebrow = 'ALL CARE'
+    assign range_heading = 'Complete range'
+  endif
+
+  if mf_eyebrow != blank
+    assign eyebrow = mf_eyebrow
+  endif
+  if mf_description != blank
+    assign hero_text = mf_description
+  endif
+
+  if section.settings.eyebrow_override != blank
+    assign eyebrow = section.settings.eyebrow_override
+  endif
+  if section.settings.heading_override != blank
+    assign hero_heading = section.settings.heading_override
+  endif
+  if section.settings.text_override != blank
+    assign hero_text = section.settings.text_override
+  endif
+  if section.settings.range_eyebrow_override != blank
+    assign range_eyebrow = section.settings.range_eyebrow_override
+  endif
+  if section.settings.range_heading_override != blank
+    assign range_heading = section.settings.range_heading_override
+  endif
+
+  assign has_custom_hero = false
+  if mf_hero_image != blank
+    assign has_custom_hero = true
+  endif
+  if section.settings.hero_image_1 != blank or section.settings.hero_image_1_mobile != blank
+    assign has_custom_hero = true
+  endif
+  if section.settings.hero_image_2 != blank or section.settings.hero_image_2_mobile != blank
+    assign has_custom_hero = true
+  endif
+  if section.settings.hero_image_3 != blank or section.settings.hero_image_3_mobile != blank
+    assign has_custom_hero = true
+  endif
+%}
+
+<section class="pp-collection-hero pp-reveal" style="--collection-hero-bg:{% if mf_accent != blank %}color-mix(in srgb, {{ mf_accent }} 8%, white){% else %}{{ section.settings.hero_background }}{% endif %};--collection-accent:{{ mf_accent | default: "#47105d" }}">
+  <div class="page-width pp-collection-hero__grid">
+    <div class="pp-collection-hero__copy">
+      <div class="pp-kicker">{{ eyebrow }}</div>
+      <h1>{{ hero_heading }}</h1>
+      <p>{{ hero_text }}</p>
+      {% if section.settings.show_view_all %}
+        <a class="pp-text-link" href="{{ section.settings.view_all_link | default: routes.all_products_collection_url }}">{{ section.settings.view_all_label }} {% render 'icon-arrow' %}</a>
+      {% endif %}
+    </div>
+    {% if section.settings.show_hero_products %}
+      <div class="pp-collection-hero__visual" data-float-zone>
+        {% if mf_hero_image != blank %}
+          <span class="pp-collection-float pp-collection-float--2">{{ mf_hero_image | image_url: width: 1100 | image_tag: loading:'eager', widths:'500,800,1100', alt:hero_heading }}</span>
+        {% elsif has_custom_hero %}
+          <style>@media (min-width: 991px) {
+  #shopify-section-{{ section.id }} .pp-collection-float--1 img { object-fit: {{ hero_image_1_fit }}; object-position: {{ hero_image_1_position }}; }
+  #shopify-section-{{ section.id }} .pp-collection-float--1 {
+    {% if hero_image_1_radius > 0 %}border-radius: {{ hero_image_1_radius }}px; overflow: hidden;{% endif %}
+    {% if hero_image_1_w > 0 %}width: min({{ hero_image_1_w }}px, 100%); max-width: 100%;{% endif %}
+    {% if hero_image_1_h > 0 %}height: min({{ hero_image_1_h }}px, 100%); max-height: 100%;{% endif %}
+    {% if hero_image_1_ha == 'left' %}left: 0; right: auto; margin-left: 0; margin-right: 0;{% endif %}
+    {% if hero_image_1_ha == 'center' %}left: 0; right: 0; margin-left: auto; margin-right: auto;{% endif %}
+    {% if hero_image_1_ha == 'right' %}left: auto; right: 0; margin-left: 0; margin-right: 0;{% endif %}
+    {% if hero_image_1_va == 'top' %}top: 0; bottom: auto; margin-top: 0; margin-bottom: 0;{% endif %}
+    {% if hero_image_1_va == 'center' %}top: 0; bottom: 0; margin-top: auto; margin-bottom: auto;{% endif %}
+    {% if hero_image_1_va == 'bottom' %}bottom: 0; top: auto; margin-top: 0; margin-bottom: 0;{% endif %}
+  }
+}
+@media (max-width: 990px) {
+  #shopify-section-{{ section.id }} .pp-collection-float--1 img { object-fit: {{ hero_image_1_fit_m }}; object-position: {{ hero_image_1_position_m }}; }
+  #shopify-section-{{ section.id }} .pp-collection-float--1 {
+    {% if hero_image_1_radius_m > 0 %}border-radius: {{ hero_image_1_radius_m }}px; overflow: hidden;{% endif %}
+    {% if hero_image_1_w_m > 0 %}width: min({{ hero_image_1_w_m }}px, 100%); max-width: 100%;{% endif %}
+    {% if hero_image_1_h_m > 0 %}height: min({{ hero_image_1_h_m }}px, 100%); max-height: 100%;{% endif %}
+    {% if hero_image_1_ha_m == 'left' %}left: 0; right: auto; margin-left: 0; margin-right: 0;{% endif %}
+    {% if hero_image_1_ha_m == 'center' %}left: 0; right: 0; margin-left: auto; margin-right: auto;{% endif %}
+    {% if hero_image_1_ha_m == 'right' %}left: auto; right: 0; margin-left: 0; margin-right: 0;{% endif %}
+    {% if hero_image_1_va_m == 'top' %}top: 0; bottom: auto; margin-top: 0; margin-bottom: 0;{% endif %}
+    {% if hero_image_1_va_m == 'center' %}top: 0; bottom: 0; margin-top: auto; margin-bottom: auto;{% endif %}
+    {% if hero_image_1_va_m == 'bottom' %}bottom: 0; top: auto; margin-top: 0; margin-bottom: 0;{% endif %}
+  }
+}
+@media (min-width: 991px) {
+  #shopify-section-{{ section.id }} .pp-collection-float--2 img { object-fit: {{ hero_image_2_fit }}; object-position: {{ hero_image_2_position }}; }
+  #shopify-section-{{ section.id }} .pp-collection-float--2 {
+    {% if hero_image_2_radius > 0 %}border-radius: {{ hero_image_2_radius }}px; overflow: hidden;{% endif %}
+    {% if hero_image_2_w > 0 %}width: min({{ hero_image_2_w }}px, 100%); max-width: 100%;{% endif %}
+    {% if hero_image_2_h > 0 %}height: min({{ hero_image_2_h }}px, 100%); max-height: 100%;{% endif %}
+    {% if hero_image_2_ha == 'left' %}left: 0; right: auto; margin-left: 0; margin-right: 0;{% endif %}
+    {% if hero_image_2_ha == 'center' %}left: 0; right: 0; margin-left: auto; margin-right: auto;{% endif %}
+    {% if hero_image_2_ha == 'right' %}left: auto; right: 0; margin-left: 0; margin-right: 0;{% endif %}
+    {% if hero_image_2_va == 'top' %}top: 0; bottom: auto; margin-top: 0; margin-bottom: 0;{% endif %}
+    {% if hero_image_2_va == 'center' %}top: 0; bottom: 0; margin-top: auto; margin-bottom: auto;{% endif %}
+    {% if hero_image_2_va == 'bottom' %}bottom: 0; top: auto; margin-top: 0; margin-bottom: 0;{% endif %}
+  }
+}
+@media (max-width: 990px) {
+  #shopify-section-{{ section.id }} .pp-collection-float--2 img { object-fit: {{ hero_image_2_fit_m }}; object-position: {{ hero_image_2_position_m }}; }
+  #shopify-section-{{ section.id }} .pp-collection-float--2 {
+    {% if hero_image_2_radius_m > 0 %}border-radius: {{ hero_image_2_radius_m }}px; overflow: hidden;{% endif %}
+    {% if hero_image_2_w_m > 0 %}width: min({{ hero_image_2_w_m }}px, 100%); max-width: 100%;{% endif %}
+    {% if hero_image_2_h_m > 0 %}height: min({{ hero_image_2_h_m }}px, 100%); max-height: 100%;{% endif %}
+    {% if hero_image_2_ha_m == 'left' %}left: 0; right: auto; margin-left: 0; margin-right: 0;{% endif %}
+    {% if hero_image_2_ha_m == 'center' %}left: 0; right: 0; margin-left: auto; margin-right: auto;{% endif %}
+    {% if hero_image_2_ha_m == 'right' %}left: auto; right: 0; margin-left: 0; margin-right: 0;{% endif %}
+    {% if hero_image_2_va_m == 'top' %}top: 0; bottom: auto; margin-top: 0; margin-bottom: 0;{% endif %}
+    {% if hero_image_2_va_m == 'center' %}top: 0; bottom: 0; margin-top: auto; margin-bottom: auto;{% endif %}
+    {% if hero_image_2_va_m == 'bottom' %}bottom: 0; top: auto; margin-top: 0; margin-bottom: 0;{% endif %}
+  }
+}
+@media (min-width: 991px) {
+  #shopify-section-{{ section.id }} .pp-collection-float--3 img { object-fit: {{ hero_image_3_fit }}; object-position: {{ hero_image_3_position }}; }
+  #shopify-section-{{ section.id }} .pp-collection-float--3 {
+    {% if hero_image_3_radius > 0 %}border-radius: {{ hero_image_3_radius }}px; overflow: hidden;{% endif %}
+    {% if hero_image_3_w > 0 %}width: min({{ hero_image_3_w }}px, 100%); max-width: 100%;{% endif %}
+    {% if hero_image_3_h > 0 %}height: min({{ hero_image_3_h }}px, 100%); max-height: 100%;{% endif %}
+    {% if hero_image_3_ha == 'left' %}left: 0; right: auto; margin-left: 0; margin-right: 0;{% endif %}
+    {% if hero_image_3_ha == 'center' %}left: 0; right: 0; margin-left: auto; margin-right: auto;{% endif %}
+    {% if hero_image_3_ha == 'right' %}left: auto; right: 0; margin-left: 0; margin-right: 0;{% endif %}
+    {% if hero_image_3_va == 'top' %}top: 0; bottom: auto; margin-top: 0; margin-bottom: 0;{% endif %}
+    {% if hero_image_3_va == 'center' %}top: 0; bottom: 0; margin-top: auto; margin-bottom: auto;{% endif %}
+    {% if hero_image_3_va == 'bottom' %}bottom: 0; top: auto; margin-top: 0; margin-bottom: 0;{% endif %}
+  }
+}
+@media (max-width: 990px) {
+  #shopify-section-{{ section.id }} .pp-collection-float--3 img { object-fit: {{ hero_image_3_fit_m }}; object-position: {{ hero_image_3_position_m }}; }
+  #shopify-section-{{ section.id }} .pp-collection-float--3 {
+    {% if hero_image_3_radius_m > 0 %}border-radius: {{ hero_image_3_radius_m }}px; overflow: hidden;{% endif %}
+    {% if hero_image_3_w_m > 0 %}width: min({{ hero_image_3_w_m }}px, 100%); max-width: 100%;{% endif %}
+    {% if hero_image_3_h_m > 0 %}height: min({{ hero_image_3_h_m }}px, 100%); max-height: 100%;{% endif %}
+    {% if hero_image_3_ha_m == 'left' %}left: 0; right: auto; margin-left: 0; margin-right: 0;{% endif %}
+    {% if hero_image_3_ha_m == 'center' %}left: 0; right: 0; margin-left: auto; margin-right: auto;{% endif %}
+    {% if hero_image_3_ha_m == 'right' %}left: auto; right: 0; margin-left: 0; margin-right: 0;{% endif %}
+    {% if hero_image_3_va_m == 'top' %}top: 0; bottom: auto; margin-top: 0; margin-bottom: 0;{% endif %}
+    {% if hero_image_3_va_m == 'center' %}top: 0; bottom: 0; margin-top: auto; margin-bottom: auto;{% endif %}
+    {% if hero_image_3_va_m == 'bottom' %}bottom: 0; top: auto; margin-top: 0; margin-bottom: 0;{% endif %}
+  }
+}</style>
+            {% assign hero_image_1_img = section.settings.hero_image_1 %}
+{% assign hero_image_1_img_mobile = section.settings.hero_image_1_mobile %}
+{% assign hero_image_1_display = hero_image_1_img | default: hero_image_1_img_mobile %}
+{% assign hero_image_1_fit = section.settings.hero_image_1_fit | default: 'contain' %}
+{% assign hero_image_1_position = section.settings.hero_image_1_position | default: 'center center' %}
+{% assign hero_image_1_fit_m = section.settings.hero_image_1_fit_mobile | default: 'contain' %}
+{% assign hero_image_1_position_m = section.settings.hero_image_1_position_mobile | default: 'center center' %}
+{% assign hero_image_1_radius = section.settings.hero_image_1_radius | default: 0 %}
+{% assign hero_image_1_radius_m = section.settings.hero_image_1_radius_mobile | default: 0 %}
+{% assign hero_image_1_w = section.settings.hero_image_1_max_width | default: 0 %}
+{% assign hero_image_1_h = section.settings.hero_image_1_max_height | default: 0 %}
+{% assign hero_image_1_w_m = section.settings.hero_image_1_max_width_mobile | default: 0 %}
+{% assign hero_image_1_h_m = section.settings.hero_image_1_max_height_mobile | default: 0 %}
+{% assign hero_image_1_ha = section.settings.hero_image_1_h_align | default: 'default' %}
+{% assign hero_image_1_va = section.settings.hero_image_1_v_align | default: 'default' %}
+{% assign hero_image_1_ha_m = section.settings.hero_image_1_h_align_mobile | default: 'default' %}
+{% assign hero_image_1_va_m = section.settings.hero_image_1_v_align_mobile | default: 'default' %}
+            {% if hero_image_1_display != blank %}
+              <a {% if section.settings.hero_link_1 != blank %}href="{{ section.settings.hero_link_1 }}"{% endif %} class="pp-collection-float pp-collection-float--1">
+  <picture>
+    {% if hero_image_1_img_mobile != blank and hero_image_1_img_mobile != hero_image_1_img %}
+      <source media="(max-width: 990px)" srcset="{{ hero_image_1_img_mobile | image_url: width: 400 }} 400w, {{ hero_image_1_img_mobile | image_url: width: 600 }} 600w, {{ hero_image_1_img_mobile | image_url: width: 800 }} 800w, {{ hero_image_1_img_mobile | image_url: width: 1000 }} 1000w" sizes="100vw">
+    {% endif %}
+    {{ hero_image_1_display | image_url: width: 900 | image_tag: loading: 'eager', widths: '400,600,900', alt: hero_image_1_display.alt | default: hero_heading }}
+  </picture>
+              </a>
+            {% endif %}
+            {% assign hero_image_2_img = section.settings.hero_image_2 %}
+{% assign hero_image_2_img_mobile = section.settings.hero_image_2_mobile %}
+{% assign hero_image_2_display = hero_image_2_img | default: hero_image_2_img_mobile %}
+{% assign hero_image_2_fit = section.settings.hero_image_2_fit | default: 'contain' %}
+{% assign hero_image_2_position = section.settings.hero_image_2_position | default: 'center center' %}
+{% assign hero_image_2_fit_m = section.settings.hero_image_2_fit_mobile | default: 'contain' %}
+{% assign hero_image_2_position_m = section.settings.hero_image_2_position_mobile | default: 'center center' %}
+{% assign hero_image_2_radius = section.settings.hero_image_2_radius | default: 0 %}
+{% assign hero_image_2_radius_m = section.settings.hero_image_2_radius_mobile | default: 0 %}
+{% assign hero_image_2_w = section.settings.hero_image_2_max_width | default: 0 %}
+{% assign hero_image_2_h = section.settings.hero_image_2_max_height | default: 0 %}
+{% assign hero_image_2_w_m = section.settings.hero_image_2_max_width_mobile | default: 0 %}
+{% assign hero_image_2_h_m = section.settings.hero_image_2_max_height_mobile | default: 0 %}
+{% assign hero_image_2_ha = section.settings.hero_image_2_h_align | default: 'default' %}
+{% assign hero_image_2_va = section.settings.hero_image_2_v_align | default: 'default' %}
+{% assign hero_image_2_ha_m = section.settings.hero_image_2_h_align_mobile | default: 'default' %}
+{% assign hero_image_2_va_m = section.settings.hero_image_2_v_align_mobile | default: 'default' %}
+            {% if hero_image_2_display != blank %}
+              <a {% if section.settings.hero_link_2 != blank %}href="{{ section.settings.hero_link_2 }}"{% endif %} class="pp-collection-float pp-collection-float--2">
+  <picture>
+    {% if hero_image_2_img_mobile != blank and hero_image_2_img_mobile != hero_image_2_img %}
+      <source media="(max-width: 990px)" srcset="{{ hero_image_2_img_mobile | image_url: width: 400 }} 400w, {{ hero_image_2_img_mobile | image_url: width: 600 }} 600w, {{ hero_image_2_img_mobile | image_url: width: 800 }} 800w, {{ hero_image_2_img_mobile | image_url: width: 1000 }} 1000w" sizes="100vw">
+    {% endif %}
+    {{ hero_image_2_display | image_url: width: 900 | image_tag: loading: 'eager', widths: '400,600,900', alt: hero_image_2_display.alt | default: hero_heading }}
+  </picture>
+              </a>
+            {% endif %}
+            {% assign hero_image_3_img = section.settings.hero_image_3 %}
+{% assign hero_image_3_img_mobile = section.settings.hero_image_3_mobile %}
+{% assign hero_image_3_display = hero_image_3_img | default: hero_image_3_img_mobile %}
+{% assign hero_image_3_fit = section.settings.hero_image_3_fit | default: 'contain' %}
+{% assign hero_image_3_position = section.settings.hero_image_3_position | default: 'center center' %}
+{% assign hero_image_3_fit_m = section.settings.hero_image_3_fit_mobile | default: 'contain' %}
+{% assign hero_image_3_position_m = section.settings.hero_image_3_position_mobile | default: 'center center' %}
+{% assign hero_image_3_radius = section.settings.hero_image_3_radius | default: 0 %}
+{% assign hero_image_3_radius_m = section.settings.hero_image_3_radius_mobile | default: 0 %}
+{% assign hero_image_3_w = section.settings.hero_image_3_max_width | default: 0 %}
+{% assign hero_image_3_h = section.settings.hero_image_3_max_height | default: 0 %}
+{% assign hero_image_3_w_m = section.settings.hero_image_3_max_width_mobile | default: 0 %}
+{% assign hero_image_3_h_m = section.settings.hero_image_3_max_height_mobile | default: 0 %}
+{% assign hero_image_3_ha = section.settings.hero_image_3_h_align | default: 'default' %}
+{% assign hero_image_3_va = section.settings.hero_image_3_v_align | default: 'default' %}
+{% assign hero_image_3_ha_m = section.settings.hero_image_3_h_align_mobile | default: 'default' %}
+{% assign hero_image_3_va_m = section.settings.hero_image_3_v_align_mobile | default: 'default' %}
+            {% if hero_image_3_display != blank %}
+              <a {% if section.settings.hero_link_3 != blank %}href="{{ section.settings.hero_link_3 }}"{% endif %} class="pp-collection-float pp-collection-float--3">
+  <picture>
+    {% if hero_image_3_img_mobile != blank and hero_image_3_img_mobile != hero_image_3_img %}
+      <source media="(max-width: 990px)" srcset="{{ hero_image_3_img_mobile | image_url: width: 400 }} 400w, {{ hero_image_3_img_mobile | image_url: width: 600 }} 600w, {{ hero_image_3_img_mobile | image_url: width: 800 }} 800w, {{ hero_image_3_img_mobile | image_url: width: 1000 }} 1000w" sizes="100vw">
+    {% endif %}
+    {{ hero_image_3_display | image_url: width: 900 | image_tag: loading: 'eager', widths: '400,600,900', alt: hero_image_3_display.alt | default: hero_heading }}
+  </picture>
+              </a>
+            {% endif %}
+        {% else %}
+          {% for i in (1..3) %}<span class="pp-collection-float pp-collection-float--{{ i }} pp-hero__placeholder">{{ 'collection-1' | placeholder_svg_tag }}</span>{% endfor %}
+        {% endif %}
+        <span class="pp-orbit pp-orbit--1"></span><span class="pp-orbit pp-orbit--2"></span>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+<section class="pp-section pp-collection-range pp-reveal">
+  <div class="page-width">
+    <div class="pp-products__head pp-collection-range__head">
+      <div><div class="pp-kicker">{{ range_eyebrow }}</div><h2>{{ range_heading }}</h2><p>{{ section.settings.intro_text }}</p></div>
+    </div>
+
+    {% if h == 'all' and section.settings.show_search_filters %}
+      <div class="pp-shop-tools">
+        <label class="pp-shop-search"><span>⌕</span><input type="search" placeholder="{{ section.settings.search_placeholder }}" data-product-search></label>
+        <div class="pp-filter-pills" data-filter-pills>
+          <button class="is-active" type="button" data-filter="all">{{ section.settings.all_filter_label }}</button>
+          {% for block in section.blocks %}<button type="button" data-filter="{{ block.settings.handle | handle }}" data-pp-block-id="{{ block.id }}" {{ block.shopify_attributes }}>{{ block.settings.label }}</button>{% endfor %}
+        </div>
+        <span class="pp-result-count" data-result-count data-label="{{ section.settings.product_count_label | escape }}">{{ collection.products_count }} {{ section.settings.product_count_label }}</span>
+      </div>
+    {% endif %}
+
+    <div class="pp-product-grid" data-product-grid>
+      {% paginate collection.products by section.settings.products_per_page %}
+        {% for product in collection.products %}
+          <div data-product-item data-product-type="{{ product.type | handle }}" data-product-title="{{ product.title | escape | downcase }} {{ product.description | strip_html | escape | downcase }}">
+            {% render 'product-card', product: product, eyebrow: product.type %}
+          </div>
+        {% endfor %}
+        <div class="pp-pagination">{{ paginate | default_pagination }}</div>
+      {% endpaginate %}
+    </div>
+  </div>
+</section>
+{% schema %}
+{
+  "name": "Main collection",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow_override",
+      "label": "Hero eyebrow override"
+    },
+    {
+      "type": "textarea",
+      "id": "heading_override",
+      "label": "Hero heading override"
+    },
+    {
+      "type": "textarea",
+      "id": "text_override",
+      "label": "Hero text override"
+    },
+    {
+      "type": "text",
+      "id": "range_eyebrow_override",
+      "label": "Product range eyebrow override"
+    },
+    {
+      "type": "text",
+      "id": "range_heading_override",
+      "label": "Product range heading override"
+    },
+    {
+      "type": "textarea",
+      "id": "intro_text",
+      "label": "Product range text",
+      "default": "Choose a product to see benefits, when to use it and a simple routine."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_all",
+      "label": "Show View all link",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "view_all_label",
+      "label": "View all label",
+      "default": "View all products"
+    },
+    {
+      "type": "url",
+      "id": "view_all_link",
+      "label": "View all link"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_hero_products",
+      "label": "Show hero artwork area",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "hero_background",
+      "label": "Hero background",
+      "default": "#fffafd"
+    },
+    {"type": "header", "content": "Hero image 1 — desktop"},
+    {"type": "image_picker", "id": "hero_image_1", "label": "Hero image 1 (desktop)", "info": "A transparent PNG works best."},
+    {"type": "header", "content": "Hero image 1 — mobile"},
+    {"type": "image_picker", "id": "hero_image_1_mobile", "label": "Hero image 1 — mobile (optional)", "info": "Shown at 990px and narrower instead of the desktop image above. Leave empty to use the same image on mobile."},
+    {"type": "header", "content": "Image fit — desktop"},
+    {"type": "select", "id": "hero_image_1_fit", "label": "How the photo fills its box", "default": "contain", "options": [{"value": "contain", "label": "Show the whole photo (may leave empty space)"}, {"value": "cover", "label": "Fill the box completely (may crop)"}]},
+    {"type": "select", "id": "hero_image_1_position", "label": "Photo alignment inside its box", "info": "Only matters when the photo's shape doesn't exactly match the box.", "default": "center center", "options": [{"value": "left top", "label": "Top left"}, {"value": "center top", "label": "Top center"}, {"value": "right top", "label": "Top right"}, {"value": "left center", "label": "Middle left"}, {"value": "center center", "label": "Middle center"}, {"value": "right center", "label": "Middle right"}, {"value": "left bottom", "label": "Bottom left"}, {"value": "center bottom", "label": "Bottom center"}, {"value": "right bottom", "label": "Bottom right"}]},
+    {"type": "header", "content": "Image fit — mobile"},
+    {"type": "select", "id": "hero_image_1_fit_mobile", "label": "How the photo fills its box", "default": "contain", "options": [{"value": "contain", "label": "Show the whole photo (may leave empty space)"}, {"value": "cover", "label": "Fill the box completely (may crop)"}]},
+    {"type": "select", "id": "hero_image_1_position_mobile", "label": "Photo alignment inside its box", "info": "Only matters when the photo's shape doesn't exactly match the box.", "default": "center center", "options": [{"value": "left top", "label": "Top left"}, {"value": "center top", "label": "Top center"}, {"value": "right top", "label": "Top right"}, {"value": "left center", "label": "Middle left"}, {"value": "center center", "label": "Middle center"}, {"value": "right center", "label": "Middle right"}, {"value": "left bottom", "label": "Bottom left"}, {"value": "center bottom", "label": "Bottom center"}, {"value": "right bottom", "label": "Bottom right"}]},
+    {"type": "header", "content": "Corner rounding — desktop"},
+    {"type": "range", "id": "hero_image_1_radius", "min": 0, "max": 60, "step": 2, "unit": "px", "label": "Corner rounding (0 = theme default)", "default": 0},
+    {"type": "header", "content": "Corner rounding — mobile"},
+    {"type": "range", "id": "hero_image_1_radius_mobile", "min": 0, "max": 60, "step": 2, "unit": "px", "label": "Corner rounding (0 = theme default)", "default": 0},
+    {"type": "header", "content": "Image size — desktop"},
+    {"type": "range", "id": "hero_image_1_max_width", "min": 0, "max": 900, "step": 50, "unit": "px", "label": "Image width (0 = automatic)", "info": "Applies at 991px and wider. Automatically shrinks to fit if the layout doesn't have room, so it never overlaps other content.", "default": 0},
+    {"type": "range", "id": "hero_image_1_max_height", "min": 0, "max": 900, "step": 50, "unit": "px", "label": "Image height (0 = automatic)", "info": "Applies at 991px and wider. Automatically shrinks to fit if the layout doesn't have room, so it never overlaps other content.", "default": 0},
+    {"type": "header", "content": "Image size — mobile"},
+    {"type": "range", "id": "hero_image_1_max_width_mobile", "min": 0, "max": 500, "step": 25, "unit": "px", "label": "Image width (0 = automatic)", "info": "Applies at 990px and narrower (phones and tablets). Automatically shrinks to fit if the layout doesn't have room, so it never overlaps other content.", "default": 0},
+    {"type": "range", "id": "hero_image_1_max_height_mobile", "min": 0, "max": 500, "step": 25, "unit": "px", "label": "Image height (0 = automatic)", "info": "Applies at 990px and narrower (phones and tablets). Automatically shrinks to fit if the layout doesn't have room, so it never overlaps other content.", "default": 0},
+    {"type": "header", "content": "Box position — desktop"},
+    {"type": "select", "id": "hero_image_1_h_align", "label": "Horizontal position", "info": "Applies at 991px and wider. \"Default\" keeps the theme's original spacing.", "default": "default", "options": [{"value": "default", "label": "Default (theme spacing)"}, {"value": "left", "label": "Left"}, {"value": "center", "label": "Center"}, {"value": "right", "label": "Right"}]},
+    {"type": "select", "id": "hero_image_1_v_align", "label": "Vertical position", "info": "Applies at 991px and wider. \"Default\" keeps the theme's original spacing.", "default": "default", "options": [{"value": "default", "label": "Default (theme spacing)"}, {"value": "top", "label": "Top"}, {"value": "center", "label": "Center"}, {"value": "bottom", "label": "Bottom"}]},
+    {"type": "header", "content": "Box position — mobile"},
+    {"type": "select", "id": "hero_image_1_h_align_mobile", "label": "Horizontal position", "info": "Applies at 990px and narrower (phones and tablets). \"Default\" keeps the theme's original spacing.", "default": "default", "options": [{"value": "default", "label": "Default (theme spacing)"}, {"value": "left", "label": "Left"}, {"value": "center", "label": "Center"}, {"value": "right", "label": "Right"}]},
+    {"type": "select", "id": "hero_image_1_v_align_mobile", "label": "Vertical position", "info": "Applies at 990px and narrower (phones and tablets). \"Default\" keeps the theme's original spacing.", "default": "default", "options": [{"value": "default", "label": "Default (theme spacing)"}, {"value": "top", "label": "Top"}, {"value": "center", "label": "Center"}, {"value": "bottom", "label": "Bottom"}]},
+    {
+      "type": "url",
+      "id": "hero_link_1",
+      "label": "Custom hero image 1 link"
+    },
+    {"type": "header", "content": "Hero image 2 — desktop"},
+    {"type": "image_picker", "id": "hero_image_2", "label": "Hero image 2 (desktop)", "info": "A transparent PNG works best."},
+    {"type": "header", "content": "Hero image 2 — mobile"},
+    {"type": "image_picker", "id": "hero_image_2_mobile", "label": "Hero image 2 — mobile (optional)", "info": "Shown at 990px and narrower instead of the desktop image above. Leave empty to use the same image on mobile."},
+    {"type": "header", "content": "Image fit — desktop"},
+    {"type": "select", "id": "hero_image_2_fit", "label": "How the photo fills its box", "default": "contain", "options": [{"value": "contain", "label": "Show the whole photo (may leave empty space)"}, {"value": "cover", "label": "Fill the box completely (may crop)"}]},
+    {"type": "select", "id": "hero_image_2_position", "label": "Photo alignment inside its box", "info": "Only matters when the photo's shape doesn't exactly match the box.", "default": "center center", "options": [{"value": "left top", "label": "Top left"}, {"value": "center top", "label": "Top center"}, {"value": "right top", "label": "Top right"}, {"value": "left center", "label": "Middle left"}, {"value": "center center", "label": "Middle center"}, {"value": "right center", "label": "Middle right"}, {"value": "left bottom", "label": "Bottom left"}, {"value": "center bottom", "label": "Bottom center"}, {"value": "right bottom", "label": "Bottom right"}]},
+    {"type": "header", "content": "Image fit — mobile"},
+    {"type": "select", "id": "hero_image_2_fit_mobile", "label": "How the photo fills its box", "default": "contain", "options": [{"value": "contain", "label": "Show the whole photo (may leave empty space)"}, {"value": "cover", "label": "Fill the box completely (may crop)"}]},
+    {"type": "select", "id": "hero_image_2_position_mobile", "label": "Photo alignment inside its box", "info": "Only matters when the photo's shape doesn't exactly match the box.", "default": "center center", "options": [{"value": "left top", "label": "Top left"}, {"value": "center top", "label": "Top center"}, {"value": "right top", "label": "Top right"}, {"value": "left center", "label": "Middle left"}, {"value": "center center", "label": "Middle center"}, {"value": "right center", "label": "Middle right"}, {"value": "left bottom", "label": "Bottom left"}, {"value": "center bottom", "label": "Bottom center"}, {"value": "right bottom", "label": "Bottom right"}]},
+    {"type": "header", "content": "Corner rounding — desktop"},
+    {"type": "range", "id": "hero_image_2_radius", "min": 0, "max": 60, "step": 2, "unit": "px", "label": "Corner rounding (0 = theme default)", "default": 0},
+    {"type": "header", "content": "Corner rounding — mobile"},
+    {"type": "range", "id": "hero_image_2_radius_mobile", "min": 0, "max": 60, "step": 2, "unit": "px", "label": "Corner rounding (0 = theme default)", "default": 0},
+    {"type": "header", "content": "Image size — desktop"},
+    {"type": "range", "id": "hero_image_2_max_width", "min": 0, "max": 900, "step": 50, "unit": "px", "label": "Image width (0 = automatic)", "info": "Applies at 991px and wider. Automatically shrinks to fit if the layout doesn't have room, so it never overlaps other content.", "default": 0},
+    {"type": "range", "id": "hero_image_2_max_height", "min": 0, "max": 900, "step": 50, "unit": "px", "label": "Image height (0 = automatic)", "info": "Applies at 991px and wider. Automatically shrinks to fit if the layout doesn't have room, so it never overlaps other content.", "default": 0},
+    {"type": "header", "content": "Image size — mobile"},
+    {"type": "range", "id": "hero_image_2_max_width_mobile", "min": 0, "max": 500, "step": 25, "unit": "px", "label": "Image width (0 = automatic)", "info": "Applies at 990px and narrower (phones and tablets). Automatically shrinks to fit if the layout doesn't have room, so it never overlaps other content.", "default": 0},
+    {"type": "range", "id": "hero_image_2_max_height_mobile", "min": 0, "max": 500, "step": 25, "unit": "px", "label": "Image height (0 = automatic)", "info": "Applies at 990px and narrower (phones and tablets). Automatically shrinks to fit if the layout doesn't have room, so it never overlaps other content.", "default": 0},
+    {"type": "header", "content": "Box position — desktop"},
+    {"type": "select", "id": "hero_image_2_h_align", "label": "Horizontal position", "info": "Applies at 991px and wider. \"Default\" keeps the theme's original spacing.", "default": "default", "options": [{"value": "default", "label": "Default (theme spacing)"}, {"value": "left", "label": "Left"}, {"value": "center", "label": "Center"}, {"value": "right", "label": "Right"}]},
+    {"type": "select", "id": "hero_image_2_v_align", "label": "Vertical position", "info": "Applies at 991px and wider. \"Default\" keeps the theme's original spacing.", "default": "default", "options": [{"value": "default", "label": "Default (theme spacing)"}, {"value": "top", "label": "Top"}, {"value": "center", "label": "Center"}, {"value": "bottom", "label": "Bottom"}]},
+    {"type": "header", "content": "Box position — mobile"},
+    {"type": "select", "id": "hero_image_2_h_align_mobile", "label": "Horizontal position", "info": "Applies at 990px and narrower (phones and tablets). \"Default\" keeps the theme's original spacing.", "default": "default", "options": [{"value": "default", "label": "Default (theme spacing)"}, {"value": "left", "label": "Left"}, {"value": "center", "label": "Center"}, {"value": "right", "label": "Right"}]},
+    {"type": "select", "id": "hero_image_2_v_align_mobile", "label": "Vertical position", "info": "Applies at 990px and narrower (phones and tablets). \"Default\" keeps the theme's original spacing.", "default": "default", "options": [{"value": "default", "label": "Default (theme spacing)"}, {"value": "top", "label": "Top"}, {"value": "center", "label": "Center"}, {"value": "bottom", "label": "Bottom"}]},
+    {
+      "type": "url",
+      "id": "hero_link_2",
+      "label": "Custom hero image 2 link"
+    },
+    {"type": "header", "content": "Hero image 3 — desktop"},
+    {"type": "image_picker", "id": "hero_image_3", "label": "Hero image 3 (desktop)", "info": "A transparent PNG works best."},
+    {"type": "header", "content": "Hero image 3 — mobile"},
+    {"type": "image_picker", "id": "hero_image_3_mobile", "label": "Hero image 3 — mobile (optional)", "info": "Shown at 990px and narrower instead of the desktop image above. Leave empty to use the same image on mobile."},
+    {"type": "header", "content": "Image fit — desktop"},
+    {"type": "select", "id": "hero_image_3_fit", "label": "How the photo fills its box", "default": "contain", "options": [{"value": "contain", "label": "Show the whole photo (may leave empty space)"}, {"value": "cover", "label": "Fill the box completely (may crop)"}]},
+    {"type": "select", "id": "hero_image_3_position", "label": "Photo alignment inside its box", "info": "Only matters when the photo's shape doesn't exactly match the box.", "default": "center center", "options": [{"value": "left top", "label": "Top left"}, {"value": "center top", "label": "Top center"}, {"value": "right top", "label": "Top right"}, {"value": "left center", "label": "Middle left"}, {"value": "center center", "label": "Middle center"}, {"value": "right center", "label": "Middle right"}, {"value": "left bottom", "label": "Bottom left"}, {"value": "center bottom", "label": "Bottom center"}, {"value": "right bottom", "label": "Bottom right"}]},
+    {"type": "header", "content": "Image fit — mobile"},
+    {"type": "select", "id": "hero_image_3_fit_mobile", "label": "How the photo fills its box", "default": "contain", "options": [{"value": "contain", "label": "Show the whole photo (may leave empty space)"}, {"value": "cover", "label": "Fill the box completely (may crop)"}]},
+    {"type": "select", "id": "hero_image_3_position_mobile", "label": "Photo alignment inside its box", "info": "Only matters when the photo's shape doesn't exactly match the box.", "default": "center center", "options": [{"value": "left top", "label": "Top left"}, {"value": "center top", "label": "Top center"}, {"value": "right top", "label": "Top right"}, {"value": "left center", "label": "Middle left"}, {"value": "center center", "label": "Middle center"}, {"value": "right center", "label": "Middle right"}, {"value": "left bottom", "label": "Bottom left"}, {"value": "center bottom", "label": "Bottom center"}, {"value": "right bottom", "label": "Bottom right"}]},
+    {"type": "header", "content": "Corner rounding — desktop"},
+    {"type": "range", "id": "hero_image_3_radius", "min": 0, "max": 60, "step": 2, "unit": "px", "label": "Corner rounding (0 = theme default)", "default": 0},
+    {"type": "header", "content": "Corner rounding — mobile"},
+    {"type": "range", "id": "hero_image_3_radius_mobile", "min": 0, "max": 60, "step": 2, "unit": "px", "label": "Corner rounding (0 = theme default)", "default": 0},
+    {"type": "header", "content": "Image size — desktop"},
+    {"type": "range", "id": "hero_image_3_max_width", "min": 0, "max": 900, "step": 50, "unit": "px", "label": "Image width (0 = automatic)", "info": "Applies at 991px and wider. Automatically shrinks to fit if the layout doesn't have room, so it never overlaps other content.", "default": 0},
+    {"type": "range", "id": "hero_image_3_max_height", "min": 0, "max": 900, "step": 50, "unit": "px", "label": "Image height (0 = automatic)", "info": "Applies at 991px and wider. Automatically shrinks to fit if the layout doesn't have room, so it never overlaps other content.", "default": 0},
+    {"type": "header", "content": "Image size — mobile"},
+    {"type": "range", "id": "hero_image_3_max_width_mobile", "min": 0, "max": 500, "step": 25, "unit": "px", "label": "Image width (0 = automatic)", "info": "Applies at 990px and narrower (phones and tablets). Automatically shrinks to fit if the layout doesn't have room, so it never overlaps other content.", "default": 0},
+    {"type": "range", "id": "hero_image_3_max_height_mobile", "min": 0, "max": 500, "step": 25, "unit": "px", "label": "Image height (0 = automatic)", "info": "Applies at 990px and narrower (phones and tablets). Automatically shrinks to fit if the layout doesn't have room, so it never overlaps other content.", "default": 0},
+    {"type": "header", "content": "Box position — desktop"},
+    {"type": "select", "id": "hero_image_3_h_align", "label": "Horizontal position", "info": "Applies at 991px and wider. \"Default\" keeps the theme's original spacing.", "default": "default", "options": [{"value": "default", "label": "Default (theme spacing)"}, {"value": "left", "label": "Left"}, {"value": "center", "label": "Center"}, {"value": "right", "label": "Right"}]},
+    {"type": "select", "id": "hero_image_3_v_align", "label": "Vertical position", "info": "Applies at 991px and wider. \"Default\" keeps the theme's original spacing.", "default": "default", "options": [{"value": "default", "label": "Default (theme spacing)"}, {"value": "top", "label": "Top"}, {"value": "center", "label": "Center"}, {"value": "bottom", "label": "Bottom"}]},
+    {"type": "header", "content": "Box position — mobile"},
+    {"type": "select", "id": "hero_image_3_h_align_mobile", "label": "Horizontal position", "info": "Applies at 990px and narrower (phones and tablets). \"Default\" keeps the theme's original spacing.", "default": "default", "options": [{"value": "default", "label": "Default (theme spacing)"}, {"value": "left", "label": "Left"}, {"value": "center", "label": "Center"}, {"value": "right", "label": "Right"}]},
+    {"type": "select", "id": "hero_image_3_v_align_mobile", "label": "Vertical position", "info": "Applies at 990px and narrower (phones and tablets). \"Default\" keeps the theme's original spacing.", "default": "default", "options": [{"value": "default", "label": "Default (theme spacing)"}, {"value": "top", "label": "Top"}, {"value": "center", "label": "Center"}, {"value": "bottom", "label": "Bottom"}]},
+    {
+      "type": "url",
+      "id": "hero_link_3",
+      "label": "Custom hero image 3 link"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_search_filters",
+      "label": "Show Shop all search and filters",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "search_placeholder",
+      "label": "Search placeholder",
+      "default": "Search by product or concern"
+    },
+    {
+      "type": "text",
+      "id": "all_filter_label",
+      "label": "All filter label",
+      "default": "All"
+    },
+    {
+      "type": "text",
+      "id": "product_count_label",
+      "label": "Product count label",
+      "default": "products"
+    },
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "min": 8,
+      "max": 48,
+      "step": 4,
+      "label": "Products per page",
+      "default": 24
+    },
+    {
+      "type": "header",
+      "content": "Professional section controls"
+    },
+    {
+      "type": "paragraph",
+      "content": "Optional overrides. Leave disabled to preserve the original V7 design."
+    },
+    {
+      "type": "checkbox",
+      "id": "pp_custom_colors",
+      "label": "Override section colours",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "pp_background",
+      "label": "Background colour",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "pp_text_color",
+      "label": "Text colour",
+      "default": "#351042"
+    },
+    {
+      "type": "color",
+      "id": "pp_accent_color",
+      "label": "Accent colour",
+      "default": "#ff5a0a"
+    },
+    {
+      "type": "checkbox",
+      "id": "pp_custom_type",
+      "label": "Override section typography",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "pp_heading_font",
+      "label": "Heading font",
+      "default": "theme",
+      "options": [
+        {
+          "value": "theme",
+          "label": "Use theme default"
+        },
+        {
+          "value": "aquatail",
+          "label": "Aquatail — included"
+        },
+        {
+          "value": "futura",
+          "label": "Futura — included"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "pp_heading_weight",
+      "label": "Heading weight",
+      "default": "700",
+      "options": [
+        {
+          "value": "400",
+          "label": "Regular"
+        },
+        {
+          "value": "600",
+          "label": "Semibold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        },
+        {
+          "value": "900",
+          "label": "Black"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "pp_heading_size",
+      "min": 24,
+      "max": 104,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading size — desktop",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "pp_heading_size_mobile",
+      "min": 22,
+      "max": 70,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading size — mobile",
+      "default": 44
+    },
+    {
+      "type": "range",
+      "id": "pp_heading_tracking",
+      "min": -8,
+      "max": 10,
+      "step": 1,
+      "unit": "%",
+      "label": "Heading letter spacing",
+      "default": -3
+    },
+    {
+      "type": "select",
+      "id": "pp_body_font",
+      "label": "Body font",
+      "default": "theme",
+      "options": [
+        {
+          "value": "theme",
+          "label": "Use theme default"
+        },
+        {
+          "value": "aquatail",
+          "label": "Aquatail — included"
+        },
+        {
+          "value": "futura",
+          "label": "Futura — included"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "pp_body_weight",
+      "label": "Body weight",
+      "default": "400",
+      "options": [
+        {
+          "value": "400",
+          "label": "Regular"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semibold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "pp_body_size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Body size — desktop",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "pp_body_size_mobile",
+      "min": 12,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "label": "Body size — mobile",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "pp_line_height",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "label": "Body line height",
+      "default": 16
+    },
+    {
+      "type": "checkbox",
+      "id": "pp_custom_spacing",
+      "label": "Override section spacing",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "pp_padding_top",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding — desktop",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "pp_padding_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding — desktop",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "pp_padding_top_mobile",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding — mobile",
+      "default": 56
+    },
+    {
+      "type": "range",
+      "id": "pp_padding_bottom_mobile",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding — mobile",
+      "default": 56
+    },
+    {
+      "type": "range",
+      "id": "pp_content_width",
+      "min": 0,
+      "max": 1800,
+      "step": 100,
+      "unit": "px",
+      "label": "Content width (0 = theme default)",
+      "default": 0
+    },
+    {
+      "type": "checkbox",
+      "id": "pp_disable_motion",
+      "label": "Disable motion in this section",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "pp_min_height",
+      "min": 0,
+      "max": 1000,
+      "step": 50,
+      "unit": "px",
+      "label": "Section minimum height (0 = automatic)",
+      "default": 0
+    }
+  ],
+  "blocks": [
+    {
+      "type": "filter",
+      "name": "Product type filter",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "Grooming"
+        },
+        {
+          "type": "text",
+          "id": "handle",
+          "label": "Product type handle",
+          "default": "grooming"
+        },
+        {
+          "type": "header",
+          "content": "Individual block design"
+        },
+        {
+          "type": "checkbox",
+          "id": "pp_block_custom",
+          "label": "Customize this block",
+          "default": false
+        },
+        {
+          "type": "color",
+          "id": "pp_block_background",
+          "label": "Card / block background",
+          "default": "#ffffff"
+        },
+        {
+          "type": "color",
+          "id": "pp_block_text",
+          "label": "Text colour",
+          "default": "#351042"
+        },
+        {
+          "type": "color",
+          "id": "pp_block_accent",
+          "label": "Accent / border colour",
+          "default": "#ff5a0a"
+        },
+        {
+          "type": "select",
+          "id": "pp_block_heading_font",
+          "label": "Heading font",
+          "default": "theme",
+          "options": [
+            {
+              "value": "theme",
+              "label": "Use theme default"
+            },
+            {
+              "value": "aquatail",
+              "label": "Aquatail — included"
+            },
+            {
+              "value": "futura",
+              "label": "Futura — included"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "pp_block_body_font",
+          "label": "Body font",
+          "default": "theme",
+          "options": [
+            {
+              "value": "theme",
+              "label": "Use theme default"
+            },
+            {
+              "value": "aquatail",
+              "label": "Aquatail — included"
+            },
+            {
+              "value": "futura",
+              "label": "Futura — included"
+            }
+          ]
+        },
+        {
+          "type": "range",
+          "id": "pp_block_heading_size",
+          "min": 16,
+          "max": 64,
+          "step": 2,
+          "unit": "px",
+          "label": "Heading size",
+          "default": 28
+        },
+        {
+          "type": "range",
+          "id": "pp_block_body_size",
+          "min": 10,
+          "max": 24,
+          "step": 1,
+          "unit": "px",
+          "label": "Body size",
+          "default": 14
+        },
+        {
+          "type": "range",
+          "id": "pp_block_padding",
+          "min": 0,
+          "max": 64,
+          "step": 4,
+          "unit": "px",
+          "label": "Inner padding",
+          "default": 24
+        },
+        {
+          "type": "range",
+          "id": "pp_block_height",
+          "min": 0,
+          "max": 800,
+          "step": 40,
+          "unit": "px",
+          "label": "Minimum height (0 = automatic)",
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "pp_block_image_height",
+          "min": 0,
+          "max": 600,
+          "step": 30,
+          "unit": "px",
+          "label": "Image height (0 = automatic)",
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "pp_block_radius",
+          "min": 0,
+          "max": 48,
+          "step": 4,
+          "unit": "px",
+          "label": "Corner radius",
+          "default": 24
+        },
+        {
+          "type": "select",
+          "id": "pp_block_animation",
+          "label": "Entrance animation",
+          "default": "inherit",
+          "options": [
+            {
+              "value": "inherit",
+              "label": "Section default"
+            },
+            {
+              "value": "fade",
+              "label": "Fade"
+            },
+            {
+              "value": "rise",
+              "label": "Rise up"
+            },
+            {
+              "value": "pop",
+              "label": "Soft pop"
+            },
+            {
+              "value": "wave",
+              "label": "Gentle wave"
+            },
+            {
+              "value": "none",
+              "label": "None"
+            }
+          ]
+        },
+        {
+          "type": "range",
+          "id": "pp_block_animation_delay",
+          "min": 0,
+          "max": 1000,
+          "step": 100,
+          "unit": "ms",
+          "label": "Animation delay",
+          "default": 0
+        }
+      ]
+    }
+  ],
+  "max_blocks": 5
+}
+{% endschema %}

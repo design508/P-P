@@ -1,0 +1,206 @@
+{% comment %} Creator Club — Emotional introduction. Classes: pp-ccc-intro* {% endcomment %}
+{% render 'section-editor-styles', section: section %}
+<style>
+  #shopify-section-{{ section.id }} .pp-ccc-intro {
+    position: relative;
+    background: {{ section.settings.background }};
+    padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;
+  }
+  /* Scattered playful confetti dots behind the copy + media. */
+  #shopify-section-{{ section.id }} .pp-ccc-intro:before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image:
+      radial-gradient(circle, var(--orange, #ff5a0a) 3px, transparent 4px),
+      radial-gradient(circle, {{ section.settings.accent_color }} 3px, transparent 4px),
+      radial-gradient(circle, var(--pink, #ff2b78) 3px, transparent 4px),
+      radial-gradient(circle, var(--green, #61f46f) 3px, transparent 4px);
+    background-size: 140px 140px, 190px 190px, 160px 160px, 210px 210px;
+    background-position: 6% 12%, 82% 18%, 32% 84%, 92% 66%;
+    background-repeat: no-repeat;
+    opacity: .4;
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-intro__grid {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: minmax(0,1fr) minmax(0,1fr);
+    gap: clamp(28px, 4vw, 64px);
+    align-items: center;
+  }
+  /* Playful sticker-style layered ring border on the media box. box-shadow
+     paints outside the element's own border box regardless of its
+     overflow:hidden, so it isn't clipped by the rounded-image mask below. */
+  #shopify-section-{{ section.id }} .pp-ccc-intro__media {
+    transform: rotate(-1.4deg);
+    box-shadow:
+      0 0 0 6px #fff,
+      0 0 0 11px color-mix(in srgb, var(--orange, #ff5a0a) 65%, white),
+      0 16px 32px -14px rgba(53,16,66,.35);
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-intro__label {
+    font-family: var(--body);
+    font-weight: 800;
+    font-size: 13px;
+    letter-spacing: .14em;
+    color: {{ section.settings.accent_color }};
+    margin-bottom: 14px;
+    display: block;
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-intro h2 {
+    font-family: var(--display);
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    font-size: clamp(28px, 3.4vw, 42px);
+    color: var(--ink, #351042);
+    margin: 0 0 18px;
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-intro p {
+    font-family: var(--body);
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--muted, #6b5b73);
+    max-width: 52ch;
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-intro__supporting {
+    font-weight: 700;
+    color: var(--ink, #351042) !important;
+    margin-top: 16px;
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-intro__media {
+    position: relative;
+    border-radius: 28px;
+    overflow: hidden;
+    aspect-ratio: 4/3;
+    background: {{ section.settings.media_bg }};
+  }
+  #shopify-section-{{ section.id }} .pp-ccc-intro__media img,
+  #shopify-section-{{ section.id }} .pp-ccc-intro__media video,
+  #shopify-section-{{ section.id }} .pp-ccc-intro__media svg { width: 100%; height: 100%; object-fit: cover; display: block; }
+  @media screen and (max-width: 900px) {
+    #shopify-section-{{ section.id }} .pp-ccc-intro__grid { grid-template-columns: 1fr; }
+    #shopify-section-{{ section.id }} .pp-ccc-intro p { max-width: 100%; }
+    #shopify-section-{{ section.id }} .pp-ccc-intro__media { order: -1; }
+  }
+</style>
+<section class="pp-ccc-intro pp-reveal">
+  <div class="page-width">
+    <div class="pp-ccc-intro__grid">
+      <div>
+        {% if section.settings.label != blank %}<span class="pp-ccc-intro__label">{{ section.settings.label }}</span>{% endif %}
+        <h2>{{ section.settings.heading }}</h2>
+        {% if section.settings.text != blank %}<p>{{ section.settings.text }}</p>{% endif %}
+        {% if section.settings.supporting != blank %}<p class="pp-ccc-intro__supporting">{{ section.settings.supporting }}</p>{% endif %}
+      </div>
+      {% assign image_img = section.settings.image %}
+{% assign image_img_mobile = section.settings.image_mobile %}
+{% assign image_display = image_img | default: image_img_mobile %}
+{% assign image_fit = section.settings.image_fit | default: 'contain' %}
+{% assign image_position = section.settings.image_position | default: 'center center' %}
+{% assign image_fit_m = section.settings.image_fit_mobile | default: 'contain' %}
+{% assign image_position_m = section.settings.image_position_mobile | default: 'center center' %}
+{% assign image_radius = section.settings.image_radius | default: 0 %}
+{% assign image_radius_m = section.settings.image_radius_mobile | default: 0 %}
+{% assign image_w = section.settings.image_max_width | default: 0 %}
+{% assign image_h = section.settings.image_max_height | default: 0 %}
+{% assign image_w_m = section.settings.image_max_width_mobile | default: 0 %}
+{% assign image_h_m = section.settings.image_max_height_mobile | default: 0 %}
+{% assign image_ha = section.settings.image_h_align | default: 'default' %}
+{% assign image_va = section.settings.image_v_align | default: 'default' %}
+{% assign image_ha_m = section.settings.image_h_align_mobile | default: 'default' %}
+{% assign image_va_m = section.settings.image_v_align_mobile | default: 'default' %}
+      <style>@media (min-width: 991px) {
+  #shopify-section-{{ section.id }} .pp-ccc-intro__media img { object-fit: {{ image_fit }}; object-position: {{ image_position }}; }
+  #shopify-section-{{ section.id }} .pp-ccc-intro__media {
+    {% if image_radius > 0 %}border-radius: {{ image_radius }}px; overflow: hidden;{% endif %}
+    {% if image_w > 0 %}width: min({{ image_w }}px, 100%); max-width: 100%;{% endif %}
+    {% if image_h > 0 %}height: min({{ image_h }}px, 100%); max-height: 100%;{% endif %}
+    {% if image_ha == 'left' %}margin-left: 0; margin-right: auto;{% endif %}
+    {% if image_ha == 'center' %}margin-left: auto; margin-right: auto;{% endif %}
+    {% if image_ha == 'right' %}margin-left: auto; margin-right: 0;{% endif %}
+    {% if image_va == 'top' %}align-self: flex-start;{% endif %}
+    {% if image_va == 'center' %}align-self: center;{% endif %}
+    {% if image_va == 'bottom' %}align-self: flex-end;{% endif %}
+  }
+}
+@media (max-width: 990px) {
+  #shopify-section-{{ section.id }} .pp-ccc-intro__media img { object-fit: {{ image_fit_m }}; object-position: {{ image_position_m }}; }
+  #shopify-section-{{ section.id }} .pp-ccc-intro__media {
+    {% if image_radius_m > 0 %}border-radius: {{ image_radius_m }}px; overflow: hidden;{% endif %}
+    {% if image_w_m > 0 %}width: min({{ image_w_m }}px, 100%); max-width: 100%;{% endif %}
+    {% if image_h_m > 0 %}height: min({{ image_h_m }}px, 100%); max-height: 100%;{% endif %}
+    {% if image_ha_m == 'left' %}margin-left: 0; margin-right: auto;{% endif %}
+    {% if image_ha_m == 'center' %}margin-left: auto; margin-right: auto;{% endif %}
+    {% if image_ha_m == 'right' %}margin-left: auto; margin-right: 0;{% endif %}
+    {% if image_va_m == 'top' %}align-self: flex-start;{% endif %}
+    {% if image_va_m == 'center' %}align-self: center;{% endif %}
+    {% if image_va_m == 'bottom' %}align-self: flex-end;{% endif %}
+  }
+}</style>
+      <div class="pp-ccc-intro__media">
+        {% if section.settings.video != blank %}
+          {{ section.settings.video | video_tag: autoplay: false, controls: true, loop: false, muted: false, image_size: '900x' }}
+        {% elsif image_display != blank %}
+  <picture>
+    {% if image_img_mobile != blank and image_img_mobile != image_img %}
+      <source media="(max-width: 990px)" srcset="{{ image_img_mobile | image_url: width: 400 }} 400w, {{ image_img_mobile | image_url: width: 600 }} 600w, {{ image_img_mobile | image_url: width: 800 }} 800w, {{ image_img_mobile | image_url: width: 1000 }} 1000w" sizes="100vw">
+    {% endif %}
+    {{ image_display | image_url: width: 900 | image_tag: loading: 'lazy', widths: '400,600,900', alt: image_display.alt | default: 'Everyday life with a Pups & Paws pet' }}
+  </picture>
+        {% else %}
+          {{ 'lifestyle-2' | placeholder_svg_tag: 'pp-ccc-placeholder' }}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% schema %}
+{
+  "name": "Creator Club — Intro",
+  "settings": [
+    { "type": "text", "id": "label", "label": "Label", "default": "FOR PET PARENTS, BY PET PARENTS" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Their everyday chaos deserves the spotlight." },
+    { "type": "textarea", "id": "text", "label": "Body copy", "default": "The zoomies. The muddy paws. The post-bath fluff. The cuddles that somehow take over the whole bed. We want to see the honest, funny and heart-melting moments that make your pet yours." },
+    { "type": "text", "id": "supporting", "label": "Supporting line", "default": "You create the moment. We celebrate it with you." },
+    { "type": "header", "content": "Media (replaceable)" },
+        {"type": "header", "content": "Lifestyle image — desktop"},
+    {"type": "image_picker", "id": "image", "label": "Lifestyle image (desktop)", "info": "A transparent PNG works best."},
+    {"type": "header", "content": "Lifestyle image — mobile"},
+    {"type": "image_picker", "id": "image_mobile", "label": "Lifestyle image — mobile (optional)", "info": "Shown at 990px and narrower instead of the desktop image above. Leave empty to use the same image on mobile."},
+    {"type": "header", "content": "Image fit — desktop"},
+    {"type": "select", "id": "image_fit", "label": "How the photo fills its box", "default": "contain", "options": [{"value": "contain", "label": "Show the whole photo (may leave empty space)"}, {"value": "cover", "label": "Fill the box completely (may crop)"}]},
+    {"type": "select", "id": "image_position", "label": "Photo alignment inside its box", "info": "Only matters when the photo's shape doesn't exactly match the box.", "default": "center center", "options": [{"value": "left top", "label": "Top left"}, {"value": "center top", "label": "Top center"}, {"value": "right top", "label": "Top right"}, {"value": "left center", "label": "Middle left"}, {"value": "center center", "label": "Middle center"}, {"value": "right center", "label": "Middle right"}, {"value": "left bottom", "label": "Bottom left"}, {"value": "center bottom", "label": "Bottom center"}, {"value": "right bottom", "label": "Bottom right"}]},
+    {"type": "header", "content": "Image fit — mobile"},
+    {"type": "select", "id": "image_fit_mobile", "label": "How the photo fills its box", "default": "contain", "options": [{"value": "contain", "label": "Show the whole photo (may leave empty space)"}, {"value": "cover", "label": "Fill the box completely (may crop)"}]},
+    {"type": "select", "id": "image_position_mobile", "label": "Photo alignment inside its box", "info": "Only matters when the photo's shape doesn't exactly match the box.", "default": "center center", "options": [{"value": "left top", "label": "Top left"}, {"value": "center top", "label": "Top center"}, {"value": "right top", "label": "Top right"}, {"value": "left center", "label": "Middle left"}, {"value": "center center", "label": "Middle center"}, {"value": "right center", "label": "Middle right"}, {"value": "left bottom", "label": "Bottom left"}, {"value": "center bottom", "label": "Bottom center"}, {"value": "right bottom", "label": "Bottom right"}]},
+    {"type": "header", "content": "Corner rounding — desktop"},
+    {"type": "range", "id": "image_radius", "min": 0, "max": 60, "step": 2, "unit": "px", "label": "Corner rounding (0 = theme default)", "default": 0},
+    {"type": "header", "content": "Corner rounding — mobile"},
+    {"type": "range", "id": "image_radius_mobile", "min": 0, "max": 60, "step": 2, "unit": "px", "label": "Corner rounding (0 = theme default)", "default": 0},
+    {"type": "header", "content": "Image size — desktop"},
+    {"type": "range", "id": "image_max_width", "min": 0, "max": 900, "step": 50, "unit": "px", "label": "Image width (0 = automatic)", "info": "Applies at 991px and wider. Automatically shrinks to fit if the layout doesn't have room, so it never overlaps other content.", "default": 0},
+    {"type": "range", "id": "image_max_height", "min": 0, "max": 900, "step": 50, "unit": "px", "label": "Image height (0 = automatic)", "info": "Applies at 991px and wider. Automatically shrinks to fit if the layout doesn't have room, so it never overlaps other content.", "default": 0},
+    {"type": "header", "content": "Image size — mobile"},
+    {"type": "range", "id": "image_max_width_mobile", "min": 0, "max": 600, "step": 25, "unit": "px", "label": "Image width (0 = automatic)", "info": "Applies at 990px and narrower (phones and tablets). Automatically shrinks to fit if the layout doesn't have room, so it never overlaps other content.", "default": 0},
+    {"type": "range", "id": "image_max_height_mobile", "min": 0, "max": 600, "step": 25, "unit": "px", "label": "Image height (0 = automatic)", "info": "Applies at 990px and narrower (phones and tablets). Automatically shrinks to fit if the layout doesn't have room, so it never overlaps other content.", "default": 0},
+    {"type": "header", "content": "Box position — desktop"},
+    {"type": "select", "id": "image_h_align", "label": "Horizontal position", "info": "Applies at 991px and wider. \"Default\" keeps the theme's original spacing.", "default": "default", "options": [{"value": "default", "label": "Default (theme spacing)"}, {"value": "left", "label": "Left"}, {"value": "center", "label": "Center"}, {"value": "right", "label": "Right"}]},
+    {"type": "select", "id": "image_v_align", "label": "Vertical position", "info": "Applies at 991px and wider. \"Default\" keeps the theme's original spacing.", "default": "default", "options": [{"value": "default", "label": "Default (theme spacing)"}, {"value": "top", "label": "Top"}, {"value": "center", "label": "Center"}, {"value": "bottom", "label": "Bottom"}]},
+    {"type": "header", "content": "Box position — mobile"},
+    {"type": "select", "id": "image_h_align_mobile", "label": "Horizontal position", "info": "Applies at 990px and narrower (phones and tablets). \"Default\" keeps the theme's original spacing.", "default": "default", "options": [{"value": "default", "label": "Default (theme spacing)"}, {"value": "left", "label": "Left"}, {"value": "center", "label": "Center"}, {"value": "right", "label": "Right"}]},
+    {"type": "select", "id": "image_v_align_mobile", "label": "Vertical position", "info": "Applies at 990px and narrower (phones and tablets). \"Default\" keeps the theme's original spacing.", "default": "default", "options": [{"value": "default", "label": "Default (theme spacing)"}, {"value": "top", "label": "Top"}, {"value": "center", "label": "Center"}, {"value": "bottom", "label": "Bottom"}]},
+    { "type": "video", "id": "video", "label": "Lifestyle video (optional, overrides image)" },
+    { "type": "header", "content": "Colours" },
+    { "type": "color", "id": "background", "label": "Section background", "default": "#ffffff" },
+    { "type": "color", "id": "accent_color", "label": "Label colour", "default": "#ff5a0a" },
+    { "type": "color", "id": "media_bg", "label": "Media placeholder background", "default": "#f3e9f8" },
+    { "type": "header", "content": "Section spacing" },
+    { "type": "range", "id": "padding_top", "min": 0, "max": 160, "step": 4, "unit": "px", "label": "Top padding — desktop", "default": 64 },
+    { "type": "range", "id": "padding_bottom", "min": 0, "max": 160, "step": 4, "unit": "px", "label": "Bottom padding — desktop", "default": 64 }
+  ],
+  "presets": [{ "name": "Creator Club — Intro" }]
+}
+{% endschema %}

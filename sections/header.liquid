@@ -1,0 +1,260 @@
+{% render 'section-editor-styles', section: section %}
+{% liquid
+  assign grooming_url = section.settings.grooming_link | default: collections['grooming'].url | default: '/collections/grooming'
+  assign nutrition_url = section.settings.nutrition_link | default: collections['nutrition'].url | default: '/collections/nutrition'
+  assign treats_url = section.settings.treats_link | default: collections['treats'].url | default: '/collections/treats'
+  assign story_url = section.settings.story_link | default: '/pages/our-story'
+%}
+
+{% if section.settings.sticky_header %}
+  <style>
+    #shopify-section-{{ section.id }} {
+      position: -webkit-sticky !important;
+      position: sticky !important;
+      top: 0 !important;
+      z-index: 30 !important;
+      width: 100%;
+    }
+
+    #shopify-section-{{ section.id }} .pp-header {
+      width: 100%;
+      position: relative;
+      z-index: 1;
+    }
+  </style>
+{% endif %}
+
+{% liquid
+  assign logo_fit = section.settings.logo_fit | default: 'contain'
+  assign logo_position = section.settings.logo_position | default: 'center center'
+  assign logo_fit_m = section.settings.logo_fit_mobile | default: 'contain'
+  assign logo_position_m = section.settings.logo_position_mobile | default: 'center center'
+  assign logo_radius = section.settings.logo_radius | default: 0
+  assign logo_radius_m = section.settings.logo_radius_mobile | default: 0
+  assign logo_width_m = section.settings.logo_width_mobile | default: 0
+  assign logo_max_h = section.settings.logo_max_height | default: 0
+  assign logo_max_h_m = section.settings.logo_max_height_mobile | default: 0
+  assign logo_ha = section.settings.logo_h_align | default: 'default'
+  assign logo_ha_m = section.settings.logo_h_align_mobile | default: 'default'
+%}
+<style>
+  @media (min-width: 991px) {
+    #shopify-section-{{ section.id }} .pp-logo img {
+      object-fit: {{ logo_fit }};
+      object-position: {{ logo_position }};
+      {% if logo_radius > 0 %}border-radius: {{ logo_radius }}px; overflow: hidden;{% endif %}
+      {% if logo_max_h > 0 %}max-height: {{ logo_max_h }}px;{% endif %}
+    }
+    {% if logo_ha == 'left' %}#shopify-section-{{ section.id }} .pp-logo { justify-content: flex-start; }{% endif %}
+    {% if logo_ha == 'center' %}#shopify-section-{{ section.id }} .pp-logo { justify-content: center; }{% endif %}
+    {% if logo_ha == 'right' %}#shopify-section-{{ section.id }} .pp-logo { justify-content: flex-end; }{% endif %}
+  }
+  @media (max-width: 990px) {
+    #shopify-section-{{ section.id }} .pp-logo img {
+      object-fit: {{ logo_fit_m }};
+      object-position: {{ logo_position_m }};
+      {% if logo_radius_m > 0 %}border-radius: {{ logo_radius_m }}px; overflow: hidden;{% endif %}
+      {% if logo_width_m > 0 %}width: min({{ logo_width_m }}px, 100%);{% endif %}
+      {% if logo_max_h_m > 0 %}max-height: {{ logo_max_h_m }}px;{% endif %}
+    }
+    {% if logo_ha_m == 'left' %}#shopify-section-{{ section.id }} .pp-logo { justify-content: flex-start; }{% endif %}
+    {% if logo_ha_m == 'center' %}#shopify-section-{{ section.id }} .pp-logo { justify-content: center; }{% endif %}
+    {% if logo_ha_m == 'right' %}#shopify-section-{{ section.id }} .pp-logo { justify-content: flex-end; }{% endif %}
+  }
+</style>
+
+<header class="pp-header" data-header style="--header-bg:{{ section.settings.background }};--bag-bg:{{ section.settings.bag_background }};--logo-width:{{ section.settings.logo_width }}px">
+  <div class="pp-header__inner page-width">
+    <a class="pp-logo" href="{{ routes.root_url }}" aria-label="{{ shop.name }}">
+      {% if section.settings.logo != blank %}
+        {% liquid
+          assign logo_display = section.settings.logo
+          assign logo_mobile_display = section.settings.logo_mobile
+        %}
+        <picture>
+          {% if logo_mobile_display != blank and logo_mobile_display != logo_display %}
+            <source media="(max-width: 990px)" srcset="{{ logo_mobile_display | image_url: width: 320 }} 320w, {{ logo_mobile_display | image_url: width: 500 }} 500w">
+          {% endif %}
+          {{ logo_display | image_url: width: 500 | image_tag: widths: '160,240,320,500', alt: shop.name }}
+        </picture>
+      {% else %}
+        <span class="pp-logo__paw">{{ section.settings.logo_mark }}</span>
+        <span><b>{{ section.settings.brand_name }}</b><small>{{ section.settings.brand_tagline }}</small></span>
+      {% endif %}
+    </a>
+
+    <nav class="pp-nav" aria-label="{{ section.settings.menu_aria_label }}">
+      {% if section.settings.menu != blank %}
+        {% for link in section.settings.menu.links %}
+          {% render 'pp-nav-link', title: link.title, url: link.url, is_active: link.current, highlight_on: section.settings.nav_highlight_enable, highlight_title: section.settings.nav_highlight_title, badge_on: section.settings.nav_badge_enable, badge_title: section.settings.nav_badge_title, badge_type: section.settings.badge_type, badge_text: section.settings.badge_text, badge_image: section.settings.badge_image, badge_image_mobile: section.settings.badge_image_mobile, highlight2_on: section.settings.nav_highlight2_enable, highlight2_title: section.settings.nav_highlight2_title %}
+        {% endfor %}
+      {% else %}
+        {% assign shop_all_active = false %}{% if request.path == routes.all_products_collection_url %}{% assign shop_all_active = true %}{% endif %}
+        {% assign grooming_active = false %}{% if collection.handle == 'grooming' %}{% assign grooming_active = true %}{% endif %}
+        {% assign nutrition_active = false %}{% if collection.handle == 'nutrition' %}{% assign nutrition_active = true %}{% endif %}
+        {% assign treats_active = false %}{% if collection.handle == 'treats' %}{% assign treats_active = true %}{% endif %}
+        {% assign story_active = false %}{% if page.handle == 'our-story' %}{% assign story_active = true %}{% endif %}
+        {% render 'pp-nav-link', title: section.settings.shop_all_label, url: routes.all_products_collection_url, is_active: shop_all_active, highlight_on: section.settings.nav_highlight_enable, highlight_title: section.settings.nav_highlight_title, badge_on: section.settings.nav_badge_enable, badge_title: section.settings.nav_badge_title, badge_type: section.settings.badge_type, badge_text: section.settings.badge_text, badge_image: section.settings.badge_image, badge_image_mobile: section.settings.badge_image_mobile, highlight2_on: section.settings.nav_highlight2_enable, highlight2_title: section.settings.nav_highlight2_title %}
+        {% render 'pp-nav-link', title: section.settings.grooming_label, url: grooming_url, is_active: grooming_active, highlight_on: section.settings.nav_highlight_enable, highlight_title: section.settings.nav_highlight_title, badge_on: section.settings.nav_badge_enable, badge_title: section.settings.nav_badge_title, badge_type: section.settings.badge_type, badge_text: section.settings.badge_text, badge_image: section.settings.badge_image, badge_image_mobile: section.settings.badge_image_mobile, highlight2_on: section.settings.nav_highlight2_enable, highlight2_title: section.settings.nav_highlight2_title %}
+        {% render 'pp-nav-link', title: section.settings.nutrition_label, url: nutrition_url, is_active: nutrition_active, highlight_on: section.settings.nav_highlight_enable, highlight_title: section.settings.nav_highlight_title, badge_on: section.settings.nav_badge_enable, badge_title: section.settings.nav_badge_title, badge_type: section.settings.badge_type, badge_text: section.settings.badge_text, badge_image: section.settings.badge_image, badge_image_mobile: section.settings.badge_image_mobile, highlight2_on: section.settings.nav_highlight2_enable, highlight2_title: section.settings.nav_highlight2_title %}
+        {% render 'pp-nav-link', title: section.settings.treats_label, url: treats_url, is_active: treats_active, highlight_on: section.settings.nav_highlight_enable, highlight_title: section.settings.nav_highlight_title, badge_on: section.settings.nav_badge_enable, badge_title: section.settings.nav_badge_title, badge_type: section.settings.badge_type, badge_text: section.settings.badge_text, badge_image: section.settings.badge_image, badge_image_mobile: section.settings.badge_image_mobile, highlight2_on: section.settings.nav_highlight2_enable, highlight2_title: section.settings.nav_highlight2_title %}
+        {% render 'pp-nav-link', title: section.settings.story_label, url: story_url, is_active: story_active, highlight_on: section.settings.nav_highlight_enable, highlight_title: section.settings.nav_highlight_title, badge_on: section.settings.nav_badge_enable, badge_title: section.settings.nav_badge_title, badge_type: section.settings.badge_type, badge_text: section.settings.badge_text, badge_image: section.settings.badge_image, badge_image_mobile: section.settings.badge_image_mobile, highlight2_on: section.settings.nav_highlight2_enable, highlight2_title: section.settings.nav_highlight2_title %}
+      {% endif %}
+    </nav>
+
+    <a class="pp-bag" href="{{ routes.cart_url }}" data-cart-open>{% render 'icon-bag' %}{% if section.settings.show_cart_label %}<span>{{ section.settings.cart_label }}</span>{% endif %}<b data-cart-count>{{ cart.item_count }}</b></a>
+    <button class="pp-menu-toggle" aria-label="{{ section.settings.open_menu_label }}" data-menu-toggle>☰</button>
+  </div>
+
+  <div class="pp-mobile-menu" data-mobile-menu>
+    {% if section.settings.menu != blank %}
+      {% for link in section.settings.menu.links %}
+        {% render 'pp-nav-link', title: link.title, url: link.url, is_active: link.current, highlight_on: section.settings.nav_highlight_enable, highlight_title: section.settings.nav_highlight_title, badge_on: section.settings.nav_badge_enable, badge_title: section.settings.nav_badge_title, badge_type: section.settings.badge_type, badge_text: section.settings.badge_text, badge_image: section.settings.badge_image, badge_image_mobile: section.settings.badge_image_mobile, highlight2_on: section.settings.nav_highlight2_enable, highlight2_title: section.settings.nav_highlight2_title %}
+      {% endfor %}
+    {% else %}
+      {% render 'pp-nav-link', title: section.settings.shop_all_label, url: routes.all_products_collection_url, highlight_on: section.settings.nav_highlight_enable, highlight_title: section.settings.nav_highlight_title, badge_on: section.settings.nav_badge_enable, badge_title: section.settings.nav_badge_title, badge_type: section.settings.badge_type, badge_text: section.settings.badge_text, badge_image: section.settings.badge_image, badge_image_mobile: section.settings.badge_image_mobile, highlight2_on: section.settings.nav_highlight2_enable, highlight2_title: section.settings.nav_highlight2_title %}
+      {% render 'pp-nav-link', title: section.settings.grooming_label, url: grooming_url, highlight_on: section.settings.nav_highlight_enable, highlight_title: section.settings.nav_highlight_title, badge_on: section.settings.nav_badge_enable, badge_title: section.settings.nav_badge_title, badge_type: section.settings.badge_type, badge_text: section.settings.badge_text, badge_image: section.settings.badge_image, badge_image_mobile: section.settings.badge_image_mobile, highlight2_on: section.settings.nav_highlight2_enable, highlight2_title: section.settings.nav_highlight2_title %}
+      {% render 'pp-nav-link', title: section.settings.nutrition_label, url: nutrition_url, highlight_on: section.settings.nav_highlight_enable, highlight_title: section.settings.nav_highlight_title, badge_on: section.settings.nav_badge_enable, badge_title: section.settings.nav_badge_title, badge_type: section.settings.badge_type, badge_text: section.settings.badge_text, badge_image: section.settings.badge_image, badge_image_mobile: section.settings.badge_image_mobile, highlight2_on: section.settings.nav_highlight2_enable, highlight2_title: section.settings.nav_highlight2_title %}
+      {% render 'pp-nav-link', title: section.settings.treats_label, url: treats_url, highlight_on: section.settings.nav_highlight_enable, highlight_title: section.settings.nav_highlight_title, badge_on: section.settings.nav_badge_enable, badge_title: section.settings.nav_badge_title, badge_type: section.settings.badge_type, badge_text: section.settings.badge_text, badge_image: section.settings.badge_image, badge_image_mobile: section.settings.badge_image_mobile, highlight2_on: section.settings.nav_highlight2_enable, highlight2_title: section.settings.nav_highlight2_title %}
+      {% render 'pp-nav-link', title: section.settings.story_label, url: story_url, highlight_on: section.settings.nav_highlight_enable, highlight_title: section.settings.nav_highlight_title, badge_on: section.settings.nav_badge_enable, badge_title: section.settings.nav_badge_title, badge_type: section.settings.badge_type, badge_text: section.settings.badge_text, badge_image: section.settings.badge_image, badge_image_mobile: section.settings.badge_image_mobile, highlight2_on: section.settings.nav_highlight2_enable, highlight2_title: section.settings.nav_highlight2_title %}
+    {% endif %}
+  </div>
+</header>
+
+{% render 'pp-nav-enhancements', section: section %}
+
+{% schema %}
+{
+  "name": "Header",
+  "settings": [
+    {"type": "image_picker", "id": "logo", "label": "Logo"},
+    {"type": "image_picker", "id": "logo_mobile", "label": "Logo — mobile (optional)", "info": "Shown at 990px and narrower instead of the desktop logo above. Leave empty to use the same logo on mobile."},
+    {"type": "range", "id": "logo_width", "min": 100, "max": 300, "step": 10, "unit": "px", "label": "Logo width", "default": 240},
+    {"type": "text", "id": "logo_mark", "label": "Fallback logo mark", "default": "●"},
+    {"type": "text", "id": "brand_name", "label": "Fallback brand name", "default": "PUPS & PAWS"},
+    {"type": "text", "id": "brand_tagline", "label": "Fallback brand tagline", "default": "PARTNERS IN PETHOOD"},
+    {"type": "link_list", "id": "menu", "label": "Main menu"},
+    {"type": "text", "id": "menu_aria_label", "label": "Menu accessibility label", "default": "Primary"},
+    {"type": "header", "content": "Fallback menu labels and links"},
+    {"type": "text", "id": "shop_all_label", "label": "Shop all label", "default": "Shop all"},
+    {"type": "text", "id": "grooming_label", "label": "Grooming label", "default": "Grooming"},
+    {"type": "url", "id": "grooming_link", "label": "Grooming link"},
+    {"type": "text", "id": "nutrition_label", "label": "Nutrition label", "default": "Nutrition"},
+    {"type": "url", "id": "nutrition_link", "label": "Nutrition link"},
+    {"type": "text", "id": "treats_label", "label": "Treats label", "default": "Treats"},
+    {"type": "url", "id": "treats_link", "label": "Treats link"},
+    {"type": "text", "id": "story_label", "label": "Our Story label", "default": "Our Story"},
+    {"type": "url", "id": "story_link", "label": "Our Story link"},
+    {"type": "header", "content": "Cuddle Care Box menu highlight"},
+    {"type": "paragraph", "content": "Gives one menu item its own colour. Matched on the link title, not its position, so you can reorder the menu freely. Works in the desktop header, the sticky header and the mobile drawer."},
+    {"type": "checkbox", "id": "nav_highlight_enable", "label": "Enable highlight", "default": true},
+    {"type": "text", "id": "nav_highlight_title", "label": "Target menu title", "default": "Cuddle Care Box", "info": "Must match the menu item text. Case and hyphens are ignored, so \"Cuddle-Care Box\" also matches."},
+    {"type": "color", "id": "nav_highlight_color", "label": "Text colour", "default": "#ff5a0a"},
+    {"type": "color", "id": "nav_highlight_hover_color", "label": "Hover colour", "default": "#47105d"},
+    {"type": "checkbox", "id": "nav_highlight_bg_enable", "label": "Show background pill", "default": true},
+    {"type": "color", "id": "nav_highlight_bg", "label": "Background colour", "default": "#fff0e8"},
+    {"type": "select", "id": "nav_highlight_weight", "label": "Font weight", "default": "800", "options": [{"value": "500", "label": "Medium"}, {"value": "600", "label": "Semibold"}, {"value": "700", "label": "Bold"}, {"value": "800", "label": "Extra bold"}, {"value": "900", "label": "Black"}]},
+    {"type": "range", "id": "nav_highlight_pad_x", "min": 0, "max": 32, "step": 1, "unit": "px", "label": "Horizontal padding", "default": 14},
+    {"type": "range", "id": "nav_highlight_pad_y", "min": 0, "max": 20, "step": 1, "unit": "px", "label": "Vertical padding", "default": 8},
+    {"type": "range", "id": "nav_highlight_radius", "min": 0, "max": 50, "step": 1, "unit": "px", "label": "Border radius", "default": 50},
+    {"type": "checkbox", "id": "nav_highlight_shine", "label": "Animate a moving shine across the highlight", "default": true, "info": "A soft light sweep loops across the highlighted pill every few seconds. Turned off automatically when 'Enable motion and reveal effects' (Theme settings → Brand and layout) is off, or for visitors who prefer reduced motion."},
+    {"type": "header", "content": "Creator Club menu highlight"},
+    {"type": "paragraph", "content": "A second, independent menu highlight — separate from the Cuddle Care Box highlight above and safe to use alongside it. Matched on the link title, not its position."},
+    {"type": "checkbox", "id": "nav_highlight2_enable", "label": "Enable highlight", "default": true},
+    {"type": "text", "id": "nav_highlight2_title", "label": "Target menu title", "default": "Creator Club", "info": "Must match the menu item text. Case and hyphens are ignored."},
+    {"type": "color", "id": "nav_highlight2_color", "label": "Text colour", "default": "#47105d"},
+    {"type": "color", "id": "nav_highlight2_hover_color", "label": "Hover colour", "default": "#ff5a0a"},
+    {"type": "checkbox", "id": "nav_highlight2_bg_enable", "label": "Show background pill", "default": false},
+    {"type": "color", "id": "nav_highlight2_bg", "label": "Background colour", "default": "#f3e9f8"},
+    {"type": "select", "id": "nav_highlight2_weight", "label": "Font weight", "default": "800", "options": [{"value": "500", "label": "Medium"}, {"value": "600", "label": "Semibold"}, {"value": "700", "label": "Bold"}, {"value": "800", "label": "Extra bold"}, {"value": "900", "label": "Black"}]},
+    {"type": "range", "id": "nav_highlight2_pad_x", "min": 0, "max": 32, "step": 1, "unit": "px", "label": "Horizontal padding", "default": 14},
+    {"type": "range", "id": "nav_highlight2_pad_y", "min": 0, "max": 20, "step": 1, "unit": "px", "label": "Vertical padding", "default": 8},
+    {"type": "range", "id": "nav_highlight2_radius", "min": 0, "max": 50, "step": 1, "unit": "px", "label": "Border radius", "default": 50},
+    {"type": "checkbox", "id": "nav_highlight2_shine", "label": "Animate a moving shine across the highlight", "default": false, "info": "Off by default to keep this second highlight subtle alongside the Cuddle Care Box one. Respects 'Enable motion and reveal effects' and prefers-reduced-motion."},
+    {"type": "checkbox", "id": "nav_highlight2_blink", "label": "Blink the highlight", "default": true, "info": "Gently fades the label's opacity in and out on a loop to draw the eye. Respects 'Enable motion and reveal effects' and prefers-reduced-motion. Can be combined with the shine sweep above, or used alone."},
+    {"type": "range", "id": "nav_highlight2_blink_speed", "min": 1, "max": 5, "step": 0.5, "unit": "s", "label": "Blink speed (cycle length)", "default": 1.5},
+    {"type": "header", "content": "Grooming menu badge"},
+    {"type": "paragraph", "content": "A small badge pinned to the upper-right of one menu word. Anchored to the text itself, so it never widens the header or the page."},
+    {"type": "checkbox", "id": "nav_badge_enable", "label": "Enable badge", "default": true},
+    {"type": "text", "id": "nav_badge_title", "label": "Target menu title", "default": "Grooming"},
+    {"type": "select", "id": "badge_type", "label": "Badge type", "default": "text", "options": [{"value": "text", "label": "Text"}, {"value": "image", "label": "Image"}]},
+    {"type": "text", "id": "badge_text", "label": "Badge text", "default": "NEW", "info": "Short is best — NEW, ★, or a paw ✦."},
+    {"type": "header", "content": "Badge image — desktop"},
+    {"type": "image_picker", "id": "badge_image", "label": "Badge image (desktop)", "info": "Used when Badge type is Image. A square PNG or SVG works best."},
+    {"type": "header", "content": "Badge image — mobile"},
+    {"type": "image_picker", "id": "badge_image_mobile", "label": "Badge image — mobile (optional)", "info": "Shown at 990px and narrower instead of the desktop image above. Leave empty to use the same image on mobile."},
+    {"type": "header", "content": "Badge image fit — desktop"},
+    {"type": "select", "id": "badge_image_fit", "label": "How the photo fills its box", "default": "contain", "options": [{"value": "contain", "label": "Show the whole photo (may leave empty space)"}, {"value": "cover", "label": "Fill the box completely (may crop)"}]},
+    {"type": "select", "id": "badge_image_position", "label": "Photo alignment inside its box", "info": "Only matters when the photo's shape doesn't exactly match the box.", "default": "center center", "options": [{"value": "left top", "label": "Top left"}, {"value": "center top", "label": "Top center"}, {"value": "right top", "label": "Top right"}, {"value": "left center", "label": "Middle left"}, {"value": "center center", "label": "Middle center"}, {"value": "right center", "label": "Middle right"}, {"value": "left bottom", "label": "Bottom left"}, {"value": "center bottom", "label": "Bottom center"}, {"value": "right bottom", "label": "Bottom right"}]},
+    {"type": "header", "content": "Badge image fit — mobile"},
+    {"type": "select", "id": "badge_image_fit_mobile", "label": "How the photo fills its box", "default": "contain", "options": [{"value": "contain", "label": "Show the whole photo (may leave empty space)"}, {"value": "cover", "label": "Fill the box completely (may crop)"}]},
+    {"type": "select", "id": "badge_image_position_mobile", "label": "Photo alignment inside its box", "info": "Only matters when the photo's shape doesn't exactly match the box.", "default": "center center", "options": [{"value": "left top", "label": "Top left"}, {"value": "center top", "label": "Top center"}, {"value": "right top", "label": "Top right"}, {"value": "left center", "label": "Middle left"}, {"value": "center center", "label": "Middle center"}, {"value": "right center", "label": "Middle right"}, {"value": "left bottom", "label": "Bottom left"}, {"value": "center bottom", "label": "Bottom center"}, {"value": "right bottom", "label": "Bottom right"}]},
+    {"type": "range", "id": "badge_image_size", "min": 10, "max": 40, "step": 1, "unit": "px", "label": "Badge image size", "default": 18},
+    {"type": "header", "content": "Badge image size — mobile"},
+    {"type": "range", "id": "badge_image_size_mobile", "min": 0, "max": 40, "step": 1, "unit": "px", "label": "Badge image size — mobile (0 = same as desktop)", "default": 0},
+    {"type": "header", "content": "Badge image corner rounding — desktop"},
+    {"type": "range", "id": "badge_image_radius", "min": 0, "max": 40, "step": 1, "unit": "px", "label": "Corner rounding (0 = theme default)", "default": 0},
+    {"type": "header", "content": "Badge image corner rounding — mobile"},
+    {"type": "range", "id": "badge_image_radius_mobile", "min": 0, "max": 40, "step": 1, "unit": "px", "label": "Corner rounding (0 = theme default)", "default": 0},
+    {"type": "color", "id": "badge_text_color", "label": "Text colour", "default": "#ffffff"},
+    {"type": "color", "id": "badge_bg_color", "label": "Background colour", "default": "#ff2b78"},
+    {"type": "range", "id": "badge_font_size", "min": 7, "max": 16, "step": 1, "unit": "px", "label": "Font size", "default": 9},
+    {"type": "range", "id": "badge_offset_x", "min": -40, "max": 40, "step": 1, "unit": "px", "label": "Desktop horizontal offset", "default": -8},
+    {"type": "range", "id": "badge_offset_y", "min": -30, "max": 30, "step": 1, "unit": "px", "label": "Desktop vertical offset", "default": -4},
+    {"type": "range", "id": "badge_offset_x_mobile", "min": -40, "max": 40, "step": 1, "unit": "px", "label": "Mobile horizontal offset", "default": -8},
+    {"type": "range", "id": "badge_offset_y_mobile", "min": -30, "max": 30, "step": 1, "unit": "px", "label": "Mobile vertical offset", "default": -2},
+    {"type": "header", "content": "Logo image fit — desktop"},
+    {"type": "select", "id": "logo_fit", "label": "How the logo fills its box", "default": "contain", "options": [{"value": "contain", "label": "Show the whole logo (may leave empty space)"}, {"value": "cover", "label": "Fill the box completely (may crop)"}]},
+    {"type": "select", "id": "logo_position", "label": "Logo alignment inside its box", "info": "Only matters when the logo's shape doesn't exactly match the box.", "default": "center center", "options": [{"value": "left top", "label": "Top left"}, {"value": "center top", "label": "Top center"}, {"value": "right top", "label": "Top right"}, {"value": "left center", "label": "Middle left"}, {"value": "center center", "label": "Middle center"}, {"value": "right center", "label": "Middle right"}, {"value": "left bottom", "label": "Bottom left"}, {"value": "center bottom", "label": "Bottom center"}, {"value": "right bottom", "label": "Bottom right"}]},
+    {"type": "header", "content": "Logo image fit — mobile"},
+    {"type": "select", "id": "logo_fit_mobile", "label": "How the logo fills its box", "default": "contain", "options": [{"value": "contain", "label": "Show the whole logo (may leave empty space)"}, {"value": "cover", "label": "Fill the box completely (may crop)"}]},
+    {"type": "select", "id": "logo_position_mobile", "label": "Logo alignment inside its box", "info": "Only matters when the logo's shape doesn't exactly match the box.", "default": "center center", "options": [{"value": "left top", "label": "Top left"}, {"value": "center top", "label": "Top center"}, {"value": "right top", "label": "Top right"}, {"value": "left center", "label": "Middle left"}, {"value": "center center", "label": "Middle center"}, {"value": "right center", "label": "Middle right"}, {"value": "left bottom", "label": "Bottom left"}, {"value": "center bottom", "label": "Bottom center"}, {"value": "right bottom", "label": "Bottom right"}]},
+    {"type": "header", "content": "Logo corner rounding — desktop"},
+    {"type": "range", "id": "logo_radius", "min": 0, "max": 60, "step": 2, "unit": "px", "label": "Corner rounding (0 = theme default)", "default": 0},
+    {"type": "header", "content": "Logo corner rounding — mobile"},
+    {"type": "range", "id": "logo_radius_mobile", "min": 0, "max": 60, "step": 2, "unit": "px", "label": "Corner rounding (0 = theme default)", "default": 0},
+    {"type": "header", "content": "Logo width — mobile"},
+    {"type": "range", "id": "logo_width_mobile", "min": 0, "max": 300, "step": 10, "unit": "px", "label": "Logo width — mobile (0 = same as desktop)", "default": 0},
+    {"type": "header", "content": "Logo height override — desktop"},
+    {"type": "range", "id": "logo_max_height", "min": 0, "max": 160, "step": 5, "unit": "px", "label": "Logo max height (0 = automatic, currently 50px)", "default": 0},
+    {"type": "header", "content": "Logo height override — mobile"},
+    {"type": "range", "id": "logo_max_height_mobile", "min": 0, "max": 160, "step": 5, "unit": "px", "label": "Logo max height — mobile (0 = automatic)", "default": 0},
+    {"type": "header", "content": "Logo box position — desktop"},
+    {"type": "select", "id": "logo_h_align", "label": "Horizontal position", "info": "Applies at 991px and wider. \"Default\" keeps the theme's original spacing.", "default": "default", "options": [{"value": "default", "label": "Default (theme spacing)"}, {"value": "left", "label": "Left"}, {"value": "center", "label": "Center"}, {"value": "right", "label": "Right"}]},
+    {"type": "header", "content": "Logo box position — mobile"},
+    {"type": "select", "id": "logo_h_align_mobile", "label": "Horizontal position", "info": "Applies at 990px and narrower (phones and tablets). \"Default\" keeps the theme's original spacing.", "default": "default", "options": [{"value": "default", "label": "Default (theme spacing)"}, {"value": "left", "label": "Left"}, {"value": "center", "label": "Center"}, {"value": "right", "label": "Right"}]},
+    {"type": "header", "content": "Header appearance"},
+    {"type": "color", "id": "background", "label": "Header background", "default": "#ffffff"},
+    {"type": "color", "id": "bag_background", "label": "Care bag background", "default": "#ffa44f"},
+    {"type": "checkbox", "id": "sticky_header", "label": "Keep header visible while scrolling", "default": true},
+    {"type": "checkbox", "id": "show_cart_label", "label": "Show Care bag label", "default": true},
+    {"type": "text", "id": "cart_label", "label": "Care bag label", "default": "Care bag"},
+    {"type": "text", "id": "open_menu_label", "label": "Mobile menu accessibility label", "default": "Open menu"},
+    {"type": "header", "content": "Professional section controls"},
+    {"type": "paragraph", "content": "Optional overrides. Leave disabled to preserve the original V7 design."},
+    {"type": "checkbox", "id": "pp_custom_colors", "label": "Override section colours", "default": false},
+    {"type": "color", "id": "pp_background", "label": "Background colour", "default": "#ffffff"},
+    {"type": "color", "id": "pp_text_color", "label": "Text colour", "default": "#351042"},
+    {"type": "color", "id": "pp_accent_color", "label": "Accent colour", "default": "#ff5a0a"},
+    {"type": "checkbox", "id": "pp_custom_type", "label": "Override section typography", "default": false},
+    {"type": "select", "id": "pp_heading_font", "label": "Heading font", "default": "theme", "options": [{"value": "theme", "label": "Use theme default"}, {"value": "aquatail", "label": "Aquatail — included"}, {"value": "futura", "label": "Futura — included"}]},
+    {"type": "select", "id": "pp_heading_weight", "label": "Heading weight", "default": "700", "options": [{"value": "400", "label": "Regular"}, {"value": "600", "label": "Semibold"}, {"value": "700", "label": "Bold"}, {"value": "900", "label": "Black"}]},
+    {"type": "range", "id": "pp_heading_size", "min": 24, "max": 104, "step": 2, "unit": "px", "label": "Heading size — desktop", "default": 50},
+    {"type": "range", "id": "pp_heading_size_mobile", "min": 22, "max": 70, "step": 2, "unit": "px", "label": "Heading size — mobile", "default": 44},
+    {"type": "range", "id": "pp_heading_tracking", "min": -8, "max": 10, "step": 1, "unit": "%", "label": "Heading letter spacing", "default": -3},
+    {"type": "select", "id": "pp_body_font", "label": "Body font", "default": "theme", "options": [{"value": "theme", "label": "Use theme default"}, {"value": "aquatail", "label": "Aquatail — included"}, {"value": "futura", "label": "Futura — included"}]},
+    {"type": "select", "id": "pp_body_weight", "label": "Body weight", "default": "400", "options": [{"value": "400", "label": "Regular"}, {"value": "500", "label": "Medium"}, {"value": "600", "label": "Semibold"}, {"value": "700", "label": "Bold"}]},
+    {"type": "range", "id": "pp_body_size", "min": 12, "max": 24, "step": 1, "unit": "px", "label": "Body size — desktop", "default": 16},
+    {"type": "range", "id": "pp_body_size_mobile", "min": 12, "max": 22, "step": 1, "unit": "px", "label": "Body size — mobile", "default": 15},
+    {"type": "range", "id": "pp_line_height", "min": 10, "max": 20, "step": 1, "label": "Body line height", "default": 16},
+    {"type": "checkbox", "id": "pp_custom_spacing", "label": "Override section spacing", "default": false},
+    {"type": "range", "id": "pp_padding_top", "min": 0, "max": 200, "step": 4, "unit": "px", "label": "Top padding — desktop", "default": 80},
+    {"type": "range", "id": "pp_padding_bottom", "min": 0, "max": 200, "step": 4, "unit": "px", "label": "Bottom padding — desktop", "default": 80},
+    {"type": "range", "id": "pp_padding_top_mobile", "min": 0, "max": 120, "step": 4, "unit": "px", "label": "Top padding — mobile", "default": 56},
+    {"type": "range", "id": "pp_padding_bottom_mobile", "min": 0, "max": 120, "step": 4, "unit": "px", "label": "Bottom padding — mobile", "default": 56},
+    {"type": "range", "id": "pp_content_width", "min": 0, "max": 1800, "step": 100, "unit": "px", "label": "Content width (0 = theme default)", "default": 0},
+    {"type": "checkbox", "id": "pp_disable_motion", "label": "Disable motion in this section", "default": false},
+    {"type": "range", "id": "pp_min_height", "min": 0, "max": 1000, "step": 50, "unit": "px", "label": "Section minimum height (0 = automatic)", "default": 0}
+  ]
+}
+{% endschema %}

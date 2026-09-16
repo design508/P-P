@@ -1,0 +1,148 @@
+<!doctype html>
+<html class="no-js" lang="{{ request.locale.iso_code }}">
+  <head>
+  <script src="https://sdk.breezesdk.store/nexus/ctrl/shopify/mods/241.0.1/mod.js" defer="defer"></script>
+  <script src="https://sdk.breezesdk.store/configs/6z1aic-0h/crt.js" defer="defer"></script>
+
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-PGR9KMCH');</script>
+    <meta name="google-site-verification" content="SpbK-2eYty7h37ww6y1EfmVk0QYPyLHPOviLgHEobYQ" />
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="theme-color" content="{{ settings.color_primary }}">
+    <link rel="canonical" href="{{ canonical_url }}">
+    {% if settings.favicon != blank %}
+      <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 64, height: 64 }}">
+    {% endif %}
+    <title>
+      {{ page_title }}
+      {% if current_tags %} – tagged "{{ current_tags | join: ', ' }}"{% endif %}
+      {% if current_page != 1 %} – Page {{ current_page }}{% endif %}
+      {% unless page_title contains shop.name %} – {{ shop.name }}{% endunless %}
+    </title>
+    {% if page_description %}<meta name="description" content="{{ page_description | escape }}">{% endif %}
+    {{ content_for_header }}
+    {% assign body_font_bold = settings.body_font | font_modify: 'weight', '700' %}
+    {% assign heading_font_regular = settings.heading_font | font_modify: 'weight', '400' %}
+    <style>
+      @font-face{font-family:'PP Aquatail';src:url('{{ 'pp-aquatail-regular.ttf' | asset_url }}') format('truetype');font-style:normal;font-weight:400;font-display:swap}
+      @font-face{font-family:'PP Aquatail';src:url('{{ 'pp-aquatail-medium.ttf' | asset_url }}') format('truetype');font-style:normal;font-weight:500;font-display:swap}
+      @font-face{font-family:'PP Aquatail';src:url('{{ 'pp-aquatail-semibold.ttf' | asset_url }}') format('truetype');font-style:normal;font-weight:600;font-display:swap}
+      @font-face{font-family:'PP Aquatail';src:url('{{ 'pp-aquatail-bold.ttf' | asset_url }}') format('truetype');font-style:normal;font-weight:700;font-display:swap}
+      @font-face{font-family:'PP Aquatail';src:url('{{ 'pp-aquatail-extrabold.ttf' | asset_url }}') format('truetype');font-style:normal;font-weight:800;font-display:swap}
+      @font-face{font-family:'PP Aquatail';src:url('{{ 'pp-aquatail-black.ttf' | asset_url }}') format('truetype');font-style:normal;font-weight:900;font-display:swap}
+      @font-face{font-family:'PP Futura';src:url('{{ 'pp-futura-book.ttf' | asset_url }}') format('truetype');font-style:normal;font-weight:400;font-display:swap}
+      @font-face{font-family:'PP Futura';src:url('{{ 'pp-futura-book.ttf' | asset_url }}') format('truetype');font-style:normal;font-weight:500;font-display:swap}
+      @font-face{font-family:'PP Futura';src:url('{{ 'pp-futura-bold.ttf' | asset_url }}') format('truetype');font-style:normal;font-weight:600;font-display:swap}
+      @font-face{font-family:'PP Futura';src:url('{{ 'pp-futura-bold.ttf' | asset_url }}') format('truetype');font-style:normal;font-weight:700;font-display:swap}
+      @font-face{font-family:'PP Futura';src:url('{{ 'pp-futura-heavy.ttf' | asset_url }}') format('truetype');font-style:normal;font-weight:800;font-display:swap}
+      @font-face{font-family:'PP Futura';src:url('{{ 'pp-futura-heavy.ttf' | asset_url }}') format('truetype');font-style:normal;font-weight:900;font-display:swap}
+      {{ settings.heading_font | font_face: font_display: 'swap' }}
+      {% if heading_font_regular %}{{ heading_font_regular | font_face: font_display: 'swap' }}{% endif %}
+      {{ settings.body_font | font_face: font_display: 'swap' }}
+      {% if body_font_bold %}{{ body_font_bold | font_face: font_display: 'swap' }}{% endif %}
+    </style>
+    {{ 'theme.css' | asset_url | stylesheet_tag }}
+    <style>
+      :root {
+        --purple: {{ settings.color_primary }};
+        --purple2: {{ settings.color_secondary }};
+        --orange: {{ settings.color_orange }};
+        --pink: {{ settings.color_pink }};
+        --green: {{ settings.color_green }};
+        --ink: {{ settings.color_ink }};
+        --muted: {{ settings.color_muted }};
+        --line: {{ settings.color_line }};
+        --page: {{ settings.page_width }}px;
+        --display: {% case settings.heading_font_source %}{% when 'aquatail' %}'PP Aquatail', Georgia, serif{% when 'futura' %}'PP Futura', Arial, sans-serif{% else %}{{ settings.heading_font.family }}, {{ settings.heading_font.fallback_families }}{% endcase %};
+        --body: {% case settings.body_font_source %}{% when 'aquatail' %}'PP Aquatail', Georgia, serif{% when 'futura' %}'PP Futura', Arial, sans-serif{% else %}{{ settings.body_font.family }}, {{ settings.body_font.fallback_families }}{% endcase %};
+        --heading-tracking: {{ settings.heading_letter_spacing | divided_by: 100.0 }}em;
+--body-tracking: {{ settings.body_letter_spacing | divided_by: 100.0 }}em;
+        --section-space: clamp({{ settings.section_spacing | times: 0.85 }}px, {{ settings.section_spacing | divided_by: 14.4 }}vw, {{ settings.section_spacing | times: 1.35 }}px);
+        --section-space-mobile: {{ settings.section_spacing_mobile }}px;
+        --button-radius: {{ settings.button_radius }}px;
+        --card-radius: {{ settings.card_radius }}px;
+        --card-ratio: {{ settings.card_image_ratio }};
+        --card-bg-1: {{ settings.card_background_1 }};
+        --card-bg-2: {{ settings.card_background_2 }};
+        --card-bg-3: {{ settings.card_background_3 }};
+        --card-bg-4: {{ settings.card_background_4 }};
+      }
+      body { background: {{ settings.color_background }}; font-size: clamp({{ settings.base_font_size | times: 0.88 }}px, {{ settings.base_font_size | divided_by: 14.4 }}vw, {{ settings.base_font_size | times: 1.30 }}px); letter-spacing: var(--body-tracking); }
+      h1, h2, h3, h4, h5, h6 {font-family: var(--display);
+  letter-spacing: var(--heading-tracking) !important; }
+  h1 *,
+h2 *,
+h3 *,
+h4 *,
+h5 *,
+h6 * {
+  letter-spacing: var(--heading-tracking) !important;
+}
+
+p,
+li,
+a,
+label,
+input,
+textarea,
+select {
+  letter-spacing: var(--body-tracking) !important;
+}
+      {% if settings.override_global_heading_sizes %}
+        h1 { font-size: clamp({{ settings.global_h1_size | times: 0.85 }}px, {{ settings.global_h1_size | divided_by: 14.4 }}vw, {{ settings.global_h1_size | times: 1.35 }}px) !important; }
+        h2 { font-size: clamp({{ settings.global_h2_size | times: 0.85 }}px, {{ settings.global_h2_size | divided_by: 14.4 }}vw, {{ settings.global_h2_size | times: 1.35 }}px) !important; }
+        @media (max-width: 749px) {
+          h1 { font-size: {{ settings.global_h1_size_mobile }}px !important; }
+          h2 { font-size: {{ settings.global_h2_size_mobile }}px !important; }
+        }
+      {% endif %}
+      .pp-btn, button, [type="submit"] { font-size: clamp({{ settings.button_font_size | times: 0.90 }}px, {{ settings.button_font_size | divided_by: 14.4 }}vw, {{ settings.button_font_size | times: 1.25 }}px); font-weight: {{ settings.button_font_weight }}; }
+      .pp-card__media { border-radius: var(--card-radius); aspect-ratio: var(--card-ratio); background: var(--card-bg-1); transition: background-color .3s ease; }
+      .pp-card:nth-child(2) .pp-card__media { background: var(--card-bg-2); }
+      .pp-card:nth-child(3) .pp-card__media { background: var(--card-bg-3); }
+      .pp-card:nth-child(4) .pp-card__media { background: var(--card-bg-4); }
+      @media (max-width: 749px) {
+        body { font-size: {{ settings.base_font_size }}px; }
+        .pp-btn, button, [type="submit"] { font-size: {{ settings.button_font_size }}px; }
+      }
+      body.pp-motion-off *, body.pp-motion-off *::before, body.pp-motion-off *::after { animation: none !important; transition: none !important; }
+      body.pp-motion-off .pp-reveal { opacity: 1 !important; transform: none !important; }
+    </style>
+    {{ 'pp-motion.css' | asset_url | stylesheet_tag }}
+    <script src="{{ 'theme.js' | asset_url }}" defer="defer"></script>
+    {%- comment -%}
+      Cuddle Care Box glue: PDP CTA variant sync + builder preselection.
+      Deferred, so it runs immediately after theme.js has initialised the builder.
+    {%- endcomment -%}
+    <script src="{{ 'pp-cuddle-care.js' | asset_url }}" defer="defer"></script>
+    {%- comment -%}
+      New site-wide interactivity: ambient scroll parallax + sticky
+      add-to-cart show/hide. Deferred, additive, never edits theme.js.
+    {%- endcomment -%}
+    <script src="{{ 'pp-motion.js' | asset_url }}" defer="defer"></script>
+    {%- comment -%}
+      Auto-tints each product card's photo background to a soft pastel of
+      that product's own packaging color, instead of the fixed rotation of
+      theme-setting colors. Deferred, additive, never edits theme.js.
+    {%- endcomment -%}
+    <script src="{{ 'pp-card-auto-color.js' | asset_url }}" defer="defer"></script>
+  </head>
+  <body class="template-{{ template.name | handle }}{% unless settings.enable_animations %} pp-motion-off{% endunless %}">
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PGR9KMCH"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    {% render 'pp-ambient-motion' %}
+    <a class="skip-link" href="#MainContent">Skip to content</a>
+    {% sections 'header-group' %}
+    <main id="MainContent" role="main">{{ content_for_layout }}</main>
+    {% sections 'footer-group' %}
+    {% render 'cart-drawer' %}
+    {% render 'site-popup' %}
+    
+  </body>
+</html>
+

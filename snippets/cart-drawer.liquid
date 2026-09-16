@@ -1,0 +1,15 @@
+{% if settings.cart_drawer_enable %}
+<aside class="pp-cart-drawer" data-cart-drawer aria-hidden="true">
+  <button class="pp-cart-drawer__overlay" data-cart-close aria-label="Close cart"></button>
+  <div class="pp-cart-drawer__panel" role="dialog" aria-modal="true" aria-label="Shopping bag">
+    <div class="pp-cart-drawer__head"><div><span class="pp-kicker">CARE BAG</span><h2>Your picks</h2></div><button type="button" data-cart-close aria-label="Close cart">×</button></div>
+    <div class="pp-cart-drawer__body" data-cart-drawer-body><p class="pp-cart-loading">Loading your care bag…</p></div>
+    <div class="pp-cart-drawer__foot" data-cart-drawer-foot hidden>
+      <div class="pp-cart-total"><span>Subtotal</span><strong data-cart-subtotal></strong></div>
+      <a class="pp-btn pp-btn--orange" href="{{ routes.cart_url }}">View bag & checkout {% render 'icon-arrow' %}</a>
+      <small>Taxes and shipping are calculated at checkout.</small>
+    </div>
+  </div>
+</aside>
+{% endif %}
+

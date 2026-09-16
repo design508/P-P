@@ -1,0 +1,605 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "ccc_hero": {
+      "type": "ccc-hero",
+      "settings": {
+        "eyebrow": "PUPS & PAWS CREATOR CLUB",
+        "heading": "Your Pet Has Main-Character Energy",
+        "text": "Share the everyday moments that make life with your pet special. Post a reel featuring your Pups & Paws favourites and unlock rewards for being part of our pet-parent community.",
+        "primary_label": "Join the Pack",
+        "primary_target": "creator-club-form",
+        "secondary_label": "See How It Works",
+        "secondary_target": "ccc-how-it-works",
+        "reassurance": "No huge following needed. Just real pets, real moments and lots of love.",
+        "squiggle_enable": true,
+        "scroll_cue_enable": true,
+        "scroll_cue_label": "See what's inside",
+        "roadmap_enable": true,
+        "roadmap_1_icon": "🐾",
+        "roadmap_1_label": "How it works",
+        "roadmap_1_target": "ccc-how-it-works",
+        "roadmap_2_icon": "🎁",
+        "roadmap_2_label": "Rewards",
+        "roadmap_2_target": "ccc-rewards",
+        "roadmap_3_icon": "💡",
+        "roadmap_3_label": "Content ideas",
+        "roadmap_3_target": "ccc-ideas",
+        "roadmap_4_icon": "❓",
+        "roadmap_4_label": "FAQ",
+        "roadmap_4_target": "ccc-faq",
+        "background": "#fffaf7",
+        "heading_color": "#351042",
+        "accent_color": "#fd2d7b",
+        "eyebrow_bg": "#f3e9f8",
+        "visual_bg": "#ffe9dc",
+        "padding_top": 72,
+        "padding_bottom": 64
+      }
+    },
+    "ccc_ticker": {
+      "type": "announcement-bar",
+      "settings": {
+        "accessibility_label": "Creator Club highlights",
+        "text_1": "REAL PETS",
+        "text_2": "REAL MOMENTS • CREATOR REWARDS",
+        "text_3": "NO HUGE FOLLOWING NEEDED • JOIN THE PUPS & PAWS PACK",
+        "link": "",
+        "background": "#47105d",
+        "text_color": "#ffffff",
+        "accent_color": "#ff9d45",
+        "speed": 25,
+        "pause_on_hover": true,
+        "pp_custom_colors": false,
+        "pp_background": "#ffffff",
+        "pp_text_color": "#351042",
+        "pp_accent_color": "#ff5a0a",
+        "pp_custom_type": false,
+        "pp_heading_font": "theme",
+        "pp_heading_weight": "700",
+        "pp_heading_size": 64,
+        "pp_heading_size_mobile": 44,
+        "pp_heading_tracking": -3,
+        "pp_body_font": "theme",
+        "pp_body_weight": "400",
+        "pp_body_size": 16,
+        "pp_body_size_mobile": 15,
+        "pp_line_height": 16,
+        "pp_custom_spacing": false,
+        "pp_padding_top": 80,
+        "pp_padding_bottom": 80,
+        "pp_padding_top_mobile": 56,
+        "pp_padding_bottom_mobile": 56,
+        "pp_content_width": 0,
+        "pp_disable_motion": false,
+        "pp_custom_buttons": false,
+        "pp_button_background": "#47105d",
+        "pp_button_text": "#ffffff",
+        "pp_button_height": 48,
+        "pp_button_radius": 40,
+        "pp_min_height": 0
+      }
+    },
+    "ccc_intro": {
+      "type": "ccc-intro",
+      "settings": {
+        "label": "FOR PET PARENTS, BY PET PARENTS",
+        "heading": "Their everyday chaos deserves the spotlight.",
+        "text": "The zoomies. The muddy paws. The post-bath fluff. The cuddles that somehow take over the whole bed. We want to see the honest, funny and heart-melting moments that make your pet yours.",
+        "supporting": "You create the moment. We celebrate it with you.",
+        "background": "#ffffff",
+        "accent_color": "#ff5a0a",
+        "media_bg": "#f3e9f8",
+        "padding_top": 64,
+        "padding_bottom": 64
+      }
+    },
+    "ccc_how": {
+      "type": "ccc-how-it-works",
+      "blocks": {
+        "step-1": {
+          "type": "step",
+          "settings": {
+            "step_label": "01 — UNBOX",
+            "heading": "Treat Your Pet",
+            "text": "Shop your pet's favourite Pups & Paws grooming or wellness product and wait for the order to arrive.",
+            "icon": "unbox"
+          }
+        },
+        "step-2": {
+          "type": "step",
+          "settings": {
+            "step_label": "02 — ROLL CAMERA",
+            "heading": "Capture the Chaos",
+            "text": "Film a natural reel featuring your pet and the product. No stiff scripts or studio setup needed.",
+            "icon": "camera"
+          }
+        },
+        "step-3": {
+          "type": "step",
+          "settings": {
+            "step_label": "03 — FETCH REWARDS",
+            "heading": "Share & Get Rewarded",
+            "text": "Post the reel, tag our official Instagram account and submit the reel link for verification.",
+            "icon": "paw"
+          }
+        }
+      },
+      "block_order": [
+        "step-1",
+        "step-2",
+        "step-3"
+      ],
+      "settings": {
+        "heading": "Three little steps. That's it.",
+        "background": "#fdf7fb",
+        "accent_color": "#ff5a0a",
+        "icon_bg": "#f3e9f8",
+        "icon_color": "#47105d",
+        "padding_top": 64,
+        "padding_bottom": 64
+      }
+    },
+    "ccc_tiers": {
+      "type": "ccc-reward-tiers",
+      "blocks": {
+        "tier-1": {
+          "type": "tier",
+          "settings": {
+            "enable": true,
+            "tier_name": "Happy Tail",
+            "min_views": 1000,
+            "max_views": 5000,
+            "reward_title": "Reward details will be announced soon.",
+            "reward_description": "Reward details will be announced soon.",
+            "badge_text": "",
+            "card_bg": "#fdf7fb",
+            "text_color": "#351042",
+            "border_color": "#eee0ee",
+            "highlighted": false
+          }
+        },
+        "tier-2": {
+          "type": "tier",
+          "settings": {
+            "enable": true,
+            "tier_name": "Zoomie Star",
+            "min_views": 5000,
+            "max_views": 20000,
+            "reward_title": "Reward details will be announced soon.",
+            "reward_description": "Reward details will be announced soon.",
+            "badge_text": "",
+            "card_bg": "#fdf7fb",
+            "text_color": "#351042",
+            "border_color": "#eee0ee",
+            "highlighted": false
+          }
+        },
+        "tier-3": {
+          "type": "tier",
+          "settings": {
+            "enable": true,
+            "tier_name": "Pack Favourite",
+            "min_views": 20000,
+            "max_views": 100000,
+            "reward_title": "Reward details will be announced soon.",
+            "reward_description": "Reward details will be announced soon.",
+            "badge_text": "",
+            "card_bg": "#fdf7fb",
+            "text_color": "#351042",
+            "border_color": "#eee0ee",
+            "highlighted": true
+          }
+        },
+        "tier-4": {
+          "type": "tier",
+          "settings": {
+            "enable": true,
+            "tier_name": "Internet's Best Friend",
+            "min_views": 100000,
+            "max_views": 0,
+            "reward_title": "Reward details will be announced soon.",
+            "reward_description": "Reward details will be announced soon.",
+            "badge_text": "",
+            "card_bg": "#fdf7fb",
+            "text_color": "#351042",
+            "border_color": "#eee0ee",
+            "highlighted": false
+          }
+        }
+      },
+      "block_order": [
+        "tier-1",
+        "tier-2",
+        "tier-3",
+        "tier-4"
+      ],
+      "settings": {
+        "label": "MORE LOVE. MORE REACH. MORE REWARDS.",
+        "heading": "Every view deserves a little tail wag.",
+        "footnote": "Final reward values, thresholds and payout timelines will be announced soon.",
+        "background": "#ffffff",
+        "accent_color": "#ff5a0a",
+        "badge_bg": "#47105d",
+        "badge_text_color": "#ffffff",
+        "padding_top": 64,
+        "padding_bottom": 64
+      }
+    },
+    "ccc_inspiration": {
+      "type": "ccc-inspiration",
+      "blocks": {
+        "idea-1": {
+          "type": "idea",
+          "settings": {
+            "enable": true,
+            "heading": "The post-bath fluff reveal",
+            "text": "Show the big fluffy transformation right after a wash.",
+            "icon": "🛁",
+            "card_color": "#fdf7fb"
+          }
+        },
+        "idea-2": {
+          "type": "idea",
+          "settings": {
+            "enable": true,
+            "heading": "A real grooming routine",
+            "text": "Walk through your everyday grooming steps.",
+            "icon": "🪑",
+            "card_color": "#fdf7fb"
+          }
+        },
+        "idea-3": {
+          "type": "idea",
+          "settings": {
+            "enable": true,
+            "heading": "First sniff or first reaction",
+            "text": "Capture the very first reaction to a new product.",
+            "icon": "👃",
+            "card_color": "#fdf7fb"
+          }
+        },
+        "idea-4": {
+          "type": "idea",
+          "settings": {
+            "enable": true,
+            "heading": "Before and after playtime",
+            "text": "A muddy before, a happy clean after.",
+            "icon": "🎾",
+            "card_color": "#fdf7fb"
+          }
+        },
+        "idea-5": {
+          "type": "idea",
+          "settings": {
+            "enable": true,
+            "heading": "Your pet's favourite Pups & Paws product",
+            "text": "Show off the one they can't get enough of.",
+            "icon": "💜",
+            "card_color": "#fdf7fb"
+          }
+        },
+        "idea-6": {
+          "type": "idea",
+          "settings": {
+            "enable": true,
+            "heading": "Bedtime cuddles after bath day",
+            "text": "The cosy wind-down after a good scrub.",
+            "icon": "🌙",
+            "card_color": "#fdf7fb"
+          }
+        },
+        "idea-7": {
+          "type": "idea",
+          "settings": {
+            "enable": true,
+            "heading": "A funny voice-over from your pet's perspective",
+            "text": "Give them a voice and let the personality shine.",
+            "icon": "🎙️",
+            "card_color": "#fdf7fb"
+          }
+        },
+        "idea-8": {
+          "type": "idea",
+          "settings": {
+            "enable": true,
+            "heading": "Everyday walks, zoomies and little rituals",
+            "text": "The small, ordinary moments that are actually the best ones.",
+            "icon": "🐾",
+            "card_color": "#fdf7fb"
+          }
+        }
+      },
+      "block_order": [
+        "idea-1",
+        "idea-2",
+        "idea-3",
+        "idea-4",
+        "idea-5",
+        "idea-6",
+        "idea-7",
+        "idea-8"
+      ],
+      "settings": {
+        "heading": "Your pet already gives you content.",
+        "text": "Keep it honest, playful and completely you.",
+        "closing": "Perfect is forgettable. Real pet-parent moments are not.",
+        "background": "#ffffff",
+        "padding_top": 64,
+        "padding_bottom": 64
+      }
+    },
+    "ccc_reels": {
+      "type": "ccc-reels",
+      "blocks": {
+        "reel_cRNYbE": {
+          "type": "reel",
+          "settings": {
+            "enable": false,
+            "cover_image": "shopify://shop_images/PeanutButter5.jpg",
+            "instagram_url": "https://www.instagram.com/reel/DcyR89rpp34/?utm_source=ig_web_copy_link&stkn=MzRlODBiNWFlZA==",
+            "pet_name": "demo",
+            "handle": "sharry_the_golden",
+            "caption": ""
+          }
+        }
+      },
+      "block_order": [
+        "reel_cRNYbE"
+      ],
+      "settings": {
+        "label": "SEEN IN THE WILD",
+        "heading": "Made by pets. Filmed by their humans.",
+        "background": "#fdf7fb",
+        "accent_color": "#ff5a0a",
+        "padding_top": 64,
+        "padding_bottom": 64
+      }
+    },
+    "ccc_join": {
+      "type": "ccc-who-can-join",
+      "blocks": {
+        "item-1": {
+          "type": "item",
+          "settings": {
+            "enable": true,
+            "text": "You have purchased a Pups & Paws product"
+          }
+        },
+        "item-2": {
+          "type": "item",
+          "settings": {
+            "enable": true,
+            "text": "You have an active public Instagram account"
+          }
+        },
+        "item-3": {
+          "type": "item",
+          "settings": {
+            "enable": true,
+            "text": "You can create an original reel featuring your pet"
+          }
+        },
+        "item-4": {
+          "type": "item",
+          "settings": {
+            "enable": true,
+            "text": "You are comfortable tagging Pups & Paws"
+          }
+        },
+        "item-5": {
+          "type": "item",
+          "settings": {
+            "enable": true,
+            "text": "You agree to the Creator Club terms"
+          }
+        }
+      },
+      "block_order": [
+        "item-1",
+        "item-2",
+        "item-3",
+        "item-4",
+        "item-5"
+      ],
+      "settings": {
+        "heading": "If you're a pet parent, you're already our kind of creator.",
+        "text": "Big creator, small creator or first-time creator—the size of your following matters less than the honesty of your story.",
+        "background": "#ffffff",
+        "check_color": "#3dc842",
+        "padding_top": 64,
+        "padding_bottom": 64
+      }
+    },
+    "ccc_form": {
+      "type": "ccc-submission-form",
+      "settings": {
+        "heading": "Ready to join the pack?",
+        "intro": "Tell us a little about you, your pet and the reel you created.",
+        "placeholder_heading": "Submissions open soon",
+        "placeholder_text": "We're putting the finishing touches on the creator submission form. Check back shortly to send in your reel.",
+        "terms_note": "Participation is subject to verification and the official Pups & Paws Creator Club terms. Rewards, eligibility and timelines may vary.",
+        "terms_page": "",
+        "terms_link_label": "Read the Creator Club terms",
+        "background": "#ffffff",
+        "accent_color": "#47105d",
+        "padding_top": 64,
+        "padding_bottom": 64
+      }
+    },
+    "ccc_faq": {
+      "type": "ccc-faq",
+      "blocks": {
+        "faq-1": {
+          "type": "faq",
+          "settings": {
+            "question": "Do I need thousands of followers?",
+            "answer": "<p>Not at all. We care more about genuine pet-parent content than follower count.</p>"
+          }
+        },
+        "faq-2": {
+          "type": "faq",
+          "settings": {
+            "question": "Does my pet need to be professionally trained?",
+            "answer": "<p>Absolutely not. The funny, chaotic and completely natural moments are often the best ones.</p>"
+          }
+        },
+        "faq-3": {
+          "type": "faq",
+          "settings": {
+            "question": "Do you provide a script?",
+            "answer": "<p>No stiff scripts here. Create something that feels natural to you and your pet while showing the product clearly.</p>"
+          }
+        },
+        "faq-4": {
+          "type": "faq",
+          "settings": {
+            "question": "Does the product need to appear in the reel?",
+            "answer": "<p>Yes. The Pups & Paws product should be clearly visible and naturally included in the content.</p>"
+          }
+        },
+        "faq-5": {
+          "type": "faq",
+          "settings": {
+            "question": "Can I submit an older reel?",
+            "answer": "<p>You may submit it if it meets the current program requirements and features an eligible Pups & Paws purchase.</p>"
+          }
+        },
+        "faq-6": {
+          "type": "faq",
+          "settings": {
+            "question": "How will my reel be verified?",
+            "answer": "<p>Submit your reel link and order details through the form. Our team will review the information and contact you.</p>"
+          }
+        },
+        "faq-7": {
+          "type": "faq",
+          "settings": {
+            "question": "When will I receive my reward?",
+            "answer": "<p>Reward eligibility and processing depend on the final Creator Club terms.</p>"
+          }
+        },
+        "faq-8": {
+          "type": "faq",
+          "settings": {
+            "question": "Can Pups & Paws repost my content?",
+            "answer": "<p>Only according to the consent and content-usage permissions accepted during submission.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "faq-1",
+        "faq-2",
+        "faq-3",
+        "faq-4",
+        "faq-5",
+        "faq-6",
+        "faq-7",
+        "faq-8"
+      ],
+      "settings": {
+        "heading": "Things pet parents ask us.",
+        "background": "#fdf7fb",
+        "accent_color": "#47105d",
+        "padding_top": 64,
+        "padding_bottom": 64
+      }
+    },
+    "ccc_cta": {
+      "type": "ccc-final-cta",
+      "settings": {
+        "heading": "Their next zoomie could make them a star.",
+        "text": "Capture the cuddles, the chaos and everything in between. Share your Pups & Paws moment and join a growing pack of real pet parents.",
+        "primary_label": "Join the Creator Club",
+        "secondary_label": "Shop Their Favourites",
+        "shop_collection": "",
+        "background": "#f3e9f8",
+        "heading_color": "#351042",
+        "text_color": "#351042",
+        "padding_top": 56,
+        "padding_bottom": 72
+      }
+    },
+    "ccc_affiliate": {
+      "type": "ccc-affiliate-program",
+      "blocks": {
+        "step-1": {
+          "type": "earn_step",
+          "settings": {
+            "heading": "Get Your Code",
+            "text": "Once approved, you'll receive your personal creator code and sharing link.",
+            "icon": "code"
+          }
+        },
+        "step-2": {
+          "type": "earn_step",
+          "settings": {
+            "heading": "Share With Your Pack",
+            "text": "Share your code or link naturally with your pet-parent community.",
+            "icon": "share"
+          }
+        },
+        "step-3": {
+          "type": "earn_step",
+          "settings": {
+            "heading": "Earn Rewards",
+            "text": "When someone shops through you, you earn commission on every eligible approved order.",
+            "icon": "earn"
+          }
+        }
+      },
+      "block_order": [
+        "step-1",
+        "step-2",
+        "step-3"
+      ],
+      "settings": {
+        "enable": true,
+        "eyebrow": "AFFILIATE PROGRAM",
+        "heading": "Earn While You Share the Love",
+        "benefit_line": "Share your code. Treat your community. Earn on every approved order.",
+        "apply_button_label": "Apply & Start Earning",
+        "registration_url": "",
+        "login_button_label": "Creator Login",
+        "login_url": "",
+        "terms_link_label": "View Creator Affiliate Terms",
+        "terms_url": "",
+        "info_note": "Commission is confirmed after the order's return and cancellation period is complete.",
+        "background": "#ffffff",
+        "accent_color": "#ff5a0a",
+        "icon_bg": "#f3e9f8",
+        "icon_color": "#47105d",
+        "heading_color": "#351042",
+        "heading_size": 34,
+        "heading_size_mobile": 26,
+        "body_size": 16,
+        "padding_top": 64,
+        "padding_bottom": 64,
+        "padding_top_mobile": 40,
+        "padding_bottom_mobile": 40
+      }
+    }
+  },
+  "order": [
+    "ccc_hero",
+    "ccc_ticker",
+    "ccc_intro",
+    "ccc_how",
+    "ccc_tiers",
+    "ccc_inspiration",
+    "ccc_reels",
+    "ccc_join",
+    "ccc_form",
+    "ccc_faq",
+    "ccc_cta",
+    "ccc_affiliate"
+  ]
+}

@@ -1,0 +1,23 @@
+/* ===========================================================================
+   PDP — Shoppable videos look-wise upgrade: the small text badge on each
+   video cover (e.g. "REAL ROUTINE") gets a colour gradient instead of a
+   flat white fill, cycling through the brand palette per card.
+   .pp-video-card__badge lives in the shared assets/theme.css, so this file
+   overrides it with a more specific selector rather than editing that
+   shared file. Loaded only by sections/shoppable-videos.liquid.
+   =========================================================================== */
+
+.pp-shoppable-videos .pp-video-card__badge {
+  background: linear-gradient(135deg, var(--orange, #ff5a0a), var(--pink, #ff2b78));
+  color: #fff;
+}
+
+.pp-shoppable-videos .pp-video-reel > article:nth-child(3n+2) .pp-video-card__badge {
+  background: linear-gradient(135deg, var(--purple2, #5b1a74), var(--purple, #47105d));
+  color: #fff;
+}
+
+.pp-shoppable-videos .pp-video-reel > article:nth-child(3n+3) .pp-video-card__badge {
+  background: linear-gradient(135deg, var(--green, #61f46f), #2fd44a);
+  color: var(--purple, #47105d);
+}

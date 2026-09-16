@@ -1,0 +1,1059 @@
+{% render 'section-editor-styles', section: section %}
+{{ 'pp-hero-life.css' | asset_url | stylesheet_tag }}
+{% assign hero_image_block = nil %}
+{% for block in section.blocks %}
+  {% if block.type == 'main_image' %}
+    {% assign hero_image_block = block %}
+  {% endif %}
+{% endfor %}
+{% assign main_hero_image = hero_image_block.settings.image | default: section.settings.hero_image | default: section.settings.lifestyle_image %}
+{% assign main_hero_image_mobile = hero_image_block.settings.image_mobile %}
+{% assign hero_display_image = main_hero_image | default: main_hero_image_mobile %}
+{% assign hero_img_fit = hero_image_block.settings.image_fit | default: 'contain' %}
+{% assign hero_img_position = hero_image_block.settings.image_position | default: 'center center' %}
+{% assign hero_img_radius = hero_image_block.settings.image_radius | default: 0 %}
+{% assign hero_box_w = hero_image_block.settings.image_max_width | default: 0 %}
+{% assign hero_box_h = hero_image_block.settings.image_max_height | default: 0 %}
+{% assign hero_box_h_align = hero_image_block.settings.box_h_align | default: 'default' %}
+{% assign hero_box_v_align = hero_image_block.settings.box_v_align | default: 'default' %}
+{% assign hero_img_fit_m = hero_image_block.settings.image_fit_mobile | default: 'contain' %}
+{% assign hero_img_position_m = hero_image_block.settings.image_position_mobile | default: 'center center' %}
+{% assign hero_img_radius_m = hero_image_block.settings.image_radius_mobile | default: 0 %}
+{% assign hero_box_w_m = hero_image_block.settings.image_max_width_mobile | default: 0 %}
+{% assign hero_box_h_m = hero_image_block.settings.image_max_height_mobile | default: 0 %}
+{% assign hero_box_h_align_m = hero_image_block.settings.box_h_align_mobile | default: 'default' %}
+{% assign hero_box_v_align_m = hero_image_block.settings.box_v_align_mobile | default: 'default' %}
+<style>
+  @media (min-width: 991px) {
+    #shopify-section-{{ section.id }} .live-hero__lifestyle img {
+      object-fit: {{ hero_img_fit }};
+      object-position: {{ hero_img_position }};
+    }
+    #shopify-section-{{ section.id }} .live-hero__lifestyle {
+      {% if hero_img_radius > 0 %}border-radius: {{ hero_img_radius }}px;{% endif %}
+      {% if hero_box_w > 0 %}width: min({{ hero_box_w }}px, 100%); max-width: 100%;{% endif %}
+      {% if hero_box_h > 0 %}height: min({{ hero_box_h }}px, 100%); max-height: 100%;{% endif %}
+      {% if hero_box_h_align == 'left' %}left: 0; right: auto; margin-left: 0; margin-right: 0;{% endif %}
+      {% if hero_box_h_align == 'center' %}left: 0; right: 0; margin-left: auto; margin-right: auto;{% endif %}
+      {% if hero_box_h_align == 'right' %}left: auto; right: 0; margin-left: 0; margin-right: 0;{% endif %}
+      {% if hero_box_v_align == 'top' %}top: 0; bottom: auto; margin-top: 0; margin-bottom: 0;{% endif %}
+      {% if hero_box_v_align == 'center' %}top: 0; bottom: 0; margin-top: auto; margin-bottom: auto;{% endif %}
+      {% if hero_box_v_align == 'bottom' %}top: auto; bottom: 0; margin-top: 0; margin-bottom: 0;{% endif %}
+    }
+  }
+  {% comment %}
+    Mobile/tablet (990px and narrower) gets its own independent set of image
+    settings instead of inheriting the desktop ones. Height is capped in three
+    tiers matching the same breakpoints theme.css already uses for
+    .live-hero__stage's own min-height (460px / 520px / 405px), so the box can
+    never grow taller than the space actually available at that width —
+    exactly the same "never overflow" guarantee the desktop fix uses, just
+    expressed as explicit tiers instead of a percentage, since .live-hero__stage
+    isn't stretched to a definite height on mobile the way it is on desktop.
+  {% endcomment %}
+  @media (max-width: 990px) {
+    #shopify-section-{{ section.id }} .live-hero__lifestyle img {
+      object-fit: {{ hero_img_fit_m }};
+      object-position: {{ hero_img_position_m }};
+    }
+    #shopify-section-{{ section.id }} .live-hero__lifestyle {
+      {% if hero_img_radius_m > 0 %}border-radius: {{ hero_img_radius_m }}px;{% endif %}
+      {% if hero_box_w_m > 0 %}width: min({{ hero_box_w_m }}px, 100%); max-width: 100%;{% endif %}
+      {% if hero_box_h_m > 0 %}height: min({{ hero_box_h_m }}px, 460px); max-height: 460px;{% endif %}
+      {% if hero_box_h_align_m == 'left' %}left: 0; right: auto; margin-left: 0; margin-right: 0;{% endif %}
+      {% if hero_box_h_align_m == 'center' %}left: 0; right: 0; margin-left: auto; margin-right: auto;{% endif %}
+      {% if hero_box_h_align_m == 'right' %}left: auto; right: 0; margin-left: 0; margin-right: 0;{% endif %}
+      {% if hero_box_v_align_m == 'top' %}top: 0; bottom: auto; margin-top: 0; margin-bottom: 0;{% endif %}
+      {% if hero_box_v_align_m == 'center' %}top: 0; bottom: 0; margin-top: auto; margin-bottom: auto;{% endif %}
+      {% if hero_box_v_align_m == 'bottom' %}top: auto; bottom: 0; margin-top: 0; margin-bottom: 0;{% endif %}
+    }
+  }
+  {% if hero_box_h_m > 0 %}
+    @media (max-width: 900px) {
+      #shopify-section-{{ section.id }} .live-hero__lifestyle {
+        height: min({{ hero_box_h_m }}px, 520px);
+        max-height: 520px;
+      }
+    }
+    @media (max-width: 680px) {
+      #shopify-section-{{ section.id }} .live-hero__lifestyle {
+        height: min({{ hero_box_h_m }}px, 405px);
+        max-height: 405px;
+      }
+    }
+  {% endif %}
+  {% if section.settings.pp_custom_spacing %}
+    #shopify-section-{{ section.id }} .live-hero {
+      padding-top: clamp({{ section.settings.pp_padding_top | times: 0.85 }}px, {{ section.settings.pp_padding_top | divided_by: 14.4 }}vw, {{ section.settings.pp_padding_top | times: 1.35 }}px) !important;
+      padding-bottom: clamp({{ section.settings.pp_padding_bottom | times: 0.85 }}px, {{ section.settings.pp_padding_bottom | divided_by: 14.4 }}vw, {{ section.settings.pp_padding_bottom | times: 1.35 }}px) !important;
+    }
+    @media screen and (max-width: 749px) {
+      #shopify-section-{{ section.id }} .live-hero {
+        padding-top: {{ section.settings.pp_padding_top_mobile }}px !important;
+        padding-bottom: {{ section.settings.pp_padding_bottom_mobile }}px !important;
+      }
+    }
+  {% endif %}
+  #shopify-section-{{ section.id }} .live-hero__lifestyle,
+  #shopify-section-{{ section.id }} .live-hero__lifestyle img {
+    opacity: 1 !important;
+    filter: none !important;
+    mix-blend-mode: normal !important;
+  }
+  #shopify-section-{{ section.id }} .live-hero__lifestyle--placeholder:empty {
+    display: none;
+  }
+  #shopify-section-{{ section.id }} .live-hero__lifestyle--placeholder {
+    position: relative;
+    min-height: clamp(272px, 22.2222vw, 432px);
+    border: 2px dashed rgba(71, 16, 93, 0.28);
+    border-radius: clamp(24px, 1.9444vw, 38px);
+    overflow: hidden;
+  }
+  #shopify-section-{{ section.id }} .live-hero__lifestyle--placeholder .placeholder-svg {
+    width: 100%;
+    height: 100%;
+    min-height: clamp(272px, 22.2222vw, 432px);
+    opacity: 0.2;
+  }
+  #shopify-section-{{ section.id }} .live-hero__placeholder-label {
+    position: absolute;
+    inset: 50% auto auto 50%;
+    transform: translate(-50%, -50%);
+    padding: clamp(9px,.6944vw,14px) clamp(14px,1.1111vw,22px);
+    border-radius: 999px;
+    background: #fff;
+    color: #47105d;
+    font-size: clamp(12px,.9722vw,19px);
+    font-weight: 600;
+    white-space: nowrap;
+    box-shadow: 0 8px 24px rgba(71, 16, 93, 0.12);
+  }
+</style>
+<section class="live-hero" style="--hero-a:{{ section.settings.background_1 }};--hero-b:{{ section.settings.background_2 }};--hero-accent:{{ section.settings.accent }}">
+  <span class="live-doodle live-doodle--paw live-doodle--paw-1">◌</span>
+  <span class="live-doodle live-doodle--paw live-doodle--paw-2">◌</span>
+  <div class="page-width live-hero__grid">
+    <div class="live-hero__copy pp-reveal">
+      {% if section.settings.eyebrow != blank %}<div class="live-eyebrow">{{ section.settings.eyebrow }}</div>{% endif %}
+      <h1>{{ section.settings.heading | newline_to_br }}</h1>
+      <p>{{ section.settings.text }}</p>
+      <div class="live-actions">
+        {% if section.settings.primary_label != blank %}<a class="pp-btn pp-btn--purple" href="{{ section.settings.primary_link | default: routes.all_products_collection_url }}">{{ section.settings.primary_label }} {% render 'icon-arrow' %}</a>{% endif %}
+        {% if section.settings.secondary_label != blank %}<a class="pp-btn live-btn-ghost" href="{{ section.settings.secondary_link | default: '/collections/grooming' }}">{{ section.settings.secondary_label }}</a>{% endif %}
+      </div>
+      <div class="live-trust">
+        {% assign badges = shop.metaobjects.trust_badge.values %}
+        {% if section.settings.use_trust_metaobjects and badges != blank %}
+          {% for badge in badges limit: 3 %}<span>{% if badge.icon.value != blank %}{{ badge.icon.value | image_url: width: 40 | image_tag: loading: 'lazy', alt: '' }}{% else %}<i>✦</i>{% endif %}{{ badge.title.value | default: badge.title }}</span>{% endfor %}
+        {% else %}
+          {% if section.settings.trust_1 != blank %}<span><i>◇</i>{{ section.settings.trust_1 }}</span>{% endif %}
+          {% if section.settings.trust_2 != blank %}<span><i>☀</i>{{ section.settings.trust_2 }}</span>{% endif %}
+          {% if section.settings.trust_3 != blank %}<span><i>♡</i>{{ section.settings.trust_3 }}</span>{% endif %}
+        {% endif %}
+      </div>
+    </div>
+    <div class="live-hero__stage pp-reveal" data-float-zone>
+      <span class="live-hero__word" aria-hidden="true">WOOF</span>
+      <span class="live-hero__blob live-hero__blob--1"></span><span class="live-hero__blob live-hero__blob--2"></span>
+      <div class="live-hero__lifestyle{% if hero_display_image == blank %} live-hero__lifestyle--placeholder{% endif %}"{% if hero_image_block %} {{ hero_image_block.shopify_attributes }}{% endif %}>
+        {% if hero_display_image != blank %}
+          <picture>
+            {% if main_hero_image_mobile != blank and main_hero_image_mobile != main_hero_image %}
+              <source media="(max-width: 990px)" srcset="{{ main_hero_image_mobile | image_url: width: 400 }} 400w, {{ main_hero_image_mobile | image_url: width: 600 }} 600w, {{ main_hero_image_mobile | image_url: width: 800 }} 800w, {{ main_hero_image_mobile | image_url: width: 1000 }} 1000w" sizes="100vw">
+            {% endif %}
+            {{ hero_display_image | image_url: width: 1500 | image_tag: loading: 'eager', widths: '700,1000,1300,1500', sizes: '(min-width: 990px) 50vw, 100vw', alt: section.settings.heading }}
+          </picture>
+        {% elsif request.design_mode %}
+          {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
+          <span class="live-hero__placeholder-label">{% if hero_image_block %}Click to select main hero image{% else %}Select main hero image{% endif %}</span>
+        {% endif %}
+      </div>
+      <div class="live-hero__pack" aria-label="{{ section.settings.product_group_label }}">
+        {% assign product_index = 0 %}
+        {% for block in section.blocks %}
+          {% if block.type == 'product' %}
+            {% assign product_index = product_index | plus: 1 %}
+            {% assign p = block.settings.product %}
+            {% assign hero_link = block.settings.link %}
+            {% if hero_link == blank and p != blank %}{% assign hero_link = p.url %}{% endif %}
+            <a {% if hero_link != blank %}href="{{ hero_link }}"{% endif %} class="live-hero__product live-hero__product--{{ product_index }}" data-pp-block-id="{{ block.id }}" {{ block.shopify_attributes }} style="--product-accent:{{ block.settings.color }}">
+              {% if block.settings.image != blank %}
+                {{ block.settings.image | image_url: width: 800 | image_tag: loading:'eager', widths:'280,420,600,800', alt:block.settings.short_label | default: p.title | default: section.settings.heading }}
+              {% else %}
+                {{ 'product-1' | placeholder_svg_tag }}
+              {% endif %}
+              <span>{{ block.settings.short_label | default: p.title }}</span>
+            </a>
+          {% endif %}
+        {% endfor %}
+      </div>
+      {% if section.settings.badge_text != blank %}<div class="live-hero__badge">{{ section.settings.badge_text | newline_to_br }}</div>{% endif %}
+    </div>
+  </div>
+</section>
+{% schema %}
+{
+  "name": "Live design hero",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "THE GROOMING SQUAD IS HERE"
+    },
+    {
+      "type": "textarea",
+      "id": "heading",
+      "label": "Heading",
+      "default": "MESSY DOG.\nCLEAN CUDDLES."
+    },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Text",
+      "default": "Need-specific grooming, everyday nutrition and reward-worthy treats for pets who live fully, love loudly and are still allowed on the bed."
+    },
+    {
+      "type": "text",
+      "id": "primary_label",
+      "label": "Primary button",
+      "default": "Shop all products"
+    },
+    {
+      "type": "url",
+      "id": "primary_link",
+      "label": "Primary button link"
+    },
+    {
+      "type": "text",
+      "id": "secondary_label",
+      "label": "Secondary button",
+      "default": "Explore grooming"
+    },
+    {
+      "type": "url",
+      "id": "secondary_link",
+      "label": "Secondary button link"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_trust_metaobjects",
+      "label": "Use Trust badge metaobjects when available",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "trust_1",
+      "label": "Fallback trust point 1",
+      "default": "Need-specific"
+    },
+    {
+      "type": "text",
+      "id": "trust_2",
+      "label": "Fallback trust point 2",
+      "default": "India-ready"
+    },
+    {
+      "type": "text",
+      "id": "trust_3",
+      "label": "Fallback trust point 3",
+      "default": "Pet-parent approved"
+    },
+    {
+      "type": "header",
+      "content": "Hero image (legacy fallback)"
+    },
+    {
+      "type": "paragraph",
+      "content": "Tip: use the \"Main hero image\" block below instead — once it's added, you can click the image directly in the preview to change it. The fields below only apply when no such block is present."
+    },
+    {
+      "type": "image_picker",
+      "id": "hero_image",
+      "label": "Main hero image",
+      "info": "Upload the dog and cat PNG here. A transparent PNG works best."
+    },
+    {
+      "type": "image_picker",
+      "id": "lifestyle_image",
+      "label": "Legacy lifestyle image",
+      "info": "Kept so an image selected in an older version is not lost. Main hero image takes priority."
+    },
+    {
+      "type": "text",
+      "id": "product_group_label",
+      "label": "Product group accessibility label",
+      "default": "The grooming squad"
+    },
+    {
+      "type": "textarea",
+      "id": "badge_text",
+      "label": "Round badge",
+      "default": "STILL ALLOWED\nON THE BED"
+    },
+    {
+      "type": "color",
+      "id": "background_1",
+      "label": "Background colour 1",
+      "default": "#e6ffe8"
+    },
+    {
+      "type": "color",
+      "id": "background_2",
+      "label": "Background colour 2",
+      "default": "#fff5ec"
+    },
+    {
+      "type": "color",
+      "id": "accent",
+      "label": "Accent colour",
+      "default": "#ff5a0a"
+    },
+    {
+      "type": "header",
+      "content": "Professional section controls"
+    },
+    {
+      "type": "paragraph",
+      "content": "Optional overrides. Leave disabled to preserve the original V7 design."
+    },
+    {
+      "type": "checkbox",
+      "id": "pp_custom_colors",
+      "label": "Override section colours",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "pp_background",
+      "label": "Background colour",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "pp_text_color",
+      "label": "Text colour",
+      "default": "#351042"
+    },
+    {
+      "type": "color",
+      "id": "pp_accent_color",
+      "label": "Accent colour",
+      "default": "#ff5a0a"
+    },
+    {
+      "type": "checkbox",
+      "id": "pp_custom_type",
+      "label": "Override section typography",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "pp_heading_font",
+      "label": "Heading font",
+      "default": "theme",
+      "options": [
+        {
+          "value": "theme",
+          "label": "Use theme default"
+        },
+        {
+          "value": "aquatail",
+          "label": "Aquatail — included"
+        },
+        {
+          "value": "futura",
+          "label": "Futura — included"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "pp_heading_weight",
+      "label": "Heading weight",
+      "default": "700",
+      "options": [
+        {
+          "value": "400",
+          "label": "Regular"
+        },
+        {
+          "value": "600",
+          "label": "Semibold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        },
+        {
+          "value": "900",
+          "label": "Black"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "pp_heading_size",
+      "min": 24,
+      "max": 104,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading size — desktop",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "pp_heading_size_mobile",
+      "min": 22,
+      "max": 70,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading size — mobile",
+      "default": 44
+    },
+    {
+      "type": "range",
+      "id": "pp_heading_tracking",
+      "min": -8,
+      "max": 10,
+      "step": 1,
+      "unit": "%",
+      "label": "Heading letter spacing",
+      "default": -3
+    },
+    {
+      "type": "select",
+      "id": "pp_body_font",
+      "label": "Body font",
+      "default": "theme",
+      "options": [
+        {
+          "value": "theme",
+          "label": "Use theme default"
+        },
+        {
+          "value": "aquatail",
+          "label": "Aquatail — included"
+        },
+        {
+          "value": "futura",
+          "label": "Futura — included"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "pp_body_weight",
+      "label": "Body weight",
+      "default": "400",
+      "options": [
+        {
+          "value": "400",
+          "label": "Regular"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semibold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "pp_body_size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Body size — desktop",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "pp_body_size_mobile",
+      "min": 12,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "label": "Body size — mobile",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "pp_line_height",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "label": "Body line height",
+      "default": 16
+    },
+    {
+      "type": "checkbox",
+      "id": "pp_custom_spacing",
+      "label": "Override section spacing",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "pp_padding_top",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding — desktop",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "pp_padding_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding — desktop",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "pp_padding_top_mobile",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding — mobile",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "pp_padding_bottom_mobile",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding — mobile",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "pp_content_width",
+      "min": 0,
+      "max": 1800,
+      "step": 100,
+      "unit": "px",
+      "label": "Content width (0 = theme default)",
+      "default": 0
+    },
+    {
+      "type": "checkbox",
+      "id": "pp_disable_motion",
+      "label": "Disable motion in this section",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Button controls"
+    },
+    {
+      "type": "checkbox",
+      "id": "pp_custom_buttons",
+      "label": "Customize buttons in this section",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "pp_button_background",
+      "label": "Button background",
+      "default": "#47105d"
+    },
+    {
+      "type": "color",
+      "id": "pp_button_text",
+      "label": "Button text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "pp_button_height",
+      "min": 32,
+      "max": 72,
+      "step": 4,
+      "unit": "px",
+      "label": "Button height",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "pp_button_radius",
+      "min": 0,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "label": "Button corner radius",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "pp_min_height",
+      "min": 0,
+      "max": 1000,
+      "step": 50,
+      "unit": "px",
+      "label": "Section minimum height (0 = automatic)",
+      "default": 0
+    }
+  ],
+  "blocks": [
+    {
+      "type": "main_image",
+      "name": "Main hero image",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "header",
+          "content": "Image — desktop"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Main hero image (desktop)",
+          "info": "Shown at 991px and wider. A transparent PNG works best. Once added, click the image directly in the preview to open these settings again."
+        },
+        {
+          "type": "header",
+          "content": "Image — mobile"
+        },
+        {
+          "type": "image_picker",
+          "id": "image_mobile",
+          "label": "Mobile hero image (optional)",
+          "info": "Shown at 990px and narrower (phones and tablets) instead of the desktop image above. Leave empty to use the same image on mobile."
+        },
+        {
+          "type": "paragraph",
+          "content": "Every setting below also has a separate desktop and mobile version, so you can size and position each photo differently on phones/tablets (990px and narrower) than on larger screens (991px and up)."
+        },
+        {
+          "type": "header",
+          "content": "Image fit — desktop"
+        },
+        {
+          "type": "select",
+          "id": "image_fit",
+          "label": "How the photo fills its box",
+          "default": "contain",
+          "options": [
+            { "value": "contain", "label": "Show the whole photo (may leave empty space)" },
+            { "value": "cover", "label": "Fill the box completely (may crop)" }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "image_position",
+          "label": "Photo alignment inside its box",
+          "info": "Only matters when the photo's shape doesn't exactly match the box.",
+          "default": "center center",
+          "options": [
+            { "value": "left top", "label": "Top left" },
+            { "value": "center top", "label": "Top center" },
+            { "value": "right top", "label": "Top right" },
+            { "value": "left center", "label": "Middle left" },
+            { "value": "center center", "label": "Middle center" },
+            { "value": "right center", "label": "Middle right" },
+            { "value": "left bottom", "label": "Bottom left" },
+            { "value": "center bottom", "label": "Bottom center" },
+            { "value": "right bottom", "label": "Bottom right" }
+          ]
+        },
+        {
+          "type": "header",
+          "content": "Image fit — mobile"
+        },
+        {
+          "type": "select",
+          "id": "image_fit_mobile",
+          "label": "How the photo fills its box",
+          "default": "contain",
+          "options": [
+            { "value": "contain", "label": "Show the whole photo (may leave empty space)" },
+            { "value": "cover", "label": "Fill the box completely (may crop)" }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "image_position_mobile",
+          "label": "Photo alignment inside its box",
+          "info": "Only matters when the photo's shape doesn't exactly match the box.",
+          "default": "center center",
+          "options": [
+            { "value": "left top", "label": "Top left" },
+            { "value": "center top", "label": "Top center" },
+            { "value": "right top", "label": "Top right" },
+            { "value": "left center", "label": "Middle left" },
+            { "value": "center center", "label": "Middle center" },
+            { "value": "right center", "label": "Middle right" },
+            { "value": "left bottom", "label": "Bottom left" },
+            { "value": "center bottom", "label": "Bottom center" },
+            { "value": "right bottom", "label": "Bottom right" }
+          ]
+        },
+        {
+          "type": "header",
+          "content": "Corner rounding — desktop"
+        },
+        {
+          "type": "range",
+          "id": "image_radius",
+          "min": 0,
+          "max": 60,
+          "step": 2,
+          "unit": "px",
+          "label": "Corner rounding (0 = theme default)",
+          "default": 0
+        },
+        {
+          "type": "header",
+          "content": "Corner rounding — mobile"
+        },
+        {
+          "type": "range",
+          "id": "image_radius_mobile",
+          "min": 0,
+          "max": 60,
+          "step": 2,
+          "unit": "px",
+          "label": "Corner rounding (0 = theme default)",
+          "default": 0
+        },
+        {
+          "type": "header",
+          "content": "Image size — desktop"
+        },
+        {
+          "type": "range",
+          "id": "image_max_width",
+          "min": 0,
+          "max": 1500,
+          "step": 50,
+          "unit": "px",
+          "label": "Image width (0 = automatic)",
+          "info": "Applies at 991px and wider. Automatically shrinks to fit if the layout doesn't have room, so it never overlaps other content.",
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "image_max_height",
+          "min": 0,
+          "max": 1000,
+          "step": 50,
+          "unit": "px",
+          "label": "Image height (0 = automatic)",
+          "info": "Applies at 991px and wider. Automatically shrinks to fit if the layout doesn't have room, so it never overlaps other content.",
+          "default": 0
+        },
+        {
+          "type": "header",
+          "content": "Image size — mobile"
+        },
+        {
+          "type": "range",
+          "id": "image_max_width_mobile",
+          "min": 0,
+          "max": 900,
+          "step": 25,
+          "unit": "px",
+          "label": "Image width (0 = automatic)",
+          "info": "Applies at 990px and narrower (phones and tablets). Automatically shrinks to fit if the layout doesn't have room, so it never overlaps other content.",
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "image_max_height_mobile",
+          "min": 0,
+          "max": 700,
+          "step": 25,
+          "unit": "px",
+          "label": "Image height (0 = automatic)",
+          "info": "Applies at 990px and narrower (phones and tablets). Automatically shrinks to fit if the layout doesn't have room, so it never overlaps other content.",
+          "default": 0
+        },
+        {
+          "type": "header",
+          "content": "Box position — desktop"
+        },
+        {
+          "type": "select",
+          "id": "box_h_align",
+          "label": "Horizontal position",
+          "info": "Applies at 991px and wider. \"Default\" keeps the theme's original spacing. Left/Center/Right move the box edge-to-edge on that side.",
+          "default": "default",
+          "options": [
+            { "value": "default", "label": "Default (theme spacing)" },
+            { "value": "left", "label": "Left" },
+            { "value": "center", "label": "Center" },
+            { "value": "right", "label": "Right" }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "box_v_align",
+          "label": "Vertical position",
+          "info": "Applies at 991px and wider. \"Default\" keeps the theme's original spacing. Top/Center/Bottom move the box edge-to-edge on that side.",
+          "default": "default",
+          "options": [
+            { "value": "default", "label": "Default (theme spacing)" },
+            { "value": "top", "label": "Top" },
+            { "value": "center", "label": "Center" },
+            { "value": "bottom", "label": "Bottom" }
+          ]
+        },
+        {
+          "type": "header",
+          "content": "Box position — mobile"
+        },
+        {
+          "type": "select",
+          "id": "box_h_align_mobile",
+          "label": "Horizontal position",
+          "info": "Applies at 990px and narrower. \"Default\" keeps the theme's original spacing. Left/Center/Right move the box edge-to-edge on that side.",
+          "default": "default",
+          "options": [
+            { "value": "default", "label": "Default (theme spacing)" },
+            { "value": "left", "label": "Left" },
+            { "value": "center", "label": "Center" },
+            { "value": "right", "label": "Right" }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "box_v_align_mobile",
+          "label": "Vertical position",
+          "info": "Applies at 990px and narrower. \"Default\" keeps the theme's original spacing. Top/Center/Bottom move the box edge-to-edge on that side.",
+          "default": "default",
+          "options": [
+            { "value": "default", "label": "Default (theme spacing)" },
+            { "value": "top", "label": "Top" },
+            { "value": "center", "label": "Center" },
+            { "value": "bottom", "label": "Bottom" }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "product",
+      "name": "Hero product",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Hero image (independent from product media)"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Optional custom link"
+        },
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Optional product link only (image is not pulled from product)"
+        },
+        {
+          "type": "text",
+          "id": "short_label",
+          "label": "Short hover label"
+        },
+        {
+          "type": "color",
+          "id": "color",
+          "label": "Accent",
+          "default": "#ff5a0a"
+        },
+        {
+          "type": "header",
+          "content": "Individual block design"
+        },
+        {
+          "type": "checkbox",
+          "id": "pp_block_custom",
+          "label": "Customize this block",
+          "default": false
+        },
+        {
+          "type": "color",
+          "id": "pp_block_background",
+          "label": "Card / block background",
+          "default": "#ffffff"
+        },
+        {
+          "type": "color",
+          "id": "pp_block_text",
+          "label": "Text colour",
+          "default": "#351042"
+        },
+        {
+          "type": "color",
+          "id": "pp_block_accent",
+          "label": "Accent / border colour",
+          "default": "#ff5a0a"
+        },
+        {
+          "type": "select",
+          "id": "pp_block_heading_font",
+          "label": "Heading font",
+          "default": "theme",
+          "options": [
+            {
+              "value": "theme",
+              "label": "Use theme default"
+            },
+            {
+              "value": "aquatail",
+              "label": "Aquatail — included"
+            },
+            {
+              "value": "futura",
+              "label": "Futura — included"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "pp_block_body_font",
+          "label": "Body font",
+          "default": "theme",
+          "options": [
+            {
+              "value": "theme",
+              "label": "Use theme default"
+            },
+            {
+              "value": "aquatail",
+              "label": "Aquatail — included"
+            },
+            {
+              "value": "futura",
+              "label": "Futura — included"
+            }
+          ]
+        },
+        {
+          "type": "range",
+          "id": "pp_block_heading_size",
+          "min": 16,
+          "max": 64,
+          "step": 2,
+          "unit": "px",
+          "label": "Heading size",
+          "default": 28
+        },
+        {
+          "type": "range",
+          "id": "pp_block_body_size",
+          "min": 10,
+          "max": 24,
+          "step": 1,
+          "unit": "px",
+          "label": "Body size",
+          "default": 20
+        },
+        {
+          "type": "range",
+          "id": "pp_block_padding",
+          "min": 0,
+          "max": 64,
+          "step": 4,
+          "unit": "px",
+          "label": "Inner padding",
+          "default": 24
+        },
+        {
+          "type": "range",
+          "id": "pp_block_height",
+          "min": 0,
+          "max": 800,
+          "step": 40,
+          "unit": "px",
+          "label": "Minimum height (0 = automatic)",
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "pp_block_image_height",
+          "min": 0,
+          "max": 600,
+          "step": 30,
+          "unit": "px",
+          "label": "Image height (0 = automatic)",
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "pp_block_radius",
+          "min": 0,
+          "max": 48,
+          "step": 4,
+          "unit": "px",
+          "label": "Corner radius",
+          "default": 24
+        },
+        {
+          "type": "select",
+          "id": "pp_block_animation",
+          "label": "Entrance animation",
+          "default": "inherit",
+          "options": [
+            {
+              "value": "inherit",
+              "label": "Section default"
+            },
+            {
+              "value": "fade",
+              "label": "Fade"
+            },
+            {
+              "value": "rise",
+              "label": "Rise up"
+            },
+            {
+              "value": "pop",
+              "label": "Soft pop"
+            },
+            {
+              "value": "wave",
+              "label": "Gentle wave"
+            },
+            {
+              "value": "none",
+              "label": "None"
+            }
+          ]
+        },
+        {
+          "type": "range",
+          "id": "pp_block_animation_delay",
+          "min": 0,
+          "max": 1000,
+          "step": 100,
+          "unit": "ms",
+          "label": "Animation delay",
+          "default": 0
+        }
+      ]
+    }
+  ],
+  "max_blocks": 6,
+  "presets": [
+    {
+      "name": "Live design hero"
+    }
+  ]
+}
+{% endschema %}

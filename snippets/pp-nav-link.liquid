@@ -1,0 +1,89 @@
+{% comment %}
+  pp-nav-link
+  Renders a single primary-navigation link for both the desktop nav and the
+  mobile drawer, applying the optional Cuddle Care highlight and the optional
+  badge. Matching is done on the link TITLE, never on position, so the merchant
+  can reorder the menu freely.
+
+  Accepts:
+    title        (string, required)  visible link text
+    url          (string, required)
+    is_active    (boolean, optional) adds the theme's existing .is-active class
+    highlight_on (boolean)           section.settings.nav_highlight_enable
+    highlight_title (string)         section.settings.nav_highlight_title
+    badge_on     (boolean)           section.settings.nav_badge_enable
+    badge_title  (string)            section.settings.nav_badge_title
+    badge_type   (string)            'text' | 'image'
+    badge_text   (string)
+    badge_image  (image)
+    badge_image_mobile (image, optional) shown at 989px and narrower instead of badge_image
+    highlight2_on    (boolean)       section.settings.nav_highlight2_enable — a second,
+                                      independent highlight slot (Creator Club), additive
+                                      and fully separate from the Cuddle Care highlight above.
+    highlight2_title (string)        section.settings.nav_highlight2_title
+{% endcomment %}
+
+{%- liquid
+  assign link_classes = ''
+  if is_active
+    assign link_classes = 'is-active'
+  endif
+
+  comment
+    Case- and whitespace-insensitive title match so "Cuddle Care Box",
+    "cuddle care box" and "Cuddle-Care Box " all resolve the same way.
+  endcomment
+  assign this_key = title | strip | downcase | replace: '-', ' ' | replace: '  ', ' '
+
+  assign highlight_key = highlight_title | default: 'Cuddle Care Box' | strip | downcase | replace: '-', ' ' | replace: '  ', ' '
+  assign badge_key = badge_title | default: 'Grooming' | strip | downcase | replace: '-', ' ' | replace: '  ', ' '
+  assign highlight2_key = highlight2_title | default: 'Creator Club' | strip | downcase | replace: '-', ' ' | replace: '  ', ' '
+
+  assign is_highlight = false
+  if highlight_on and this_key == highlight_key
+    assign is_highlight = true
+    assign link_classes = link_classes | append: ' nav-link--cuddle-care'
+  endif
+
+  assign is_highlight2 = false
+  if highlight2_on and this_key == highlight2_key
+    assign is_highlight2 = true
+    assign link_classes = link_classes | append: ' nav-link--creator-club'
+  endif
+
+  assign is_badged = false
+  if badge_on and this_key == badge_key
+    if badge_type == 'image'
+      if badge_image != blank
+        assign is_badged = true
+      endif
+    elsif badge_text != blank
+      assign is_badged = true
+    endif
+  endif
+  if is_badged
+    assign link_classes = link_classes | append: ' nav-link--badged'
+  endif
+
+  assign link_classes = link_classes | strip
+-%}
+
+<a href="{{ url }}"{% if link_classes != blank %} class="{{ link_classes }}"{% endif %}{% if is_highlight %} data-nav-highlight{% endif %}{% if is_highlight2 %} data-nav-highlight2{% endif %}>
+  <span class="pp-nav__label">
+    {{- title -}}
+    {%- if is_badged -%}
+      <span class="pp-nav-badge{% if badge_type == 'image' %} pp-nav-badge--image{% endif %}" aria-hidden="true">
+        {%- if badge_type == 'image' -%}
+          <picture>
+            {%- if badge_image_mobile != blank and badge_image_mobile != badge_image -%}
+              <source media="(max-width: 989px)" srcset="{{ badge_image_mobile | image_url: width: 96 }} 96w, {{ badge_image_mobile | image_url: width: 144 }} 144w">
+            {%- endif -%}
+            {{ badge_image | image_url: width: 96 | image_tag: loading: 'lazy', alt: '' }}
+          </picture>
+        {%- else -%}
+          {{- badge_text -}}
+        {%- endif -%}
+      </span>
+    {%- endif -%}
+  </span>
+</a>
