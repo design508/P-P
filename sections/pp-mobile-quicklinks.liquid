@@ -1,0 +1,27 @@
+{% if section.settings.enable %}
+  <section class="pp-mobile-quicklinks pp-mobile-quicklinks--{{ section.settings.visibility }}" style="--quicklinks-bg: {{ section.settings.section_background }}; --quicklinks-gap: {{ section.settings.card_gap }}px; --quicklinks-pt: {{ section.settings.padding_top }}px; --quicklinks-pb: {{ section.settings.padding_bottom }}px;">
+    <div class="page-width pp-mobile-quicklinks__grid">
+      {% for block in section.blocks %}
+        <article class="pp-mobile-quicklinks__card{% if section.settings.enable_animation %} pp-reveal{% endif %}" style="--card-bg: {{ block.settings.background_color }}; --card-border: {{ block.settings.border_color }}; --card-accent: {{ block.settings.accent_color }};" {{ block.shopify_attributes }}>
+          <span class="pp-mobile-quicklinks__icon" aria-hidden="true">{% if block.settings.icon == 'camera' %}◎{% else %}◇{% endif %}</span>
+          <div><h2>{{ block.settings.heading }}</h2><p>{{ block.settings.text }}</p></div>
+          {% if block.settings.link != blank %}<a class="pp-btn pp-btn--outline" href="{{ block.settings.link }}">{{ block.settings.button_label }}</a>{% endif %}
+        </article>
+      {% endfor %}
+    </div>
+  </section>
+{% endif %}
+
+{% stylesheet %}
+  .pp-mobile-quicklinks{background:var(--quicklinks-bg);padding:var(--quicklinks-pt) 0 var(--quicklinks-pb)}
+  .pp-mobile-quicklinks__grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--quicklinks-gap)}
+  .pp-mobile-quicklinks__card{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;padding:18px;border:1px solid var(--card-border);border-radius:20px;background:var(--card-bg)}
+  .pp-mobile-quicklinks__icon{display:grid;place-items:center;width:42px;height:42px;border-radius:50%;background:color-mix(in srgb,var(--card-accent) 14%,white);color:var(--card-accent);font-size:24px}
+  .pp-mobile-quicklinks h2{font-size:18px;margin:0 0 4px}.pp-mobile-quicklinks p{font-size:13px;margin:0;color:var(--muted)}
+  @media(min-width:751px){.pp-mobile-quicklinks--mobile_only{display:none}}
+  @media(max-width:750px){.pp-mobile-quicklinks__grid{grid-template-columns:1fr}.pp-mobile-quicklinks__card{grid-template-columns:auto 1fr}.pp-mobile-quicklinks__card .pp-btn{grid-column:1/-1}}
+{% endstylesheet %}
+
+{% schema %}
+{"name":"Mobile quick links","settings":[{"type":"checkbox","id":"enable","label":"Enable section","default":true},{"type":"select","id":"visibility","label":"Visibility","options":[{"value":"mobile_only","label":"Mobile only"},{"value":"all","label":"All screens"}],"default":"mobile_only"},{"type":"checkbox","id":"enable_animation","label":"Enable animation","default":true},{"type":"range","id":"card_gap","label":"Card gap","min":0,"max":32,"step":1,"unit":"px","default":10},{"type":"range","id":"padding_top","label":"Top padding","min":0,"max":100,"step":2,"unit":"px","default":20},{"type":"range","id":"padding_bottom","label":"Bottom padding","min":0,"max":100,"step":2,"unit":"px","default":28},{"type":"range","id":"heading_size","label":"Heading size","min":12,"max":28,"step":1,"unit":"px","default":16},{"type":"range","id":"body_size","label":"Body size","min":10,"max":20,"step":1,"unit":"px","default":13},{"type":"color","id":"section_background","label":"Background","default":"#ffffff"}],"blocks":[{"type":"quicklink","name":"Quick link","settings":[{"type":"text","id":"heading","label":"Heading"},{"type":"textarea","id":"text","label":"Text"},{"type":"text","id":"button_label","label":"Button label"},{"type":"url","id":"link","label":"Link"},{"type":"select","id":"icon","label":"Icon","options":[{"value":"box","label":"Box"},{"value":"camera","label":"Camera"}],"default":"box"},{"type":"color","id":"accent_color","label":"Accent","default":"#ff5a0a"},{"type":"color","id":"background_color","label":"Background","default":"#ffffff"},{"type":"color","id":"border_color","label":"Border","default":"#f7ded0"}]}],"presets":[{"name":"Mobile quick links"}]}
+{% endschema %}

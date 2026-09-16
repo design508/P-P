@@ -1,0 +1,11 @@
+{% if section.settings.enable %}
+  <aside class="pp-top-banner" style="--banner-bg:{{ section.settings.background_color }};--banner-text:{{ section.settings.text_color }};--banner-pt:{{ section.settings.padding_top }}px;--banner-pb:{{ section.settings.padding_bottom }}px;text-align:{{ section.settings.text_align }}">
+    {% if section.settings.link != blank %}<a href="{{ section.settings.link }}">{% endif %}
+      <div class="page-width"><h2>{{ section.settings.heading }}</h2><p>{{ section.settings.text }}</p>{% if section.settings.button_label != blank %}<span class="pp-btn pp-btn--{{ section.settings.button_style }}">{{ section.settings.button_label }}</span>{% endif %}</div>
+    {% if section.settings.link != blank %}</a>{% endif %}
+  </aside>
+{% endif %}
+{% stylesheet %}.pp-top-banner{background:var(--banner-bg);color:var(--banner-text);padding:var(--banner-pt) 0 var(--banner-pb)}.pp-top-banner a{color:inherit;text-decoration:none}.pp-top-banner h2{margin:0 0 8px}.pp-top-banner p{margin:0}.pp-top-banner .pp-btn{margin-top:16px}{% endstylesheet %}
+{% schema %}
+{"name":"Top banner","settings":[{"type":"checkbox","id":"enable","label":"Enable","default":false},{"type":"url","id":"link","label":"Link"},{"type":"text","id":"heading","label":"Heading"},{"type":"textarea","id":"text","label":"Text"},{"type":"select","id":"text_align","label":"Alignment","options":[{"value":"left","label":"Left"},{"value":"center","label":"Center"},{"value":"right","label":"Right"}],"default":"center"},{"type":"text","id":"button_label","label":"Button label"},{"type":"select","id":"button_style","label":"Button style","options":[{"value":"purple","label":"Purple"},{"value":"orange","label":"Orange"}],"default":"purple"},{"type":"color","id":"background_color","label":"Background","default":"#ffffff"},{"type":"color","id":"text_color","label":"Text","default":"#351042"},{"type":"range","id":"padding_top","label":"Top padding","min":0,"max":120,"step":4,"unit":"px","default":40},{"type":"range","id":"padding_bottom","label":"Bottom padding","min":0,"max":120,"step":4,"unit":"px","default":40}],"presets":[{"name":"Top banner"}]}
+{% endschema %}

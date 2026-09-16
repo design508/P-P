@@ -1,0 +1,5 @@
+<section class="pp-page-hero"><div class="page-width"><span class="pp-kicker pp-kicker--pink">{{ section.settings.eyebrow }}</span><h1>{{ page.title }}</h1>{% if section.settings.intro != blank %}<p>{{ section.settings.intro }}</p>{% endif %}</div></section>
+<section class="pp-section"><div class="page-width rte">{{ page.content }}</div></section>
+{% schema %}
+{"name":"Main page","settings":[{"type":"text","id":"eyebrow","label":"Eyebrow","default":"PUPS & PAWS"},{"type":"textarea","id":"intro","label":"Introduction"}]}
+{% endschema %}
